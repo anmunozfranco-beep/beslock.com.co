@@ -1,0 +1,57 @@
+# WordPress
+*.log
+.htaccess
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/backups/
+wp-content/upgrade/
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+*.tmproj
+*.code-workspace
+
+# Node (si usas npm)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Composer (si usas composer)
+vendor/
+composer.lock
+
+# Temporary files
+/tmp/
+*.cache
+
+# Build files
+/dist/
+/build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
