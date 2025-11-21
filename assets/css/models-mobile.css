@@ -1,0 +1,127 @@
+/* assets/css/models-mobile.css
+   Mobile-first styles for .models block (single-card).
+   Overlay title on the image, image fills the media box (cover).
+*/
+
+:root {
+  --beslock-bg-panel: #f1f3f4;
+  --beslock-bg-card: #ffffff;
+  --beslock-card-radius: 12px;
+  --beslock-card-padding: 18px;
+  --beslock-badge-bg: rgba(255,255,255,0.98);
+  --beslock-badge-border: rgba(0,0,0,0.06);
+  --beslock-text-on-image: #ffffff;
+  --beslock-text: #111111;
+  /* brand tint color */
+  --beslock-tint-rgb: 3,69,38; /* rgb(3,69,38) */
+}
+
+/* Panel container */
+.mobile-products-panel.models {
+  box-sizing: border-box;
+  padding: 16px;
+  min-height: 100vh;
+  display: block;
+  background: var(--beslock-bg-panel);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hidden/visible modifiers */
+.models--hidden { display: none; }
+.models--visible { display: block; }
+
+/* Card list wrapper */
+.models__list { max-width: 720px; margin: 0 auto; padding-bottom: 28px; }
+
+/* Card wrapper */
+.models__item { background: transparent; margin-bottom: 18px; box-sizing: border-box; }
+
+/* Media container - image is positioned inside and tint overlay sits between image and text */
+.models__item-media {
+  position: relative;
+  width: 100%;
+  height: 140px; /* chosen height */
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+  display: block;
+}
+
+/* Image fills the media box and is covered (no letterbox) */
+.models__item-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover; /* fill and crop */
+  z-index: 0;
+}
+
+/* Tint layer: covers only the image area and does NOT affect overlay text (we place it between image and overlay) */
+.models__item-media::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(var(--beslock-tint-rgb), 0.30); /* 30% tint */
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Remove the previous gradient pseudo-element if present; keep overlay above tint */
+.models__item-media::after {
+  content: "";
+  display: none;
+}
+
+/* Overlay: positioned over the image; moved to top-right as requested */
+.models__item-media__overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  z-index: 2; /* above tint */
+  pointer-events: none; /* overlay text not interactive; set to auto if you need clickable badges */
+}
+
+/* Ensure text is readable on top of tint */
+.models__item-title {
+  margin: 0;
+  color: var(--beslock-text-on-image);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.05;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+}
+
+/* Badges container (overlay) */
+.models__item-badges { display: flex; gap: 8px; align-items: center; }
+
+/* Badge visual: increase opacity (near-solid white) */
+.models__item-badge {
+  display: inline-block;
+  background: var(--beslock-badge-bg);
+  border: 1px solid var(--beslock-badge-border);
+  color: var(--beslock-text);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  pointer-events: auto;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* Small screens adjustments */
+@media (max-width: 420px) {
+  .models__list { padding-left: 6px; padding-right: 6px; }
+  .models__item-media { height: 140px; border-radius: 10px; }
+  .models__item-title { font-size: 18px; }
+  .models__item-badge { font-size: 12px; padding: 6px 8px; }
+}
