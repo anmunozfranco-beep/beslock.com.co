@@ -1,0 +1,94 @@
+<?php
+/**
+ * Beslock Custom Theme – Functions
+ * Mobile-first + BEM + GSAP Ready
+ *
+ * Actualizado: encolado seguro de assets del menú móvil (CSS + JS)
+ */
+
+add_action( 'wp_enqueue_scripts', function() {
+
+  // Helper para versiones basadas en tiempo de modificación (si existe el archivo)
+  $theme_dir_uri  = get_stylesheet_directory_uri();
+  $theme_dir_path = get_stylesheet_directory();
+
+  $ver_main_css = file_exists( $theme_dir_path . '/assets/css/main.css' )
+    ? filemtime( $theme_dir_path . '/assets/css/main.css' )
+    : null;
+
+  /* -------------------------------
+   * CSS PRINCIPAL
+   * ------------------------------- */
+  wp_enqueue_style(
+    'beslock-main-style',
+    $theme_dir_uri . '/assets/css/main.css',
+    [],
+    $ver_main_css
+  );
+
+  /* -------------------------------
+   * CSS ESPECÍFICO PARA MENÚ PRODUCTOS MÓVIL
+   * (solo en móvil para optimizar; quita wp_is_mobile() si quieres cargar siempre)
+   * ------------------------------- */
+  if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() ) {
+    $menu_css_path = $theme_dir_path . '/assets/css/menu-products-mobile.css';
+    $ver_menu_css = file_exists( $menu_css_path ) ? filemtime( $menu_css_path ) : null;
+
+    wp_enqueue_style(
+      'beslock-menu-products-mobile',
+      $theme_dir_uri . '/assets/css/menu-products-mobile.css',
+      [ 'beslock-main-style' ],
+      $ver_menu_css
+    );
+  }
+
+  /* -------------------------------
+   * GSAP + ScrollTrigger desde CDN
+   * ------------------------------- */
+  wp_enqueue_script(
+    'gsap',
+    'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js',
+    [],
+    null,
+    true
+  );
+  wp_enqueue_script(
+    'scrolltrigger',
+    'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js',
+    [ 'gsap' ],
+    null,
+    true
+  );
+
+  /* -------------------------------
+   * JS PRINCIPAL DEL TEMA
+   * ------------------------------- */
+  $main_js_path = $theme_dir_path . '/assets/js/main.js';
+  $ver_main_js = file_exists( $main_js_path ) ? filemtime( $main_js_path ) : null;
+
+  wp_enqueue_script(
+    'beslock-main-js',
+    $theme_dir_uri . '/assets/js/main.js',
+    [ 'scrolltrigger' ], // asegura carga en el orden correcto
+    $ver_main_js,
+    true
+  );
+
+  /* -------------------------------
+   * JS ESPECÍFICO PARA MENÚ PRODUCTOS MÓVIL
+   * (encolado sólo en móvil; depende del main JS para asegurar orden)
+   * ------------------------------- */
+  if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() ) {
+    $menu_js_path = $theme_dir_path . '/assets/js/menu-products-mobile.js';
+    $ver_menu_js = file_exists( $menu_js_path ) ? filemtime( $menu_js_path ) : null;
+
+    wp_enqueue_script(
+      'beslock-menu-products-mobile-js',
+      $theme_dir_uri . '/assets/js/menu-products-mobile.js',
+      [ 'beslock-main-js' ],
+      $ver_menu_js,
+      true
+    );
+  }
+
+});
