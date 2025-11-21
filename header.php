@@ -28,7 +28,10 @@
       <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-green.png' ); ?>" alt="<?php esc_attr_e('BESLOCK Logo', 'beslock'); ?>" height="32" />
     </a>
 
-    <a href="<?php echo esc_url( home_url('/cart') ); ?>" class="header__icon header__icon--cart" aria-label="<?php esc_attr_e('Go to cart', 'beslock'); ?>">&#128722;</a>
+    <a href="<?php echo esc_url( home_url('/cart') ); ?>" class="header__icon header__icon--cart" aria-label="<?php esc_attr_e('Go to cart', 'beslock'); ?>">
+      <i class="bi bi-cart" aria-hidden="true"></i>
+      <span class="screen-reader-text"><?php esc_html_e('Go to cart', 'beslock'); ?></span>
+    </a>
   </div>
 </header>
 
