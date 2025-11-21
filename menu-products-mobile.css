@@ -1,0 +1,92 @@
+/* Minimal CSS para drawer m¨®vil (ajustado para no afectar layout cuando est¨¢ cerrado) */
+
+/* Variables de base */
+:root { --drawer-bg: #fff; --drawer-width: 92vw; --drawer-z: 2000; --accent: var(--beslock-green, #034526); }
+
+/* Asegurar que el drawer no ocupe espacio ni empuje el contenido */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: var(--drawer-z);
+  display: flex;
+  pointer-events: none; /* por defecto no interact¨²a */
+  align-items: stretch;
+}
+
+/* Panel lateral que se desliza */
+.mobile-drawer__panel {
+  width: var(--drawer-width);
+  max-width: 420px;
+  background: var(--drawer-bg);
+  box-shadow: 2px 0 18px rgba(7,5,5,0.16);
+  transform: translateX(-110%);
+  transition: transform .28s cubic-bezier(.2,.9,.2,1);
+  pointer-events: auto; /* el panel s¨ª puede recibir interacci¨®n */
+  padding: 1rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Cuando el drawer est¨¢ abierto */
+.mobile-drawer.open {
+  pointer-events: auto; /* permitir interacci¨®n en todo el componente */
+}
+.mobile-drawer.open .mobile-drawer__panel {
+  transform: translateX(0);
+}
+
+/* Backdrop: ocupa el resto del viewport, inicialmente invisible */
+.mobile-drawer__backdrop {
+  flex: 1 1 auto;
+  background: rgba(0,0,0,0.28);
+  opacity: 0;
+  transition: opacity .28s;
+  pointer-events: none;
+}
+.mobile-drawer.open .mobile-drawer__backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Close button */
+.mobile-drawer__close {
+  background: none;
+  border: 2px solid rgba(0,0,0,0.06);
+  border-radius: 8px;
+  font-size: 1.2rem;
+  color: var(--beslock-text-main, #070505);
+  cursor: pointer;
+  padding: 6px 8px;
+  display: inline-block;
+}
+
+/* Menu list */
+.mobile-menu { margin: 1rem 0 2rem 0; padding: 0; list-style: none; }
+.mobile-menu__item { margin: 0; border-bottom: 1px solid #eee; }
+.mobile-menu__link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 0.25rem;
+  background: none;
+  border: 0;
+  text-align: left;
+  font-size: 1.05rem;
+  color: var(--beslock-text-main);
+  cursor: pointer;
+}
+.mobile-submenu { margin: 0; padding: 0.4rem 0 0.8rem 0.8rem; list-style: none; transition: max-height .28s ease; }
+.mobile-submenu__item { padding: .45rem 0; color: var(--beslock-text-sec); font-size: .98rem; }
+
+/* Hidden attr */
+.mobile-submenu[hidden] { display: none; }
+
+/* Accessibility focus */
+.mobile-menu__link:focus, .mobile-drawer__close:focus, .menu-btn:focus {
+  outline: 3px solid rgba(3,69,38,0.12);
+  outline-offset: 3px;
+}
