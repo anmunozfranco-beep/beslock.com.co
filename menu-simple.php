@@ -1,12 +1,16 @@
 <?php
-// /wp-content/themes/beslock-custom/templates/menu-simple.php
+// /wp-content/themes/beslock-custom/menu-simple.php
 // Partial minimal para drawer móvil — SOLO el drawer (no incluye botón de abrir)
 // Asegúrate de que el botón de apertura esté en header.php con id="menuBtn".
 ?>
 <!-- Drawer principal: no incluye botón de apertura (ese está en header.php) -->
 <nav id="mobileDrawer" class="mobile-drawer" aria-hidden="true" role="dialog" aria-label="<?php esc_attr_e('Mobile menu', 'beslock'); ?>">
   <div class="mobile-drawer__panel" role="document">
-    <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">&times;</button>
+    <!-- Close: usamos Bootstrap Icons para la X y mantenemos texto accesible -->
+    <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+      <span class="screen-reader-text"><?php esc_html_e('Close menu', 'beslock'); ?></span>
+    </button>
 
     <ul class="mobile-menu" role="menu">
       <li class="mobile-menu__item" role="none">
