@@ -14,14 +14,27 @@
 
     <ul class="mobile-menu" role="menu">
       <li class="mobile-menu__item" role="none">
-        <button class="mobile-menu__link" id="productsToggle" aria-expanded="false" aria-controls="productsList" role="menuitem">
+        <button class="mobile-menu__link" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem">
           <?php esc_html_e('Products', 'beslock'); ?> <span class="chev" aria-hidden="true">›</span>
         </button>
-        <ul id="productsList" class="mobile-submenu" hidden role="menu">
-          <li class="mobile-submenu__item" role="none">E-Nova</li>
-          <li class="mobile-submenu__item" role="none">E-Touch</li>
-          <li class="mobile-submenu__item" role="none">SmartLock Exterior</li>
-        </ul>
+
+        <?php
+        /**
+         * Panel semántico para Products.
+         * - Oculto por defecto (aria-hidden="true")
+         * - id="productsPanel" enlazado desde aria-controls en el botón
+         * - role="region" para describir área del drawer que contiene el contenido de Products
+         * - Contenido provisto por template-part: templates/models-mobile.php
+         *
+         * Nota: la visibilidad se controla con aria-* y clases (.models--hidden / .models--visible).
+         */
+        ?>
+        <div id="productsPanel" class="mobile-products-panel models models--hidden" role="region" aria-hidden="true" aria-labelledby="productsToggle">
+          <?php
+            // Cargamos el template-part con las tarjetas (models)
+            get_template_part( 'templates/models-mobile' );
+          ?>
+        </div>
       </li>
 
       <li class="mobile-menu__item" role="none">
