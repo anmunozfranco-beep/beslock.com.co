@@ -52,6 +52,17 @@ add_action( 'wp_enqueue_scripts', function() {
       [ 'beslock-main-style' ],
       $ver_menu_css
     );
+
+    // CSS del nuevo componente models (mobile)
+    $models_css_path = $theme_dir_path . '/assets/css/models-mobile.css';
+    $ver_models_css = file_exists( $models_css_path ) ? filemtime( $models_css_path ) : null;
+
+    wp_enqueue_style(
+      'beslock-models-mobile',
+      $theme_dir_uri . '/assets/css/models-mobile.css',
+      [ 'beslock-main-style', 'beslock-menu-products-mobile' ],
+      $ver_models_css
+    );
   }
 
   /* -------------------------------
@@ -99,6 +110,18 @@ add_action( 'wp_enqueue_scripts', function() {
       $theme_dir_uri . '/assets/js/menu-products-mobile.js',
       [ 'beslock-main-js' ],
       $ver_menu_js,
+      true
+    );
+
+    // JS del nuevo componente models (manejo de toggle del panel Products)
+    $models_js_path = $theme_dir_path . '/assets/js/models-mobile.js';
+    $ver_models_js = file_exists( $models_js_path ) ? filemtime( $models_js_path ) : null;
+
+    wp_enqueue_script(
+      'beslock-models-mobile-js',
+      $theme_dir_uri . '/assets/js/models-mobile.js',
+      [ 'beslock-main-js', 'beslock-menu-products-mobile-js' ],
+      $ver_models_js,
       true
     );
   }
