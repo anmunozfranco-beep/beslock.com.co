@@ -27,6 +27,18 @@ add_action( 'wp_enqueue_scripts', function() {
   );
 
   /* -------------------------------
+   * Bootstrap Icons (CDN) - GLOBAL
+   * Cargado de forma global en frontend para uso en header/menu/modales
+   * Versión: 1.13.1 (sin SRI por flujo de desarrollo)
+   * ------------------------------- */
+  wp_enqueue_style(
+    'beslock-bootstrap-icons',
+    'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css',
+    [],
+    '1.13.1'
+  );
+
+  /* -------------------------------
    * CSS ESPECÍFICO PARA MENÚ PRODUCTOS MÓVIL
    * (solo en móvil para optimizar; quita wp_is_mobile() si quieres cargar siempre)
    * ------------------------------- */
