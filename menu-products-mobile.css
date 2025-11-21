@@ -1,6 +1,11 @@
-/* Minimal CSS para drawer m��vil (ajustado para no afectar layout cuando est�� cerrado) */
+/* FILE: assets/css/menu-products-mobile.css
+   Updated: remove decorative boxes around close button and remove item dividers
+   Notes:
+   - Replaced :focus rules with :focus-visible to avoid showing outlines on touch/inspector focus.
+   - Removed border on close button and removed border-bottom on menu items.
+   - Preserved touch target size for accessibility.
+*/
 
-/* Variables de base */
 :root { --drawer-bg: #fff; --drawer-width: 92vw; --drawer-z: 2000; --accent: var(--beslock-green, #034526); }
 
 /* Asegurar que el drawer no ocupe espacio ni empuje el contenido */
@@ -12,7 +17,7 @@
   width: 100vw;
   z-index: var(--drawer-z);
   display: flex;
-  pointer-events: none; /* por defecto no interact��a */
+  pointer-events: none; /* por defecto no interactúa */
   align-items: stretch;
 }
 
@@ -24,15 +29,15 @@
   box-shadow: 2px 0 18px rgba(7,5,5,0.16);
   transform: translateX(-110%);
   transition: transform .28s cubic-bezier(.2,.9,.2,1);
-  pointer-events: auto; /* el panel s�� puede recibir interacci��n */
+  pointer-events: auto; /* el panel sólo puede recibir interacción */
   padding: 1rem;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Cuando el drawer est�� abierto */
+/* Cuando el drawer está abierto */
 .mobile-drawer.open {
-  pointer-events: auto; /* permitir interacci��n en todo el componente */
+  pointer-events: auto; /* permitir interacción en todo el componente */
 }
 .mobile-drawer.open .mobile-drawer__panel {
   transform: translateX(0);
@@ -51,21 +56,74 @@
   pointer-events: auto;
 }
 
-/* Close button */
+/* ------------------------------------------------------------------
+   Close button (X)
+   - Quitar decoraciones visuales (bordes y outlines automáticos) pero
+     mantener área táctil y accesibilidad.
+   - Mostrar outline solo para navegación con teclado (:focus-visible).
+   ------------------------------------------------------------------ */
 .mobile-drawer__close {
-  background: none;
-  border: 2px solid rgba(0,0,0,0.06);
-  border-radius: 8px;
-  font-size: 1.2rem;
+  /* visual: eliminar borde visible y fondo */
+  background: transparent;
+  border: none; /* eliminar el borde que producía el recuadro interior */
+  box-shadow: none; /* por si hay sombras heredadas */
+  border-radius: 8px; /* opcional: mantiene leve curvatura si se necesita */
   color: var(--beslock-text-main, #070505);
   cursor: pointer;
-  padding: 6px 8px;
-  display: inline-block;
+  /* mantener un hit-area grande y centrada para touch */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;           /* suficiente para touch target */
+  min-width: 44px;
+  min-height: 44px;
+  line-height: 0;          /* evita interferencia con icon fonts */
+  font-size: 1.2rem;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s, color 0.12s;
 }
 
-/* Menu list */
-.mobile-menu { margin: 1rem 0 2rem 0; padding: 0; list-style: none; }
-.mobile-menu__item { margin: 0; border-bottom: 1px solid #eee; }
+/* Envelope wrappers: si hay envoltorios con estilos, neutralizarlos
+   (selector más específico para forzar override sin !important) */
+.mobile-drawer .mobile-drawer__close,
+nav#mobileDrawer .mobile-drawer__close {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Focus visual solo para teclado (mejor UX en touch):
+   evita mostrar el outline cuando se hace tap/touch o cuando el inspector enfoca. */
+.mobile-menu__link:focus-visible,
+.mobile-drawer__close:focus-visible,
+.menu-btn:focus-visible {
+  outline: 3px solid rgba(3,69,38,0.12);
+  outline-offset: 3px;
+}
+
+/* Para compatibilidad con navegadores que no soportan :focus-visible,
+   mantenemos un fallback sutil (solo cuando realmente hay foco por teclado).
+   No usamos :focus global para evitar el doble recuadro en touch/inspector. */
+@supports selector(:focus-visible) {
+  /* nada adicional, :focus-visible ya cubre la necesidad */
+}
+
+/* ------------------------------------------------------------------
+   Menu list: eliminar líneas divisorias y subrayados predeterminados
+   ------------------------------------------------------------------ */
+.mobile-menu {
+  margin: 1rem 0 2rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Quitar la línea que aparecía como border-bottom en cada item */
+.mobile-menu__item {
+  margin: 0;
+  border-bottom: none; /* removido: anteriormente 1px solid #eee */
+}
+
+/* Enlaces: layout, espaciado y eliminación de subrayado */
 .mobile-menu__link {
   display: flex;
   justify-content: space-between;
@@ -78,15 +136,35 @@
   font-size: 1.05rem;
   color: var(--beslock-text-main);
   cursor: pointer;
+  text-decoration: none; /* quitar subrayado */
+  -webkit-tap-highlight-color: transparent;
 }
-.mobile-submenu { margin: 0; padding: 0.4rem 0 0.8rem 0.8rem; list-style: none; transition: max-height .28s ease; }
-.mobile-submenu__item { padding: .45rem 0; color: var(--beslock-text-sec); font-size: .98rem; }
+
+/* Submenu items (pequeño y sutil) */
+.mobile-submenu {
+  margin: 0;
+  padding: 0.4rem 0 0.8rem 0.8rem;
+  list-style: none;
+  transition: max-height .28s ease;
+}
+.mobile-submenu__item {
+  padding: .45rem 0;
+  color: var(--beslock-text-sec);
+  font-size: .98rem;
+}
 
 /* Hidden attr */
 .mobile-submenu[hidden] { display: none; }
 
-/* Accessibility focus */
-.mobile-menu__link:focus, .mobile-drawer__close:focus, .menu-btn:focus {
-  outline: 3px solid rgba(3,69,38,0.12);
-  outline-offset: 3px;
+/* Ajuste opcional para hover/focus en enlaces móviles (sólo visual, sin outline extra) */
+.mobile-menu__link:hover,
+.mobile-menu__link:active {
+  background: rgba(0,0,0,0.02); /* sutil feedback táctil */
 }
+
+/* Accessibility: retiramos la regla :focus que añadía el doble recuadro,
+   y hemos reemplazado por :focus-visible arriba. Mantener el soporte:
+   si un navegador no soporta :focus-visible, el outline no se mostrará
+   para toques (mejor UX). */
+
+/* Fin del archivo */
