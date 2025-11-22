@@ -2,23 +2,15 @@
 /**
  * templates/models-mobile.php
  *
- * Dynamic product cards with focal-point support for perfect 16:9 framing.
+ * Dynamic product cards for the mobile menu.
+ * This version reads images from /assets/images/products/ (non-underscore variants).
  *
  * Behaviour:
  * - Scans assets/images/products for files (webp/png/jpg/jpeg).
- * - Ignores files with filename ending in '_' (underscore) before extension.
+ * - Ignores files whose filename ends with an underscore (reserved for front-page variants in /assets/images/).
  * - Groups by base name (e.g. e-nova) and renders one card per base.
  * - Emits <source> for webp (if present) and an <img> fallback (png/jpg/jpeg/webp).
- * - Adds optional data-object-position attribute per image when a focal override
- *   exists (you can configure $focal_overrides below).
- *
- * Accessibility & overlay:
- * - Title is derived from filename (e-nova -> e-Nova) and placed top-right.
- * - Badge text defaults to "Cerradura Electronica" (you can override via
- *   $badge_overrides).
- *
- * To fine-tune per-image focal points, add entries to $focal_overrides:
- *  e.g. $focal_overrides = [ 'e-nova' => '80% 20%', 'e-orbit' => '70% 50%' ];
+ * - Adds optional data-object-position attribute per image when a focal override exists.
  *
  * IMPORTANT: copy this file to /wp-content/themes/your-theme/templates/models-mobile.php
  */
@@ -27,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
+// Menu must use the non-underscore images located in assets/images/products/
 $images_dir_path = get_stylesheet_directory() . '/assets/images/products/';
 $images_dir_uri  = get_stylesheet_directory_uri() . '/assets/images/products/';
 
@@ -34,25 +27,27 @@ $images_dir_uri  = get_stylesheet_directory_uri() . '/assets/images/products/';
 // badge text per base (optional)
 $badge_overrides = array(
   // 'e-nova' => 'Cerradura Electronica',
-  // 'e-orbit' => 'Cerradura Exterior',
 );
 
 // focal point overrides per base (object-position values, e.g. "50% 30%")
 $focal_overrides = array(
   // 'e-nova' => '80% 20%',
-  // 'e-orbit' => '60% 50%',
 );
 
-// gather files
+// gather files (only files directly under assets/images/products/)
 $files = array();
 $glob = @glob( $images_dir_path . '*.{webp,png,jpg,jpeg}', GLOB_BRACE );
 if ( $glob && is_array( $glob ) ) {
   foreach ( $glob as $path ) {
+    if ( ! is_file( $path ) ) {
+      continue;
+    }
+
     $filename = basename( $path );
     $ext = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
     $name = pathinfo( $filename, PATHINFO_FILENAME );
 
-    // Skip files whose filename ends with an underscore, e.g. e-nova_.webp
+    // Skip files whose filename ends with an underscore (reserved variants)
     if ( substr( $name, -1 ) === '_' ) {
       continue;
     }
@@ -130,7 +125,7 @@ function beslock_title_from_base( $base ) {
             loading="lazy"
             class="models__item-img"
             width="1200"
-            height="675" <!-- 16:9 ratio -->
+            height="675"
             <?php if ( ! empty( $focal ) ) : ?>
               data-object-position="<?php echo esc_attr( $focal ); ?>"
             <?php endif; ?>
