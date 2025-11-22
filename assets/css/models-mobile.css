@@ -14,7 +14,8 @@
   --beslock-badge-border: rgba(0,0,0,0.06);
   --beslock-text-on-image: #ffffff;
   --beslock-text: #111111;
-  --beslock-shade: rgba(3,69,38,0.1); /* shade at 45% */
+  /* Restored shade opacity to 10% for best contrast as requested */
+  --beslock-shade: rgba(3,69,38,0.1);
 }
 
 /* Panel container */
@@ -150,7 +151,6 @@
   pointer-events: auto; /* allow interaction if desired */
 }
 
-/* Badge visual: 65% white background, text fully opaque */
 .models__item-badge {
   display: inline-block;
   background: var(--beslock-badge-bg-rgba);
