@@ -1,0 +1,246 @@
+/* assets/css/menu-products-mobile.css
+   Versión ajustada: Products panel desliza y hace scroll correctamente.
+   Reemplaza completamente el archivo en wp-content/themes/beslock-custom/assets/css/
+*/
+
+/* Variables */
+:root{
+  --drawer-width: 320px;
+  --drawer-bg: #ffffff;
+  --products-panel-width: 100%; /* en móvil queremos full-screen cuando se abra */
+  --backdrop-color: rgba(0,0,0,0.45);
+  --drawer-ease: cubic-bezier(.22,.9,.41,1);
+  --drawer-duration: 360ms;
+  --backdrop-duration: 240ms;
+  --menu-link-color: #0b0b0b;
+}
+
+/* Contenedor del drawer */
+nav#mobileDrawer.mobile-drawer {
+  position: fixed;
+  inset: 0;
+  display: block;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+/* Backdrop */
+nav#mobileDrawer .mobile-drawer__backdrop,
+#drawerBackdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0) !important;
+  transition: background var(--backdrop-duration) ease !important;
+  z-index: 1220 !important;
+  pointer-events: none !important;
+}
+
+/* Panel principal del drawer (izquierda) */
+nav#mobileDrawer .mobile-drawer__panel {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  width: var(--drawer-width) !important;
+  max-width: 85vw !important;
+  background: var(--drawer-bg) !important;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.12) !important;
+  transform: translate3d(-100%, 0, 0) !important;
+  will-change: transform, opacity !important;
+  transition: transform var(--drawer-duration) var(--drawer-ease) !important;
+  z-index: 1301 !important;
+  overflow: visible !important; /* allow absolute children to overflow */
+  -webkit-overflow-scrolling: touch !important;
+  padding: 1.25rem 1.25rem 0.75rem 1.25rem !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
+}
+
+/* Drawer abierto */
+nav#mobileDrawer.is-open { pointer-events: auto; }
+nav#mobileDrawer.is-open .mobile-drawer__panel { transform: translate3d(0, 0, 0) !important; }
+nav#mobileDrawer.is-open .mobile-drawer__backdrop,
+#drawerBackdrop.backdrop-visible {
+  background: var(--backdrop-color) !important;
+  pointer-events: auto !important;
+}
+
+/* Menu principal: items */
+nav#mobileDrawer .mobile-menu { margin: 0; padding: 0; }
+nav#mobileDrawer .mobile-menu__item {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 1.25rem 0 !important;
+  border: none !important;
+  background: transparent !important;
+  position: relative !important;
+}
+nav#mobileDrawer .mobile-menu__item::after,
+nav#mobileDrawer .mobile-menu__item::before {
+  display: none !important;
+  content: none !important;
+}
+nav#mobileDrawer .mobile-menu__item a,
+nav#mobileDrawer .mobile-menu__link,
+nav#mobileDrawer .mobile-menu__item .mobile-menu__link--plain {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 1.2rem !important;
+  line-height: 1.2 !important;
+  color: var(--menu-link-color) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  border-bottom: none !important;
+}
+
+/* Products row */
+nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron,
+nav#mobileDrawer #productsToggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-right: 0.25rem !important;
+}
+
+/* Products chevron (controlado por JS) */
+nav#mobileDrawer .products-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.45rem;
+  font-size: 1.05rem;
+  color: var(--menu-link-color);
+  line-height: 1;
+}
+nav#mobileDrawer .products-chevron.hidden { display: none !important; }
+
+/* Forzar ocultar pseudo indicators del theme */
+#productsToggle::after,
+nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron::after,
+nav#mobileDrawer .mobile-menu__item a#productsToggle::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Close/back button */
+nav#mobileDrawer .mobile-drawer__close,
+nav#mobileDrawer #closeDrawer,
+.mobile-drawer__close {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0.35rem !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  color: var(--menu-link-color) !important;
+  cursor: pointer !important;
+}
+nav#mobileDrawer .mobile-drawer__close .bi,
+nav#mobileDrawer #closeDrawer .bi { font-size: 1.1rem !important; line-height: 1 !important; }
+
+/* ----------------------------
+   Products panel (sliding layer inside the drawer)
+   - Full-screen on mobile when visible
+   - Height full, positioned fixed at right when hidden
+   - scroll enabled and smooth touch scrolling
+   - transition on transform + opacity for visible animation
+   ---------------------------- */
+nav#mobileDrawer .mobile-products-panel {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: var(--products-panel-width) !important;
+  height: 100vh !important;
+  background: var(--drawer-bg) !important;
+  z-index: 1310 !important; /* above drawer content */
+  box-shadow: -10px 0 30px rgba(0,0,0,0.12) !important; /* subtle left shadow for contrast */
+  transform: translate3d(100%, 0, 0) !important; /* off-screen to the right */
+  opacity: 0 !important;
+  transition: transform var(--drawer-duration) var(--drawer-ease), opacity calc(var(--drawer-duration)/1.4) ease !important;
+  padding: 1.25rem !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  pointer-events: none !important; /* disabled until visible */
+  will-change: transform, opacity !important;
+}
+
+/* Visible state: slide in and allow interaction */
+nav#mobileDrawer.products-open .mobile-products-panel,
+nav#mobileDrawer .mobile-products-panel.models--visible {
+  transform: translate3d(0, 0, 0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  /* Make it full-screen width when visible */
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
+}
+
+/* While products panel open, hide main menu visually but keep DOM for a11y */
+nav#mobileDrawer.products-open .mobile-menu {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Keep close/back button visible when products-open */
+nav#mobileDrawer.products-open .mobile-drawer__close {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Prevent body scroll when drawer open */
+html.has-drawer-open { overflow: hidden !important; touch-action: none !important; }
+
+/* Touch-only aggressive focus removal */
+@media (pointer: coarse) and (hover: none) {
+  nav#mobileDrawer .mobile-menu__item a,
+  nav#mobileDrawer .mobile-menu__item button,
+  nav#mobileDrawer .mobile-menu__link,
+  #productsToggle,
+  button#productsToggle {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+    caret-color: transparent !important;
+  }
+  nav#mobileDrawer .mobile-menu__item a:focus,
+  nav#mobileDrawer .mobile-menu__item button:focus,
+  #productsToggle:focus,
+  button#productsToggle:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Full-width ONLY in small screens (<=768px) */
+@media (max-width: 768px) {
+  nav#mobileDrawer .mobile-drawer__panel {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-shadow: none !important;
+  }
+  /* Products panel full width inside drawer in mobile */
+  nav#mobileDrawer .mobile-products-panel {
+    width: 100% !important;
+    right: 0 !important;
+  }
+}
+
+/* Utility */
+.u-visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
