@@ -1,170 +1,240 @@
-/* FILE: assets/css/menu-products-mobile.css
-   Updated: remove decorative boxes around close button and remove item dividers
-   Notes:
-   - Replaced :focus rules with :focus-visible to avoid showing outlines on touch/inspector focus.
-   - Removed border on close button and removed border-bottom on menu items.
-   - Preserved touch target size for accessibility.
+/* assets/css/menu-products-mobile.css
+   Versión ajustada: Products panel desliza y hace scroll correctamente.
+   Reemplaza completamente el archivo en wp-content/themes/beslock-custom/assets/css/
 */
 
-:root { --drawer-bg: #fff; --drawer-width: 92vw; --drawer-z: 2000; --accent: var(--beslock-green, #034526); }
+/* Variables */
+:root{
+  --drawer-width: 320px;
+  --drawer-bg: #ffffff;
+  --products-panel-width: 100%; /* en móvil es 100%, en desktop puedes ajustarlo */
+  --backdrop-color: rgba(0,0,0,0.45);
+  --drawer-ease: cubic-bezier(.22,.9,.41,1);
+  --drawer-duration: 360ms;
+  --backdrop-duration: 240ms;
+  --menu-link-color: #0b0b0b;
+}
 
-/* Asegurar que el drawer no ocupe espacio ni empuje el contenido */
-.mobile-drawer {
+/* Contenedor del drawer */
+nav#mobileDrawer.mobile-drawer {
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  z-index: var(--drawer-z);
-  display: flex;
-  pointer-events: none; /* por defecto no interactúa */
-  align-items: stretch;
-}
-
-/* Panel lateral que se desliza */
-.mobile-drawer__panel {
-  width: var(--drawer-width);
-  max-width: 420px;
-  background: var(--drawer-bg);
-  box-shadow: 2px 0 18px rgba(7,5,5,0.16);
-  transform: translateX(-110%);
-  transition: transform .28s cubic-bezier(.2,.9,.2,1);
-  pointer-events: auto; /* el panel sólo puede recibir interacción */
-  padding: 1rem;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Cuando el drawer está abierto */
-.mobile-drawer.open {
-  pointer-events: auto; /* permitir interacción en todo el componente */
-}
-.mobile-drawer.open .mobile-drawer__panel {
-  transform: translateX(0);
-}
-
-/* Backdrop: ocupa el resto del viewport, inicialmente invisible */
-.mobile-drawer__backdrop {
-  flex: 1 1 auto;
-  background: rgba(0,0,0,0.28);
-  opacity: 0;
-  transition: opacity .28s;
+  inset: 0;
+  display: block;
+  z-index: 1200;
   pointer-events: none;
 }
-.mobile-drawer.open .mobile-drawer__backdrop {
-  opacity: 1;
-  pointer-events: auto;
+
+/* Backdrop */
+nav#mobileDrawer .mobile-drawer__backdrop,
+#drawerBackdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0) !important;
+  transition: background var(--backdrop-duration) ease !important;
+  z-index: 1220 !important;
+  pointer-events: none !important;
 }
 
-/* ------------------------------------------------------------------
-   Close button (X)
-   - Quitar decoraciones visuales (bordes y outlines automáticos) pero
-     mantener área táctil y accesibilidad.
-   - Mostrar outline solo para navegación con teclado (:focus-visible).
-   ------------------------------------------------------------------ */
-.mobile-drawer__close {
-  /* visual: eliminar borde visible y fondo */
-  background: transparent;
-  border: none; /* eliminar el borde que producía el recuadro interior */
-  box-shadow: none; /* por si hay sombras heredadas */
-  border-radius: 8px; /* opcional: mantiene leve curvatura si se necesita */
-  color: var(--beslock-text-main, #070505);
-  cursor: pointer;
-  /* mantener un hit-area grande y centrada para touch */
+/* Panel principal del drawer (izquierda) */
+nav#mobileDrawer .mobile-drawer__panel {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  width: var(--drawer-width) !important;
+  max-width: 85vw !important;
+  background: var(--drawer-bg) !important;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.12) !important;
+  transform: translate3d(-100%, 0, 0) !important;
+  will-change: transform, opacity !important;
+  transition: transform var(--drawer-duration) var(--drawer-ease) !important;
+  z-index: 1301 !important;
+  overflow: visible !important; /* allow absolute children to overflow */
+  -webkit-overflow-scrolling: touch !important;
+  padding: 1.25rem 1.25rem 0.75rem 1.25rem !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
+}
+
+/* Drawer abierto */
+nav#mobileDrawer.is-open { pointer-events: auto; }
+nav#mobileDrawer.is-open .mobile-drawer__panel { transform: translate3d(0, 0, 0) !important; }
+nav#mobileDrawer.is-open .mobile-drawer__backdrop,
+#drawerBackdrop.backdrop-visible {
+  background: var(--backdrop-color) !important;
+  pointer-events: auto !important;
+}
+
+/* Menu principal: items */
+nav#mobileDrawer .mobile-menu { margin: 0; padding: 0; }
+nav#mobileDrawer .mobile-menu__item {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 1.25rem 0 !important;
+  border: none !important;
+  background: transparent !important;
+  position: relative !important;
+}
+nav#mobileDrawer .mobile-menu__item::after,
+nav#mobileDrawer .mobile-menu__item::before {
+  display: none !important;
+  content: none !important;
+}
+nav#mobileDrawer .mobile-menu__item a,
+nav#mobileDrawer .mobile-menu__link,
+nav#mobileDrawer .mobile-menu__item .mobile-menu__link--plain {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 1.2rem !important;
+  line-height: 1.2 !important;
+  color: var(--menu-link-color) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  border-bottom: none !important;
+}
+
+/* Products row */
+nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron,
+nav#mobileDrawer #productsToggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-right: 0.25rem !important;
+}
+
+/* Products chevron (controlado por JS) */
+nav#mobileDrawer .products-chevron {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;           /* suficiente para touch target */
-  min-width: 44px;
-  min-height: 44px;
-  line-height: 0;          /* evita interferencia con icon fonts */
-  font-size: 1.2rem;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.12s, color 0.12s;
-}
-
-/* Envelope wrappers: si hay envoltorios con estilos, neutralizarlos
-   (selector más específico para forzar override sin !important) */
-.mobile-drawer .mobile-drawer__close,
-nav#mobileDrawer .mobile-drawer__close {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-}
-
-/* Focus visual solo para teclado (mejor UX en touch):
-   evita mostrar el outline cuando se hace tap/touch o cuando el inspector enfoca. */
-.mobile-menu__link:focus-visible,
-.mobile-drawer__close:focus-visible,
-.menu-btn:focus-visible {
-  outline: 3px solid rgba(3,69,38,0.12);
-  outline-offset: 3px;
-}
-
-/* Para compatibilidad con navegadores que no soportan :focus-visible,
-   mantenemos un fallback sutil (solo cuando realmente hay foco por teclado).
-   No usamos :focus global para evitar el doble recuadro en touch/inspector. */
-@supports selector(:focus-visible) {
-  /* nada adicional, :focus-visible ya cubre la necesidad */
-}
-
-/* ------------------------------------------------------------------
-   Menu list: eliminar líneas divisorias y subrayados predeterminados
-   ------------------------------------------------------------------ */
-.mobile-menu {
-  margin: 1rem 0 2rem 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Quitar la línea que aparecía como border-bottom en cada item */
-.mobile-menu__item {
-  margin: 0;
-  border-bottom: none; /* removido: anteriormente 1px solid #eee */
-}
-
-/* Enlaces: layout, espaciado y eliminación de subrayado */
-.mobile-menu__link {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 1rem 0.25rem;
-  background: none;
-  border: 0;
-  text-align: left;
+  margin-left: 0.45rem;
   font-size: 1.05rem;
-  color: var(--beslock-text-main);
-  cursor: pointer;
-  text-decoration: none; /* quitar subrayado */
-  -webkit-tap-highlight-color: transparent;
+  color: var(--menu-link-color);
+  line-height: 1;
+}
+nav#mobileDrawer .products-chevron.hidden { display: none !important; }
+
+/* Forzar ocultar pseudo indicators del theme */
+#productsToggle::after,
+nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron::after,
+nav#mobileDrawer .mobile-menu__item a#productsToggle::after {
+  display: none !important;
+  content: none !important;
 }
 
-/* Submenu items (pequeño y sutil) */
-.mobile-submenu {
-  margin: 0;
-  padding: 0.4rem 0 0.8rem 0.8rem;
-  list-style: none;
-  transition: max-height .28s ease;
+/* Close/back button */
+nav#mobileDrawer .mobile-drawer__close,
+nav#mobileDrawer #closeDrawer,
+.mobile-drawer__close {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0.35rem !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  color: var(--menu-link-color) !important;
+  cursor: pointer !important;
 }
-.mobile-submenu__item {
-  padding: .45rem 0;
-  color: var(--beslock-text-sec);
-  font-size: .98rem;
+nav#mobileDrawer .mobile-drawer__close .bi,
+nav#mobileDrawer #closeDrawer .bi { font-size: 1.1rem !important; line-height: 1 !important; }
+
+/* ----------------------------
+   Products panel (sliding layer inside the drawer)
+   - Height full, positioned absolute inside drawer panel
+   - scroll enabled and smooth touch scrolling
+   - transition on transform + opacity for visible animation
+   ---------------------------- */
+nav#mobileDrawer .mobile-products-panel {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: var(--products-panel-width) !important;
+  height: 100vh !important;
+  background: var(--drawer-bg) !important;
+  z-index: 1310 !important; /* above drawer content */
+  box-shadow: none !important;
+  transform: translate3d(100%, 0, 0) !important; /* off-screen to the right */
+  opacity: 0 !important;
+  transition: transform var(--drawer-duration) var(--drawer-ease), opacity calc(var(--drawer-duration)/1.4) ease !important;
+  padding: 1.25rem !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  pointer-events: none !important; /* disabled until visible */
 }
 
-/* Hidden attr */
-.mobile-submenu[hidden] { display: none; }
-
-/* Ajuste opcional para hover/focus en enlaces móviles (sólo visual, sin outline extra) */
-.mobile-menu__link:hover,
-.mobile-menu__link:active {
-  background: rgba(0,0,0,0.02); /* sutil feedback táctil */
+/* Visible state: slide in and allow interaction */
+nav#mobileDrawer.products-open .mobile-products-panel,
+nav#mobileDrawer .mobile-products-panel.models--visible {
+  transform: translate3d(0, 0, 0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
-/* Accessibility: retiramos la regla :focus que añadía el doble recuadro,
-   y hemos reemplazado por :focus-visible arriba. Mantener el soporte:
-   si un navegador no soporta :focus-visible, el outline no se mostrará
-   para toques (mejor UX). */
+/* While products panel open, hide main menu visually but keep DOM for a11y */
+nav#mobileDrawer.products-open .mobile-menu {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 
-/* Fin del archivo */
+/* Keep close/back button visible when products-open */
+nav#mobileDrawer.products-open .mobile-drawer__close {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Prevent body scroll when drawer open */
+html.has-drawer-open { overflow: hidden !important; touch-action: none !important; }
+
+/* Touch-only aggressive focus removal */
+@media (pointer: coarse) and (hover: none) {
+  nav#mobileDrawer .mobile-menu__item a,
+  nav#mobileDrawer .mobile-menu__item button,
+  nav#mobileDrawer .mobile-menu__link,
+  #productsToggle,
+  button#productsToggle {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+    caret-color: transparent !important;
+  }
+  nav#mobileDrawer .mobile-menu__item a:focus,
+  nav#mobileDrawer .mobile-menu__item button:focus,
+  #productsToggle:focus,
+  button#productsToggle:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Full-width ONLY in small screens (<=768px) */
+@media (max-width: 768px) {
+  nav#mobileDrawer .mobile-drawer__panel {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-shadow: none !important;
+  }
+  /* Products panel full width inside drawer in mobile */
+  nav#mobileDrawer .mobile-products-panel {
+    width: 100% !important;
+    right: 0 !important;
+  }
+}
+
+/* Utility */
+.u-visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
