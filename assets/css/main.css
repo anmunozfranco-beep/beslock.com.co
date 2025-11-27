@@ -39,6 +39,18 @@ a, button, input, select, textarea, .mobile-menu__link, .btn, .product-card a {
   -ms-touch-action: manipulation;
 }
 
+/* Ensure icons inside buttons don't become the event target on touch devices.
+   This lets the parent button receive the pointer event immediately. */
+button, button * {
+  touch-action: manipulation;
+}
+
+/* Make decorative icons non-interactive so taps hit the button itself. */
+.mobile-drawer__close i,
+.mobile-menu__chev,
+.header__icon i,
+.bi { pointer-events: none; }
+
 /* ========== CONTENEDOR UNIVERSAL ========== */
 .u-container {
   width: 100%;
