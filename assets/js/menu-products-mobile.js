@@ -13,7 +13,7 @@
     closeDrawer: '#closeDrawer, .mobile-drawer__close',
     backdrop: '#drawerBackdrop, .mobile-drawer__backdrop',
     productsToggle: '#productsToggle, .mobile-menu__link[id^="products"], .mobile-menu__link--products',
-    productsPanel: '#productsPanel, .mobile-products-panel'
+    productsPanel: '#productsPanel, .mobile-drawer__products-panel'
   };
 
   function $(sel) { try { return document.querySelector(sel); } catch (e) { return null; } }

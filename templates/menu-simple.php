@@ -37,7 +37,7 @@
          * Nota: la visibilidad se controla con aria-* y clases (.models--hidden / .models--visible).
          */
         ?>
-        <div id="productsPanel" class="mobile-products-panel models models--hidden" role="region" aria-hidden="true" aria-labelledby="productsToggle">
+        <div id="productsPanel" class="mobile-drawer__products-panel models models--hidden" role="region" aria-hidden="true" aria-labelledby="productsToggle">
           <?php
             // Cargamos el template-part con las tarjetas (models)
             get_template_part( 'templates/models-mobile' );

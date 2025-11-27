@@ -19,7 +19,7 @@
 }
 
 /* Panel container */
-.mobile-products-panel.models {
+.mobile-drawer__products-panel.models {
   box-sizing: border-box;
   padding: 16px;
   min-height: 100vh;

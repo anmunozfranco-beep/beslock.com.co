@@ -197,7 +197,7 @@ nav#mobileDrawer #closeDrawer .bi { font-size: 1.1rem !important; line-height: 1
    - scroll enabled and smooth touch scrolling
    - transition on transform + opacity for visible animation
    ---------------------------- */
-nav#mobileDrawer .mobile-products-panel {
+nav#mobileDrawer .mobile-drawer__products-panel {
   position: absolute !important;
   top: 0 !important;
   right: 0 !important;
@@ -221,7 +221,7 @@ nav#mobileDrawer .mobile-products-panel {
    so CSS transitions (transform/opacity) still run. The JS will set `.models--hidden`
    and we rely on that class for the visual hide animation; this selector prevents
    the UA `display:none` from cutting the animation short. */
-nav#mobileDrawer .mobile-products-panel[hidden] {
+nav#mobileDrawer .mobile-drawer__products-panel[hidden] {
   display: block !important;
   visibility: visible !important;
   pointer-events: none !important;
@@ -231,16 +231,16 @@ nav#mobileDrawer .mobile-products-panel[hidden] {
 }
 
 /* Be explicit for the class-driven hidden state as well (covers both attribute and class paths) */
-nav#mobileDrawer .mobile-products-panel.models--hidden,
-nav#mobileDrawer .mobile-products-panel.models--hidden[hidden] {
+nav#mobileDrawer .mobile-drawer__products-panel.models--hidden,
+nav#mobileDrawer .mobile-drawer__products-panel.models--hidden[hidden] {
   transform: translate3d(100%, 0, 0) !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
 /* Visible state: slide in and allow interaction */
-nav#mobileDrawer.products-open .mobile-products-panel,
-nav#mobileDrawer .mobile-products-panel.models--visible {
+nav#mobileDrawer.products-open .mobile-drawer__products-panel,
+nav#mobileDrawer .mobile-drawer__products-panel.models--visible {
   transform: translate3d(0, 0, 0) !important;
   opacity: 1 !important;
   pointer-events: auto !important;
@@ -250,7 +250,7 @@ nav#mobileDrawer .mobile-products-panel.models--visible {
    wins even if the parent has `products-open`. This gives JS the ability
    to keep `products-open` for other layout reasons while the panel itself
    animates out. */
-nav#mobileDrawer.products-open .mobile-products-panel.models--hidden {
+nav#mobileDrawer.products-open .mobile-drawer__products-panel.models--hidden {
   transform: translate3d(100%, 0, 0) !important;
   opacity: 0 !important;
   pointer-events: none !important;
