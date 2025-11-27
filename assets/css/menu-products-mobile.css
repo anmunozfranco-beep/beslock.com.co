@@ -147,7 +147,7 @@ nav#mobileDrawer .mobile-menu__item .mobile-menu__link--plain {
 /* Layout for icon + title + subtitle rows (as in design screenshot) */
 nav#mobileDrawer .mobile-menu__link {
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-start !important; /* align icon with the top/title line */
   gap: 1rem !important;
   padding: 0.6rem 0.25rem !important;
   width: 100% !important;
@@ -164,6 +164,9 @@ nav#mobileDrawer .mobile-menu__link i.bi {
   text-align: center !important;
   pointer-events: none !important; /* decorative icon shouldn't intercept taps */
 }
+
+/* Nudge icons slightly so they visually align with the title's baseline */
+nav#mobileDrawer .mobile-menu__link i.bi { margin-top: 0.18rem !important; }
 
 nav#mobileDrawer .mobile-menu__content {
   display: flex !important;
@@ -210,7 +213,7 @@ nav#mobileDrawer .products-chevron { margin-left: 0.45rem !important; }
 nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron,
 nav#mobileDrawer #productsToggle {
   display: inline-flex !important;
-  align-items: center !important;
+  align-items: center !important; /* keep Products centered vertically */
   justify-content: flex-start !important;
   gap: 0.45rem !important;
   padding-right: 0.25rem !important;
