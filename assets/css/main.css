@@ -438,7 +438,7 @@ body {
 
 /* Footer logo: tamaño = 40% del logo del header (usamos --site-logo-height) */
 /* Aquí usamos la variable definida en .header__logo img (fallback 32px) */
-.footer-logo {
+.site-footer__logo {
   display: inline-block;
   height: calc(var(--site-logo-height, 32px) * 0.85);
   width: auto;

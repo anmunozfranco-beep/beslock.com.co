@@ -228,7 +228,8 @@
         var txt = (ch.textContent || '').trim();
         if (/^[›»>→]+$/.test(txt)) toRemove.push(ch);
         var cls = (ch.className || '').toLowerCase();
-        if (cls.indexOf('indicator') !== -1 || cls.indexOf('chev') !== -1 || cls.indexOf('chevron') !== -1 || cls.indexOf('caret') !== -1) toRemove.push(ch);
+        // detect legacy short classes as well as BEM classes for chevrons/indicators
+        if (cls.indexOf('indicator') !== -1 || cls.indexOf('chev') !== -1 || cls.indexOf('chevron') !== -1 || cls.indexOf('caret') !== -1 || cls.indexOf('mobile-menu__chev') !== -1 || cls.indexOf('products-chevron') !== -1) toRemove.push(ch);
       }
     }
     for (var j = 0; j < toRemove.length; j++) {
