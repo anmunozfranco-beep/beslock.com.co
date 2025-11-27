@@ -78,7 +78,7 @@
             e.preventDefault();
             last.focus();
           }
-        } else {
+          var chevEl = productsToggle.querySelector('.products-chevron');
           if (document.activeElement === last) {
             e.preventDefault();
             first.focus();
@@ -92,7 +92,7 @@
     container.addEventListener('keydown', handler);
     return function remove() { container.removeEventListener('keydown', handler); };
   }
-
+            if (chevEl) chevEl.classList.remove('hidden');
   function ensurePanelBaseline() {
     try {
       panel.style.position = panel.style.position || 'fixed';
@@ -141,7 +141,7 @@
     if (!closeDrawer) return;
     closeDrawer.dataset.mode = mode;
     if (mode === 'back') {
-      closeDrawer.innerHTML = '<i class="bi bi-arrow-left" aria-hidden="true"></i><span class="u-visually-hidden">Back</span>';
+            if (chevEl) chevEl.classList.add('hidden');
       closeDrawer.setAttribute('aria-label', 'Back to menu');
     } else {
       closeDrawer.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i><span class="u-visually-hidden">Close menu</span>';
@@ -163,7 +163,7 @@
       try { window.requestAnimationFrame(function(){
         window.requestAnimationFrame(function(){
           productsPanel.classList.add('models--hidden');
-        });
+            if (chevEl) chevEl && chevEl.classList.add('hidden');
       }); } catch (e) {
         try { void productsPanel.offsetHeight; } catch (err) {}
         productsPanel.classList.add('models--hidden');
@@ -174,7 +174,7 @@
 
       // wait for transition to finish before setting hidden (avoid interrupting animation)
       (function waitHide(panel) {
-        var called = false;
+            if (chevEl) chevEl && chevEl.classList.remove('hidden');
             function done() {
           if (called) return; called = true;
           try { panel.hidden = true; } catch (e) {}
@@ -322,7 +322,7 @@
       ev && ev.preventDefault();
       try {
         var expanded = productsToggle.getAttribute('aria-expanded') === 'true';
-        var chev = productsToggle.querySelector('.products-chevron');
+        var chevEl = productsToggle.querySelector('.products-chevron');
 
         if (expanded) {
           // close products: prepare slide-out and wait for transition before hiding
@@ -336,7 +336,7 @@
           // force layout fallback
           try { void productsPanel.offsetHeight; } catch (e) {}
           
-          if (chev) chev.classList.remove('hidden');
+          if (chevEl) chevEl.classList.remove('hidden');
 
           // wait for the products panel transition to finish before setting hidden
           (function waitHide(panel) {
@@ -385,7 +385,7 @@
           productsPanel.classList.remove('models--hidden');
           productsPanel.hidden = false;
           
-          if (chev) chev.classList.add('hidden');
+          if (chevEl) chevEl.classList.add('hidden');
 
           // add class to trigger slide-in
           mobileDrawer.classList.add('products-open');
@@ -407,7 +407,7 @@
             productsPanel.classList.add('models--visible');
             productsPanel.classList.remove('models--hidden');
             mobileDrawer.classList.add('products-open');
-            if (chev) chev && chev.classList.add('hidden');
+            if (chevEl) chevEl && chevEl.classList.add('hidden');
             setCloseMode('back');
           } else {
             // close: trigger transition then hide
@@ -418,7 +418,7 @@
             try { window.requestAnimationFrame(function(){ window.requestAnimationFrame(function(){ productsPanel.classList.add('models--hidden'); }); }); } catch (e) { try { void productsPanel.offsetHeight; } catch (err) {} productsPanel.classList.add('models--hidden'); }
             // force layout fallback
             try { void productsPanel.offsetHeight; } catch (e) {}
-            if (chev) chev && chev.classList.remove('hidden');
+            if (chevEl) chevEl && chevEl.classList.remove('hidden');
             (function waitHide(panel){
               var called = false;
               function done(){ if(called) return; called=true; try{ panel.hidden = true; }catch(e){} try{ panel.style.transitionDelay = ''; }catch(e){} try{ panel.removeEventListener('transitionend', onEnd); }catch(e){} try{ clearTimeout(fb); }catch(e){} }
