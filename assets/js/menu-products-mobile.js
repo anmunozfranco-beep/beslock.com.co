@@ -481,13 +481,27 @@
 
   // touch-only helper: blur on touch to avoid focus rectangle
   (function touchBlurHelper() {
-    var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+    // Prefer Pointer Events and coarse pointer detection for better reliability
+    var isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches));
     if (!isTouch) return;
-    document.addEventListener('touchstart', function (ev) {
+
+    function isInteractive(el) {
+      if (!el) return false;
+      try {
+        var tag = el.tagName && el.tagName.toLowerCase();
+        if (tag === 'a' || tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea') return true;
+        if (el.isContentEditable) return true;
+        if (el.closest && el.closest('a, button, input, select, textarea, [role="button"], [role="link"]')) return true;
+      } catch (e) {}
+      return false;
+    }
+
+    // Use pointerdown for broader device support; passive true to avoid blocking scroll.
+    document.addEventListener('pointerdown', function (ev) {
       try {
         var t = ev.target;
         var inside = t && t.closest && t.closest('#mobileDrawer');
-        if (inside) {
+        if (inside && !isInteractive(t)) {
           if (document.activeElement && document.activeElement !== document.body) {
             try { document.activeElement.blur && document.activeElement.blur(); } catch (e) {}
           }
@@ -496,11 +510,12 @@
       } catch (e) {}
     }, { passive: true, capture: true });
 
+    // Keep a click fallback to clear focus after activation for non-interactive targets
     document.addEventListener('click', function (ev) {
       try {
         var t = ev.target;
         var inside = t && t.closest && t.closest('#mobileDrawer');
-        if (inside) {
+        if (inside && !isInteractive(t)) {
           setTimeout(function () {
             try { if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur(); } catch (e) {}
           }, 0);
