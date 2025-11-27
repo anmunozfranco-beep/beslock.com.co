@@ -22,8 +22,10 @@
 
     <ul class="mobile-menu" role="menu">
       <li class="mobile-menu__item" role="none">
-        <button class="mobile-menu__link" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem">
-          <?php esc_html_e('Products', 'beslock'); ?> <span class="products-chevron mobile-menu__chev" aria-hidden="true">›</span>
+        <button class="mobile-menu__link" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem" data-menu-date="<?php echo esc_attr( date_i18n( 'Y' ) ); ?>">
+          <?php esc_html_e('Products', 'beslock'); ?>
+          <span class="products-date" aria-hidden="true"><?php echo esc_html( date_i18n( 'Y' ) ); ?></span>
+          <span class="products-chevron mobile-menu__chev" aria-hidden="true">›</span>
         </button>
 
         <?php

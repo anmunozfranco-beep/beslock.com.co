@@ -319,6 +319,21 @@
     // sanitize stray decorations
     try { sanitizeProductsToggle(productsToggle); } catch (e) {}
 
+    // Ensure a date node is present (reconstruct from data attribute if needed)
+    try {
+      var existingDate = productsToggle.querySelector && productsToggle.querySelector('.products-date');
+      var dateFromAttr = productsToggle.getAttribute && productsToggle.getAttribute('data-menu-date') || (productsToggle.dataset && productsToggle.dataset.menuDate);
+      if (!existingDate && dateFromAttr) {
+        var dateSpan = document.createElement('span');
+        dateSpan.className = 'products-date';
+        dateSpan.setAttribute('aria-hidden', 'true');
+        dateSpan.textContent = dateFromAttr;
+        var chev = productsToggle.querySelector && productsToggle.querySelector('.products-chevron');
+        if (chev && chev.parentNode) chev.parentNode.insertBefore(dateSpan, chev);
+        else productsToggle.appendChild(dateSpan);
+      }
+    } catch (e) {}
+
     // ensure right arrow icon we control
     try {
       var chevron = productsToggle.querySelector('.products-chevron');
