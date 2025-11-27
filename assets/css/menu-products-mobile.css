@@ -27,18 +27,26 @@
   z-index: 1320 !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  padding: 0.65rem 0 !important;
-  margin: -1.25rem -1.25rem 0 -1.25rem !important; /* cancel panel padding to span full width */
+  justify-content: flex-start !important; /* keep close button on the left */
+  position: relative !important;
+  padding: 0.4rem 0 !important; /* match .header__bar mobile */
   background: rgba(255,255,255,0.85) !important; /* opacity layer */
   backdrop-filter: blur(6px) !important;
   -webkit-backdrop-filter: blur(6px) !important;
   box-shadow: 0 1px 0 rgba(0,0,0,0.04) inset !important;
 }
+.drawer-header .drawer__logo {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 2 !important;
+  display: flex !important;
+  align-items: center !important;
+}
 .drawer-header .drawer__logo img {
   display: block !important;
-  max-height: 36px !important;
-  height: auto !important;
+  height: var(--site-logo-height, 32px) !important; /* match header logo size */
+  width: auto !important;
 }
 
 /* Ensure drawer header remains visible when products panel open */
@@ -175,6 +183,9 @@ nav#mobileDrawer #closeDrawer,
   border-radius: 999px !important;
   color: var(--menu-link-color) !important;
   cursor: pointer !important;
+  position: relative !important; /* keep in flow at left */
+  z-index: 3 !important;
+  margin-left: 0.25rem !important;
 }
 nav#mobileDrawer .mobile-drawer__close .bi,
 nav#mobileDrawer #closeDrawer .bi { font-size: 1.1rem !important; line-height: 1 !important; }
@@ -280,6 +291,12 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
     outline: none !important;
     box-shadow: none !important;
   }
+}
+
+/* Keep drawer header spacing consistent with main header on larger screens */
+@media (min-width: 600px) {
+  .drawer-header { padding: 0.7rem 0 !important; }
+  .drawer-header .drawer__logo img { height: var(--site-logo-height, 38px) !important; }
 }
 
 /* Full-width ONLY in small screens (<=768px) */

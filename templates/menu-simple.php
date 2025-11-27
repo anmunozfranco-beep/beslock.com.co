@@ -6,18 +6,19 @@
 <!-- Drawer principal: no incluye botón de apertura (ese está en header.php) -->
 <nav id="mobileDrawer" class="mobile-drawer" aria-hidden="true" role="dialog" aria-label="<?php esc_attr_e('Mobile menu', 'beslock'); ?>">
   <div class="mobile-drawer__panel" role="document">
-    <!-- Drawer header: logo visible dentro del drawer (sólo logo, navegación opacada) -->
+    <!-- Drawer header: close/back button at left and centered logo (same height as main header) -->
     <div class="drawer-header" role="banner">
+      <!-- Close/back button placed at the left side of the header -->
+      <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        <span class="screen-reader-text"><?php esc_html_e('Back', 'beslock'); ?></span>
+      </button>
+
+      <!-- Centered logo (positioned absolutely to match header behavior) -->
       <a class="drawer__logo" href="<?php echo esc_url( home_url('/') ); ?>" aria-label="<?php esc_attr_e('Home', 'beslock'); ?>">
-        <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-green.png' ); ?>" alt="<?php esc_attr_e('BESLOCK Logo', 'beslock'); ?>" height="28" />
+        <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-green.png' ); ?>" alt="<?php esc_attr_e('BESLOCK Logo', 'beslock'); ?>" />
       </a>
     </div>
-
-    <!-- Close: usamos Bootstrap Icons para la X y mantenemos texto accesible -->
-    <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">
-      <i class="bi bi-x-lg" aria-hidden="true"></i>
-      <span class="screen-reader-text"><?php esc_html_e('Close menu', 'beslock'); ?></span>
-    </button>
 
     <ul class="mobile-menu" role="menu">
       <li class="mobile-menu__item" role="none">
