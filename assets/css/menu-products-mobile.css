@@ -177,6 +177,20 @@ nav#mobileDrawer .mobile-menu__item > button.mobile-menu__link > i.bi {
 /* Legacy safety: if any other rule forces centering via line-height/vertical-align, unset it */
 nav#mobileDrawer .mobile-menu__link i.bi { vertical-align: top !important; }
 
+/* Ensure non-Products rows align icon/text to top even if another rule applies
+   Products (#productsToggle) keeps its centered behavior. This selector is
+   specific and uses :not(#productsToggle) to avoid affecting Products. */
+nav#mobileDrawer .mobile-menu__item > a.mobile-menu__link:not(#productsToggle),
+nav#mobileDrawer .mobile-menu__item > button.mobile-menu__link:not(#productsToggle) {
+  display: flex !important;
+  align-items: flex-start !important;
+}
+nav#mobileDrawer .mobile-menu__item > a.mobile-menu__link:not(#productsToggle) > i.bi,
+nav#mobileDrawer .mobile-menu__item > button.mobile-menu__link:not(#productsToggle) > i.bi {
+  align-self: flex-start !important;
+  margin-top: 0.18rem !important;
+}
+
 nav#mobileDrawer .mobile-menu__content {
   display: flex !important;
   flex-direction: column !important;
