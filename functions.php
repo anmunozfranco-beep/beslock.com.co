@@ -8,6 +8,13 @@
 
 add_action( 'wp_enqueue_scripts', function() {
 
+  // If this theme is used as a child theme, ensure the Kadence parent stylesheet
+  // is enqueued so the site inherits the parent's layout and e-commerce assets.
+  if ( function_exists( 'is_child_theme' ) && is_child_theme() ) {
+    wp_enqueue_style( 'kadence-parent-style', get_template_directory_uri() . '/style.css', [], null );
+  }
+
+
   // Helper para versiones basadas en tiempo de modificación (si existe el archivo)
   $theme_dir_uri  = get_stylesheet_directory_uri();
   $theme_dir_path = get_stylesheet_directory();
