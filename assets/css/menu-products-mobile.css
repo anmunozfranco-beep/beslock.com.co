@@ -29,7 +29,9 @@
   align-items: center !important;
   justify-content: flex-start !important; /* keep close button on the left */
   position: relative !important;
+  /* match main header spacing but cancel panel padding so it's flush to viewport top */
   padding: 0.4rem 0 !important; /* match .header__bar mobile */
+  margin: -1.25rem -1.25rem 0 -1.25rem !important; /* cancel panel padding so header is anchored to top */
   background: rgba(255,255,255,0.85) !important; /* opacity layer */
   backdrop-filter: blur(6px) !important;
   -webkit-backdrop-filter: blur(6px) !important;
