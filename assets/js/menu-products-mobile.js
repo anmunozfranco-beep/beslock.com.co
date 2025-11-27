@@ -124,6 +124,8 @@
   }
 
   var observer = null;
+  var productsObserver = null;
+  var productsObserverAttached = false;
   function startObserver() {
     if (!window.MutationObserver) return;
     observer = new MutationObserver(function (mutations) {
@@ -147,6 +149,27 @@
     observer.observe(mobileDrawer, { attributes: true, attributeFilter: ['class', 'aria-hidden'] });
   }
   function stopObserver() { if (observer) { observer.disconnect(); observer = null; } }
+
+  // Observe changes inside the mobile drawer to re-init the products toggle
+  // when the menu DOM is replaced by navigation or partial updates.
+  function attachProductsObserver() {
+    try {
+      if (productsObserverAttached) return;
+      var root = mobileDrawer || panel || $(SELECTORS.mobileDrawer) || $(SELECTORS.panel);
+      if (!root || typeof MutationObserver === 'undefined') return;
+      productsObserverAttached = true;
+      var debounce = null;
+      productsObserver = new MutationObserver(function (mutations) {
+        if (debounce) clearTimeout(debounce);
+        debounce = setTimeout(function () {
+          try { initProductsToggle(); } catch (e) {}
+        }, 80);
+      });
+      productsObserver.observe(root, { childList: true, subtree: true, attributes: true });
+    } catch (e) {}
+  }
+
+  function detachProductsObserver() { try { if (productsObserver) { productsObserver.disconnect(); productsObserver = null; productsObserverAttached = false; } } catch (e) {} }
 
   // ---- Close button mode management ----
   function setCloseMode(mode) {
@@ -554,6 +577,9 @@
       initProductsToggle();
       setCloseMode('close');
     }, 60);
+
+    // Attach observer to keep products toggle in sync if DOM is replaced later
+    try { attachProductsObserver(); } catch (e) {}
 
     // mark initialized (idempotency)
     try { window.__beslock_menu_products_initialized = true; } catch (e) {}
