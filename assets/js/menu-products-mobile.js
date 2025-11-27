@@ -257,6 +257,7 @@
   function openDrawer() {
     if (mobileDrawer.classList.contains('is-open')) return;
     dbgLog('menu-products-mobile.js: openDrawer() called');
+    try { console.log('menu-products-mobile: openDrawer() called (direct log)'); } catch (e) {}
     previousActiveElement = document.activeElement;
     ensurePanelBaseline();
     menuBtn.setAttribute('aria-expanded', 'true');
@@ -276,6 +277,7 @@
   function closeDrawerAction() {
     if (!mobileDrawer.classList.contains('is-open')) return;
     dbgLog('menu-products-mobile.js: closeDrawerAction() called');
+    try { console.log('menu-products-mobile: closeDrawerAction() called (direct log)'); } catch (e) {}
     mobileDrawer.classList.remove('is-open');
     backdrop.classList.remove('backdrop-visible');
     try { menuBtn.setAttribute('aria-expanded', 'false'); } catch (e) {}
@@ -510,6 +512,7 @@
       return;
     }
     dbgLog('menu-products-mobile.js: init() starting');
+    try { console.log('menu-products-mobile: init() starting (direct log)'); } catch (e) {}
     ensurePanelBaseline();
     mobileDrawer.classList.remove('is-open');
     backdrop.classList.remove('backdrop-visible');
@@ -556,6 +559,7 @@
     // mark initialized (idempotency)
     try { window.__beslock_menu_products_initialized = true; } catch (e) {}
     dbgLog('menu-products-mobile.js: init() completed');
+    try { console.log('menu-products-mobile: init() completed (direct log)'); } catch (e) {}
   }
 
   // Robust startup: try to initialize now, but retry a few times if core
@@ -647,6 +651,7 @@
     try {
       obs.observe(document.documentElement || document.body, { childList: true, subtree: true });
       dbgLog('menu-products-mobile.js: observing DOM for #mobileDrawer insertion');
+      try { console.log('menu-products-mobile: observing DOM for #mobileDrawer insertion (direct log)'); } catch (e) {}
     } catch (e) {}
   })();
 
@@ -672,6 +677,7 @@
           if (!btn) return;
           ev.preventDefault();
           dbgLog('menu-products-mobile.js: delegated click handler fired for', btn);
+          try { console.log('menu-products-mobile: delegated click handler fired for', btn); } catch (e) {}
           // Prefer the exposed API if available
           if (window.beslock && window.beslock.drawer && typeof window.beslock.drawer.open === 'function') {
             window.beslock.drawer.open();
