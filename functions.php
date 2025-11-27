@@ -21,7 +21,7 @@ add_action( 'wp_enqueue_scripts', function() {
 
   // Manual asset bump token to force cache-bust when needed.
   // Update this string when you want clients to reload static assets.
-  $BESLOCK_ASSET_BUMP = '20251127.1';
+  $BESLOCK_ASSET_BUMP = '20251127.2';
 
   $ver_main_css = file_exists( $theme_dir_path . '/assets/css/main.css' )
     ? filemtime( $theme_dir_path . '/assets/css/main.css' )
