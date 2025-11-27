@@ -106,7 +106,6 @@
     container.addEventListener('keydown', handler);
     return function remove() { container.removeEventListener('keydown', handler); };
   }
-            if (chevEl) chevEl.classList.remove('hidden');
   function ensurePanelBaseline() {
     try {
       panel.style.position = panel.style.position || 'fixed';
@@ -155,7 +154,10 @@
     if (!closeDrawer) return;
     closeDrawer.dataset.mode = mode;
     if (mode === 'back') {
-            if (chevEl) chevEl.classList.add('hidden');
+      try {
+        var _chev = productsToggle && productsToggle.querySelector && productsToggle.querySelector('.products-chevron');
+        if (_chev) _chev.classList.add('hidden');
+      } catch (e) {}
       closeDrawer.setAttribute('aria-label', 'Back to menu');
     } else {
       closeDrawer.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i><span class="u-visually-hidden">Close menu</span>';
@@ -177,7 +179,7 @@
       try { window.requestAnimationFrame(function(){
         window.requestAnimationFrame(function(){
           productsPanel.classList.add('models--hidden');
-            if (chevEl) chevEl && chevEl.classList.add('hidden');
+          try { var _chev2 = productsToggle && productsToggle.querySelector && productsToggle.querySelector('.products-chevron'); if (_chev2) _chev2.classList.add('hidden'); } catch (e) {}
       }); } catch (e) {
         try { void productsPanel.offsetHeight; } catch (err) {}
         productsPanel.classList.add('models--hidden');
@@ -188,20 +190,20 @@
 
       // wait for transition to finish before setting hidden (avoid interrupting animation)
       (function waitHide(panel) {
-            if (chevEl) chevEl && chevEl.classList.remove('hidden');
-            function done() {
+        var called = false;
+        var fallback = null;
+        try { var _chev3 = productsToggle && productsToggle.querySelector && productsToggle.querySelector('.products-chevron'); if (_chev3) _chev3.classList.remove('hidden'); } catch (e) {}
+        function done() {
           if (called) return; called = true;
           try { panel.hidden = true; } catch (e) {}
-          
-          // restore any temporary inline transitionDelay we set earlier
           try { panel.style.transitionDelay = ''; } catch (e) {}
-          // only remove the products-open marker once the panel transition fully completed
           try { mobileDrawer.classList.remove('products-open'); } catch (e) {}
           try { panel.removeEventListener('transitionend', onEnd); } catch (e) {}
-          try { clearTimeout(fallback); } catch (e) {}
+          try { if (fallback) clearTimeout(fallback); } catch (e) {}
         }
         function onEnd(ev) {
-          if (ev && ev.propertyName && ev.propertyName.indexOf('transform') === -1) return;
+          if (!ev || !ev.propertyName) return;
+          if (ev.propertyName.indexOf('transform') === -1 && ev.propertyName.indexOf('opacity') === -1) return;
           done();
         }
         var cs = window.getComputedStyle(panel);
@@ -214,9 +216,8 @@
           } catch (e) { return 0; }
         }
         var timeout = parseTime(dur) + parseTime(dly) + 50;
-        var fallback = setTimeout(done, timeout || 600);
-        function onEndWrapper(e){ onEnd(e); }
-        try { panel.addEventListener('transitionend', onEndWrapper); } catch (e) {}
+        try { panel.addEventListener('transitionend', onEnd); } catch (e) {}
+        fallback = setTimeout(done, timeout || 600);
       })(productsPanel);
     } catch (e) {}
     // show right arrow again
