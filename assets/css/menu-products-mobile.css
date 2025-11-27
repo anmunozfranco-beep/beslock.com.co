@@ -112,7 +112,11 @@ nav#mobileDrawer.is-open .mobile-drawer__backdrop,
 }
 
 /* Menu principal: items */
-nav#mobileDrawer .mobile-menu { margin: 0; padding: 0; }
+/* Menu principal: items */
+/* We make the menu a column flex container and give it 70vh so items
+  distribute vertically filling ~70% of the viewport height. This
+  places the last item near the 70% mark as requested. */
+nav#mobileDrawer .mobile-menu { margin: 0; padding: 0; display: flex !important; flex-direction: column !important; justify-content: space-between !important; height: 70vh !important; box-sizing: border-box !important; }
 nav#mobileDrawer .mobile-menu__item {
   list-style: none !important;
   margin: 0 !important;
@@ -200,14 +204,15 @@ nav#mobileDrawer .mobile-menu__link:active {
 
 /* Small adjustment for chevron / products row (keep original spacing) */
 nav#mobileDrawer #productsToggle .chev,
-nav#mobileDrawer .products-chevron { margin-left: auto !important; }
+nav#mobileDrawer .products-chevron { margin-left: 0.45rem !important; }
 
-/* Products row */
+/* Products row: keep chevron next to the word 'Products' (not pushed to far right) */
 nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron,
 nav#mobileDrawer #productsToggle {
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
+  gap: 0.45rem !important;
   padding-right: 0.25rem !important;
 }
 
