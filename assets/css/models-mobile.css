@@ -125,7 +125,7 @@
 }
 
 /* Shade layer sits above the image but below overlay content */
-.models__item-media__shade {
+.models__item-media-shade {
   position: absolute;
   inset: 0;
   background: var(--beslock-shade);
@@ -134,7 +134,7 @@
 }
 
 /* Overlay for texts sits above the shade */
-.models__item-media__overlay {
+.models__item-media-overlay {
   position: absolute;
   inset: 0;
   z-index: 3; /* ensure overlay above shade */
