@@ -180,6 +180,7 @@
         window.requestAnimationFrame(function(){
           productsPanel.classList.add('models--hidden');
           try { var _chev2 = productsToggle && productsToggle.querySelector && productsToggle.querySelector('.products-chevron'); if (_chev2) _chev2.classList.add('hidden'); } catch (e) {}
+        });
       }); } catch (e) {
         try { void productsPanel.offsetHeight; } catch (err) {}
         productsPanel.classList.add('models--hidden');
