@@ -1,14 +1,14 @@
 <?php
 // /wp-content/themes/beslock-custom/footer.php
 // Footer minimal con logo blanco centrado.
-// Incluye aquï¿½ï¿½ï¿½ los elementos que removimos del header: el script de sticky header,
-// la sincronizaciï¿½ï¿½ï¿½n de la variable CSS del logo (para que el footer calcule 40%),
+// Incluye aqu«¿ los elementos que removimos del header: el script de sticky header,
+// la sincronizaci«Ñn de la variable CSS del logo (para que el footer calcule 40%),
 // y la llamada a wp_footer() seguida de los cierres </body></html>.
 ?>
 <footer class="site-footer">
   <div class="u-container" style="padding:2rem 0; text-align:center;">
     <img
-      class="site-footer__logo"
+      class="footer-logo"
       src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-white.png' ); ?>"
       alt="<?php echo esc_attr_x( 'Beslock logo blanco', 'alt text', 'beslock' ); ?>"
       loading="lazy"
@@ -36,19 +36,19 @@
   }
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  // Sincroniza el tamaï¿½ï¿½ï¿½o del logo del header con la variable CSS --site-logo-height
+  // Sincroniza el tama«Ğo del logo del header con la variable CSS --site-logo-height
   // para que el footer pueda usar calc(var(--site-logo-height) * 0.4)
   function updateSiteLogoHeight() {
     var logo = document.querySelector('.header__logo img');
     if (!logo) return;
-    // Si la imagen aï¿½ï¿½ï¿½n no tiene tamaï¿½ï¿½ï¿½o, intenta esperar a load
+    // Si la imagen a«ân no tiene tama«Ğo, intenta esperar a load
     var setVar = function() {
       var h = logo.clientHeight || logo.naturalHeight || 0;
       if (h && h > 0) {
         document.documentElement.style.setProperty('--site-logo-height', h + 'px');
       }
     };
-    // Si la imagen ya estï¿½ï¿½ï¿½ cargada
+    // Si la imagen ya est«¡ cargada
     if (logo.complete) {
       setVar();
     } else {

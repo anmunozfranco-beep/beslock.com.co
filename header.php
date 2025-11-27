@@ -30,7 +30,7 @@
 
     <a href="<?php echo esc_url( home_url('/cart') ); ?>" class="header__icon header__icon--cart" aria-label="<?php esc_attr_e('Go to cart', 'beslock'); ?>">
       <i class="bi bi-cart" aria-hidden="true"></i>
-      <span class="u-visually-hidden"><?php esc_html_e('Go to cart', 'beslock'); ?></span>
+      <span class="screen-reader-text"><?php esc_html_e('Go to cart', 'beslock'); ?></span>
     </a>
   </div>
 </header>

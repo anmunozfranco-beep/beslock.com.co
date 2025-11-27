@@ -7,15 +7,15 @@
 <nav id="mobileDrawer" class="mobile-drawer" aria-hidden="true" role="dialog" aria-label="<?php esc_attr_e('Mobile menu', 'beslock'); ?>">
   <div class="mobile-drawer__panel" role="document">
     <!-- Drawer header: close/back button at left and centered logo (same height as main header) -->
-    <div class="mobile-drawer__header" role="banner">
+    <div class="drawer-header" role="banner">
       <!-- Close/back button placed at the left side of the header -->
       <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
-        <span class="u-visually-hidden"><?php esc_html_e('Back', 'beslock'); ?></span>
+        <span class="screen-reader-text"><?php esc_html_e('Back', 'beslock'); ?></span>
       </button>
 
       <!-- Centered logo (positioned absolutely to match header behavior) -->
-      <a class="mobile-drawer__logo" href="<?php echo esc_url( home_url('/') ); ?>" aria-label="<?php esc_attr_e('Home', 'beslock'); ?>">
+      <a class="drawer__logo" href="<?php echo esc_url( home_url('/') ); ?>" aria-label="<?php esc_attr_e('Home', 'beslock'); ?>">
         <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-green.png' ); ?>" alt="<?php esc_attr_e('BESLOCK Logo', 'beslock'); ?>" />
       </a>
     </div>
@@ -23,7 +23,7 @@
     <ul class="mobile-menu" role="menu">
       <li class="mobile-menu__item" role="none">
         <button class="mobile-menu__link" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem">
-          <?php esc_html_e('Products', 'beslock'); ?> <span class="products-chevron mobile-menu__chev" aria-hidden="true">›</span>
+          <?php esc_html_e('Products', 'beslock'); ?> <span class="chev" aria-hidden="true">›</span>
         </button>
 
         <?php
@@ -37,7 +37,7 @@
          * Nota: la visibilidad se controla con aria-* y clases (.models--hidden / .models--visible).
          */
         ?>
-        <div id="productsPanel" class="mobile-drawer__products-panel models models--hidden" role="region" aria-hidden="true" aria-labelledby="productsToggle">
+        <div id="productsPanel" class="mobile-products-panel models models--hidden" role="region" aria-hidden="true" aria-labelledby="productsToggle">
           <?php
             // Cargamos el template-part con las tarjetas (models)
             get_template_part( 'templates/models-mobile' );

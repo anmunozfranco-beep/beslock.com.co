@@ -13,7 +13,7 @@
     closeDrawer: '#closeDrawer, .mobile-drawer__close',
     backdrop: '#drawerBackdrop, .mobile-drawer__backdrop',
     productsToggle: '#productsToggle, .mobile-menu__link[id^="products"], .mobile-menu__link--products',
-    productsPanel: '#productsPanel, .mobile-drawer__products-panel'
+    productsPanel: '#productsPanel, .mobile-products-panel'
   };
 
   function $(sel) { try { return document.querySelector(sel); } catch (e) { return null; } }
@@ -31,20 +31,7 @@
   var productsToggle = find(SELECTORS.productsToggle);
   var productsPanel = find(SELECTORS.productsPanel);
 
-  // NOTE: do NOT bail out early here. Initialization will be performed later
-  // via a retry/startup wrapper to handle cases where templates are injected
-  // or scripts run before partials are present in the DOM. This keeps the
-  // module definitions intact while making startup robust.
-
-  // Debug flag (opt-in) — disabled for production builds.
-  var DEBUG = false;
-  function dbgLog() {}
-  function dbgWarn() {}
-
-  // Idempotency guard: ensure we only initialize this module once.
-  if (window.__beslock_menu_products_initialized) {
-    dbgLog('menu-products-mobile.js: already initialized — skipping duplicate bootstrap');
-  }
+  if (!mobileDrawer || !panel || !menuBtn || !backdrop) return;
 
   function prefersReducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -91,7 +78,7 @@
             e.preventDefault();
             last.focus();
           }
-          var chevEl = productsToggle.querySelector('.products-chevron');
+        } else {
           if (document.activeElement === last) {
             e.preventDefault();
             first.focus();
@@ -105,6 +92,7 @@
     container.addEventListener('keydown', handler);
     return function remove() { container.removeEventListener('keydown', handler); };
   }
+
   function ensurePanelBaseline() {
     try {
       panel.style.position = panel.style.position || 'fixed';
@@ -124,8 +112,6 @@
   }
 
   var observer = null;
-  var productsObserver = null;
-  var productsObserverAttached = false;
   function startObserver() {
     if (!window.MutationObserver) return;
     observer = new MutationObserver(function (mutations) {
@@ -150,36 +136,12 @@
   }
   function stopObserver() { if (observer) { observer.disconnect(); observer = null; } }
 
-  // Observe changes inside the mobile drawer to re-init the products toggle
-  // when the menu DOM is replaced by navigation or partial updates.
-  function attachProductsObserver() {
-    try {
-      if (productsObserverAttached) return;
-      var root = mobileDrawer || panel || $(SELECTORS.mobileDrawer) || $(SELECTORS.panel);
-      if (!root || typeof MutationObserver === 'undefined') return;
-      productsObserverAttached = true;
-      var debounce = null;
-      productsObserver = new MutationObserver(function (mutations) {
-        if (debounce) clearTimeout(debounce);
-        debounce = setTimeout(function () {
-          try { initProductsToggle(); } catch (e) {}
-        }, 80);
-      });
-      productsObserver.observe(root, { childList: true, subtree: true, attributes: true });
-    } catch (e) {}
-  }
-
-  function detachProductsObserver() { try { if (productsObserver) { productsObserver.disconnect(); productsObserver = null; productsObserverAttached = false; } } catch (e) {} }
-
   // ---- Close button mode management ----
   function setCloseMode(mode) {
     if (!closeDrawer) return;
     closeDrawer.dataset.mode = mode;
     if (mode === 'back') {
-      try {
-        var _chev = productsToggle && productsToggle.querySelector && productsToggle.querySelector('.products-chevron');
-        if (_chev) _chev.classList.add('hidden');
-      } catch (e) {}
+      closeDrawer.innerHTML = '<i class="bi bi-arrow-left" aria-hidden="true"></i><span class="u-visually-hidden">Back</span>';
       closeDrawer.setAttribute('aria-label', 'Back to menu');
     } else {
       closeDrawer.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i><span class="u-visually-hidden">Close menu</span>';
@@ -201,7 +163,6 @@
       try { window.requestAnimationFrame(function(){
         window.requestAnimationFrame(function(){
           productsPanel.classList.add('models--hidden');
-          try { var _chev2 = productsToggle && productsToggle.querySelector && productsToggle.querySelector('.products-chevron'); if (_chev2) _chev2.classList.add('hidden'); } catch (e) {}
         });
       }); } catch (e) {
         try { void productsPanel.offsetHeight; } catch (err) {}
@@ -214,19 +175,19 @@
       // wait for transition to finish before setting hidden (avoid interrupting animation)
       (function waitHide(panel) {
         var called = false;
-        var fallback = null;
-        try { var _chev3 = productsToggle && productsToggle.querySelector && productsToggle.querySelector('.products-chevron'); if (_chev3) _chev3.classList.remove('hidden'); } catch (e) {}
-        function done() {
+            function done() {
           if (called) return; called = true;
           try { panel.hidden = true; } catch (e) {}
+          
+          // restore any temporary inline transitionDelay we set earlier
           try { panel.style.transitionDelay = ''; } catch (e) {}
+          // only remove the products-open marker once the panel transition fully completed
           try { mobileDrawer.classList.remove('products-open'); } catch (e) {}
           try { panel.removeEventListener('transitionend', onEnd); } catch (e) {}
-          try { if (fallback) clearTimeout(fallback); } catch (e) {}
+          try { clearTimeout(fallback); } catch (e) {}
         }
         function onEnd(ev) {
-          if (!ev || !ev.propertyName) return;
-          if (ev.propertyName.indexOf('transform') === -1 && ev.propertyName.indexOf('opacity') === -1) return;
+          if (ev && ev.propertyName && ev.propertyName.indexOf('transform') === -1) return;
           done();
         }
         var cs = window.getComputedStyle(panel);
@@ -239,8 +200,9 @@
           } catch (e) { return 0; }
         }
         var timeout = parseTime(dur) + parseTime(dly) + 50;
-        try { panel.addEventListener('transitionend', onEnd); } catch (e) {}
-        fallback = setTimeout(done, timeout || 600);
+        var fallback = setTimeout(done, timeout || 600);
+        function onEndWrapper(e){ onEnd(e); }
+        try { panel.addEventListener('transitionend', onEndWrapper); } catch (e) {}
       })(productsPanel);
     } catch (e) {}
     // show right arrow again
@@ -266,8 +228,7 @@
         var txt = (ch.textContent || '').trim();
         if (/^[›»>→]+$/.test(txt)) toRemove.push(ch);
         var cls = (ch.className || '').toLowerCase();
-        // detect legacy short classes as well as BEM classes for chevrons/indicators
-        if (cls.indexOf('indicator') !== -1 || cls.indexOf('chevron') !== -1 || cls.indexOf('caret') !== -1 || cls.indexOf('mobile-menu__chev') !== -1 || cls.indexOf('products-chevron') !== -1) toRemove.push(ch);
+        if (cls.indexOf('indicator') !== -1 || cls.indexOf('chev') !== -1 || cls.indexOf('chevron') !== -1 || cls.indexOf('caret') !== -1) toRemove.push(ch);
       }
     }
     for (var j = 0; j < toRemove.length; j++) {
@@ -279,8 +240,6 @@
   // open/close drawer
   function openDrawer() {
     if (mobileDrawer.classList.contains('is-open')) return;
-    // Ensure products toggle is up-to-date in case the DOM was replaced since init
-    try { initProductsToggle(); } catch (e) {}
     previousActiveElement = document.activeElement;
     ensurePanelBaseline();
     menuBtn.setAttribute('aria-expanded', 'true');
@@ -299,7 +258,6 @@
 
   function closeDrawerAction() {
     if (!mobileDrawer.classList.contains('is-open')) return;
-    // dev logs removed
     mobileDrawer.classList.remove('is-open');
     backdrop.classList.remove('backdrop-visible');
     try { menuBtn.setAttribute('aria-expanded', 'false'); } catch (e) {}
@@ -323,11 +281,10 @@
 
   // Products toggle init & behavior (slide + scroll)
   function initProductsToggle() {
-    // Always refresh references here because navigation or partial re-renders
-    // may replace nodes; relying on previously-stored references can point
-    // to detached elements which causes UI inconsistencies (missing chevron).
-    productsToggle = $(SELECTORS.productsToggle);
-    productsPanel = $(SELECTORS.productsPanel);
+    if (!productsToggle || !productsPanel) {
+      productsToggle = $(SELECTORS.productsToggle);
+      productsPanel = $(SELECTORS.productsPanel);
+    }
     if (!productsToggle || !productsPanel) return;
 
     try {
@@ -364,7 +321,7 @@
       ev && ev.preventDefault();
       try {
         var expanded = productsToggle.getAttribute('aria-expanded') === 'true';
-        var chevEl = productsToggle.querySelector('.products-chevron');
+        var chev = productsToggle.querySelector('.products-chevron');
 
         if (expanded) {
           // close products: prepare slide-out and wait for transition before hiding
@@ -378,7 +335,7 @@
           // force layout fallback
           try { void productsPanel.offsetHeight; } catch (e) {}
           
-          if (chevEl) chevEl.classList.remove('hidden');
+          if (chev) chev.classList.remove('hidden');
 
           // wait for the products panel transition to finish before setting hidden
           (function waitHide(panel) {
@@ -427,7 +384,7 @@
           productsPanel.classList.remove('models--hidden');
           productsPanel.hidden = false;
           
-          if (chevEl) chevEl.classList.add('hidden');
+          if (chev) chev.classList.add('hidden');
 
           // add class to trigger slide-in
           mobileDrawer.classList.add('products-open');
@@ -449,7 +406,7 @@
             productsPanel.classList.add('models--visible');
             productsPanel.classList.remove('models--hidden');
             mobileDrawer.classList.add('products-open');
-            if (chevEl) chevEl && chevEl.classList.add('hidden');
+            if (chev) chev && chev.classList.add('hidden');
             setCloseMode('back');
           } else {
             // close: trigger transition then hide
@@ -460,7 +417,7 @@
             try { window.requestAnimationFrame(function(){ window.requestAnimationFrame(function(){ productsPanel.classList.add('models--hidden'); }); }); } catch (e) { try { void productsPanel.offsetHeight; } catch (err) {} productsPanel.classList.add('models--hidden'); }
             // force layout fallback
             try { void productsPanel.offsetHeight; } catch (e) {}
-            if (chevEl) chevEl && chevEl.classList.remove('hidden');
+            if (chev) chev && chev.classList.remove('hidden');
             (function waitHide(panel){
               var called = false;
               function done(){ if(called) return; called=true; try{ panel.hidden = true; }catch(e){} try{ panel.style.transitionDelay = ''; }catch(e){} try{ panel.removeEventListener('transitionend', onEnd); }catch(e){} try{ clearTimeout(fb); }catch(e){} }
@@ -481,27 +438,13 @@
 
   // touch-only helper: blur on touch to avoid focus rectangle
   (function touchBlurHelper() {
-    // Prefer Pointer Events and coarse pointer detection for better reliability
-    var isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches));
+    var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
     if (!isTouch) return;
-
-    function isInteractive(el) {
-      if (!el) return false;
-      try {
-        var tag = el.tagName && el.tagName.toLowerCase();
-        if (tag === 'a' || tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea') return true;
-        if (el.isContentEditable) return true;
-        if (el.closest && el.closest('a, button, input, select, textarea, [role="button"], [role="link"]')) return true;
-      } catch (e) {}
-      return false;
-    }
-
-    // Use pointerdown for broader device support; passive true to avoid blocking scroll.
-    document.addEventListener('pointerdown', function (ev) {
+    document.addEventListener('touchstart', function (ev) {
       try {
         var t = ev.target;
         var inside = t && t.closest && t.closest('#mobileDrawer');
-        if (inside && !isInteractive(t)) {
+        if (inside) {
           if (document.activeElement && document.activeElement !== document.body) {
             try { document.activeElement.blur && document.activeElement.blur(); } catch (e) {}
           }
@@ -510,12 +453,11 @@
       } catch (e) {}
     }, { passive: true, capture: true });
 
-    // Keep a click fallback to clear focus after activation for non-interactive targets
     document.addEventListener('click', function (ev) {
       try {
         var t = ev.target;
         var inside = t && t.closest && t.closest('#mobileDrawer');
-        if (inside && !isInteractive(t)) {
+        if (inside) {
           setTimeout(function () {
             try { if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur(); } catch (e) {}
           }, 0);
@@ -545,11 +487,6 @@
 
   // Init
   function init() {
-    if (window.__beslock_menu_products_initialized) {
-      // already initialized (idempotency)
-      return;
-    }
-    // init starting
     ensurePanelBaseline();
     mobileDrawer.classList.remove('is-open');
     backdrop.classList.remove('backdrop-visible');
@@ -592,106 +529,13 @@
       initProductsToggle();
       setCloseMode('close');
     }, 60);
-
-    // Attach observer to keep products toggle in sync if DOM is replaced later
-    try { attachProductsObserver(); } catch (e) {}
-
-    // mark initialized (idempotency)
-    try { window.__beslock_menu_products_initialized = true; } catch (e) {}
-    // init completed
   }
 
-  // Robust startup: try to initialize now, but retry a few times if core
-  // elements are missing (partial templates or late injection). If after
-  // retries the elements still aren't present we log an error and abort to
-  // avoid throwing exceptions.
-  function startWithRetries(retries, delay) {
-    var tries = 0;
-    function attempt() {
-      // refresh element refs
-      menuBtn = find(SELECTORS.menuBtn);
-      mobileDrawer = find(SELECTORS.mobileDrawer);
-      panel = find(SELECTORS.panel);
-      closeDrawer = find(SELECTORS.closeDrawer);
-      backdrop = find(SELECTORS.backdrop);
-      productsToggle = find(SELECTORS.productsToggle);
-      productsPanel = find(SELECTORS.productsPanel);
-
-      if (menuBtn && mobileDrawer && panel && backdrop) {
-        try {
-          if (!window.__beslock_menu_products_initialized) {
-            init();
-          } else {
-            dbgLog('menu-products-mobile.js: init skipped (already initialized)');
-          }
-        } catch (e) { console.error('menu-products-mobile.js: init() threw', e); }
-        return;
-      }
-
-      tries++;
-      if (tries <= retries) {
-        dbgWarn('menu-products-mobile.js: core elements missing, retrying init (' + tries + '/' + retries + ')');
-        setTimeout(attempt, delay);
-      } else {
-        console.error('menu-products-mobile.js: core elements not found after ' + retries + ' retries; menu will not initialize.');
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function () { setTimeout(attempt, 30); }, { once: true });
-    } else {
-      setTimeout(attempt, 30);
-    }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(init, 30);
+  } else {
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 30); });
   }
-
-  // start with a conservative retry policy (approx 8 attempts, ~1.2s total)
-  startWithRetries(8, 150);
-
-  // MutationObserver fallback: if the drawer is injected later (AJAX, partials),
-  // watch the document for the `#mobileDrawer` node and initialize when seen.
-  (function observeForDrawerInsertion() {
-    if (typeof MutationObserver === 'undefined') return;
-    var attached = false;
-    var obs = new MutationObserver(function (mutations) {
-      try {
-        for (var i = 0; i < mutations.length; i++) {
-          var m = mutations[i];
-          if (!m.addedNodes || !m.addedNodes.length) continue;
-          for (var j = 0; j < m.addedNodes.length; j++) {
-            var node = m.addedNodes[j];
-            if (!node || node.nodeType !== 1) continue;
-            // direct match
-            if (node.matches && (node.matches('#mobileDrawer') || node.matches('nav.mobile-drawer'))) {
-              attached = true; break;
-            }
-            // subtree contains
-            if (node.querySelector && (node.querySelector('#mobileDrawer') || node.querySelector('nav.mobile-drawer'))) {
-              attached = true; break;
-            }
-          }
-          if (attached) break;
-        }
-        if (attached) {
-          // refresh refs and attempt init (safe if already initialized)
-          menuBtn = find(SELECTORS.menuBtn);
-          mobileDrawer = find(SELECTORS.mobileDrawer);
-          panel = find(SELECTORS.panel);
-          closeDrawer = find(SELECTORS.closeDrawer);
-          backdrop = find(SELECTORS.backdrop);
-          productsToggle = find(SELECTORS.productsToggle);
-          productsPanel = find(SELECTORS.productsPanel);
-          try { init(); } catch (e) { console.error('menu-products-mobile.js: init() threw after mutation observe', e); }
-          try { obs.disconnect(); } catch (e) {}
-        }
-      } catch (e) {
-        console.error('menu-products-mobile.js: observer error', e);
-      }
-    });
-    try {
-      obs.observe(document.documentElement || document.body, { childList: true, subtree: true });
-      // observing DOM for #mobileDrawer insertion
-    } catch (e) {}
-  })();
 
   // Expose API
   window.beslock = window.beslock || {};
@@ -699,54 +543,5 @@
   window.beslock.drawer.open = function () { openDrawer(); };
   window.beslock.drawer.close = function () { closeDrawerAction(); };
   window.beslock.drawer.isOpen = function () { return mobileDrawer.classList.contains('is-open'); };
-
-  // Last-resort delegated click fallback: if for any reason the normal
-  // initialization didn't attach the click listener to the hamburger button,
-  // this delegated handler ensures clicks still open/close the drawer.
-  // Idempotent: will attach only once.
-  try {
-    if (!window.__beslock_menu_delegate_attached) {
-      window.__beslock_menu_delegate_attached = true;
-      document.addEventListener('click', function (ev) {
-        try {
-          var target = ev.target;
-          if (!target || !target.closest) return;
-          var btn = target.closest('#menuBtn, button.header__icon.header__icon--menu, .menu-toggle');
-          if (!btn) return;
-          ev.preventDefault();
-          // delegated click handler fired
-          // Prefer the exposed API if available
-          if (window.beslock && window.beslock.drawer && typeof window.beslock.drawer.open === 'function') {
-            window.beslock.drawer.open();
-            return;
-          }
-          // Fallback: directly toggle drawer classes/attributes (minimal safe toggle)
-          try {
-            if (!mobileDrawer) mobileDrawer = find(SELECTORS.mobileDrawer);
-            if (!panel) panel = find(SELECTORS.panel);
-            if (!backdrop) backdrop = find(SELECTORS.backdrop);
-            if (!menuBtn) menuBtn = find(SELECTORS.menuBtn);
-            if (!mobileDrawer) return;
-            if (mobileDrawer.classList.contains('is-open')) {
-              // close
-              mobileDrawer.classList.remove('is-open');
-              if (backdrop) backdrop.classList.remove('backdrop-visible');
-              try { if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false'); } catch (e) {}
-              mobileDrawer.setAttribute('aria-hidden', 'true');
-              try { unlockScroll(); } catch (e) {}
-            } else {
-              // open
-              mobileDrawer.classList.add('is-open');
-              if (backdrop) backdrop.classList.add('backdrop-visible');
-              try { if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true'); } catch (e) {}
-              mobileDrawer.setAttribute('aria-hidden', 'false');
-              try { lockScroll(); } catch (e) {}
-            }
-          } catch (e) {}
-        } catch (e) {}
-      }, { passive: false });
-      // delegated click fallback attached
-    }
-  } catch (e) {}
 
 })();

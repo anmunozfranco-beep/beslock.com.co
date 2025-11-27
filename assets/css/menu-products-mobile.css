@@ -20,7 +20,8 @@
   --menu-link-color: #0b0b0b;
 }
 
-.mobile-drawer__header {
+/* Drawer header (logo) shown at top of panel with translucent background */
+.drawer-header {
   position: sticky;
   top: 0;
   z-index: 1320 !important;
@@ -36,7 +37,7 @@
   -webkit-backdrop-filter: blur(6px) !important;
   box-shadow: 0 1px 0 rgba(0,0,0,0.04) inset !important;
 }
-.mobile-drawer__header .mobile-drawer__logo {
+.drawer-header .drawer__logo {
   position: absolute !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
@@ -44,15 +45,15 @@
   display: flex !important;
   align-items: center !important;
 }
-.mobile-drawer__header .mobile-drawer__logo img {
+.drawer-header .drawer__logo img {
   display: block !important;
   height: var(--site-logo-height, 32px) !important; /* match header logo size */
   width: auto !important;
 }
 
 /* Ensure drawer header remains visible when products panel open */
-nav#mobileDrawer.products-open .mobile-drawer__header,
-nav#mobileDrawer.is-open .mobile-drawer__header {
+nav#mobileDrawer.products-open .drawer-header,
+nav#mobileDrawer.is-open .drawer-header {
   display: flex !important;
 }
 
@@ -197,7 +198,7 @@ nav#mobileDrawer #closeDrawer .bi { font-size: 1.1rem !important; line-height: 1
    - scroll enabled and smooth touch scrolling
    - transition on transform + opacity for visible animation
    ---------------------------- */
-nav#mobileDrawer .mobile-drawer__products-panel {
+nav#mobileDrawer .mobile-products-panel {
   position: absolute !important;
   top: 0 !important;
   right: 0 !important;
@@ -221,7 +222,7 @@ nav#mobileDrawer .mobile-drawer__products-panel {
    so CSS transitions (transform/opacity) still run. The JS will set `.models--hidden`
    and we rely on that class for the visual hide animation; this selector prevents
    the UA `display:none` from cutting the animation short. */
-nav#mobileDrawer .mobile-drawer__products-panel[hidden] {
+nav#mobileDrawer .mobile-products-panel[hidden] {
   display: block !important;
   visibility: visible !important;
   pointer-events: none !important;
@@ -231,16 +232,16 @@ nav#mobileDrawer .mobile-drawer__products-panel[hidden] {
 }
 
 /* Be explicit for the class-driven hidden state as well (covers both attribute and class paths) */
-nav#mobileDrawer .mobile-drawer__products-panel.models--hidden,
-nav#mobileDrawer .mobile-drawer__products-panel.models--hidden[hidden] {
+nav#mobileDrawer .mobile-products-panel.models--hidden,
+nav#mobileDrawer .mobile-products-panel.models--hidden[hidden] {
   transform: translate3d(100%, 0, 0) !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
 /* Visible state: slide in and allow interaction */
-nav#mobileDrawer.products-open .mobile-drawer__products-panel,
-nav#mobileDrawer .mobile-drawer__products-panel.models--visible {
+nav#mobileDrawer.products-open .mobile-products-panel,
+nav#mobileDrawer .mobile-products-panel.models--visible {
   transform: translate3d(0, 0, 0) !important;
   opacity: 1 !important;
   pointer-events: auto !important;
@@ -250,7 +251,7 @@ nav#mobileDrawer .mobile-drawer__products-panel.models--visible {
    wins even if the parent has `products-open`. This gives JS the ability
    to keep `products-open` for other layout reasons while the panel itself
    animates out. */
-nav#mobileDrawer.products-open .mobile-drawer__products-panel.models--hidden {
+nav#mobileDrawer.products-open .mobile-products-panel.models--hidden {
   transform: translate3d(100%, 0, 0) !important;
   opacity: 0 !important;
   pointer-events: none !important;
@@ -296,8 +297,8 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
 
 /* Keep drawer header spacing consistent with main header on larger screens */
 @media (min-width: 600px) {
-  .mobile-drawer__header { padding: 0.7rem 0 !important; }
-  .mobile-drawer__header .mobile-drawer__logo img { height: var(--site-logo-height, 38px) !important; }
+  .drawer-header { padding: 0.7rem 0 !important; }
+  .drawer-header .drawer__logo img { height: var(--site-logo-height, 38px) !important; }
 }
 
 /* Full-width ONLY in small screens (<=768px) */
@@ -310,7 +311,7 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
     box-shadow: none !important;
   }
   /* Products panel full width inside drawer in mobile */
-  nav#mobileDrawer .mobile-drawer__products-panel {
+  nav#mobileDrawer .mobile-products-panel {
     width: 100% !important;
     right: 0 !important;
   }

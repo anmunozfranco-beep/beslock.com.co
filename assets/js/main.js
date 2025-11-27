@@ -99,7 +99,7 @@
     on(window, 'beforeunload', function () {
       try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } catch (e) {}
     });
-    // header behaviors initialized
+    console.log('main.js: header behaviors initialized');
   }
 
   // ===== Lazy images =====
@@ -131,7 +131,7 @@
     } else {
       imgs.forEach(function (img) { loadImage(img); });
     }
-    // lazy images initialized
+    console.log('main.js: lazy images init');
   }
 
   // ===== GSAP reveals =====
@@ -145,21 +145,21 @@
             scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" }
           });
         });
-        // GSAP reveals initialized
+        console.log('main.js: GSAP reveals initialized');
         return;
       } catch (e) {
         console.warn('main.js: GSAP failed, falling back', e);
       }
     }
     $$('.reveal').forEach(function (el) { el.style.opacity = 1; });
-    // GSAP not available, reveal fallback applied
+    console.log('main.js: GSAP not available, reveal fallback applied');
   }
 
   // ===== Mobile menu (idempotent) =====
   function mobileMenuInit() {
     // If another menu script is present (menu-products-mobile.js), skip init to avoid double handlers.
     if (document.querySelector('script[src*="menu-products-mobile"]') && !window.__beslock_force_main_menu_init) {
-      // menu-products-mobile script present — skipping main menu init.
+      console.log('mobileMenuInit: menu-products-mobile script present — skipping main menu init.');
       return;
     }
 
@@ -227,7 +227,7 @@
       if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
       if (closeDrawer) try { closeDrawer.focus(); } catch (e) {}
       releaseTrap = trapFocus(mobileDrawer);
-      // mobile menu opened
+      console.log('main.js: mobile menu opened');
     }
 
     function closeDrawerFn() {
@@ -237,7 +237,7 @@
       if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
       try { if (menuBtn) menuBtn.focus(); } catch (e) {}
       if (typeof releaseTrap === 'function') releaseTrap();
-      // mobile menu closed
+      console.log('main.js: mobile menu closed');
     }
 
     // attach idempotent handlers with a small debounce to avoid touch->click double-fire
@@ -276,7 +276,7 @@
       });
     }
     mobileDrawer._linkHandlers = [];
-    mobileDrawer.querySelectorAll('a.mobile-menu__link, .product-card a').forEach(function (lnk) {
+    mobileDrawer.querySelectorAll('a.mobile-menu__link, a.product-card').forEach(function (lnk) {
       var fn = function (ev) {
         if (ev.target && ev.target.closest && ev.target.closest('#productsPanel')) return;
         closeDrawerFn();
@@ -325,7 +325,7 @@
       mobileDrawer._swipeHandlersAttached = true;
     })();
 
-    // mobile menu initialized (idempotent)
+    console.log('main.js: mobile menu initialized (idempotent)');
   }
 
   // ===== Products panel =====
@@ -366,7 +366,7 @@
     if (productsBack) on(productsBack, 'click', hide);
     if (productsClose) on(productsClose, 'click', hide);
 
-    // products panel initialized (lightweight)
+    console.log('main.js: products panel init (lightweight)');
   }
 
   // ===== Init sequence =====
@@ -376,7 +376,7 @@
     try { headerBehaviorsInit(); } catch (e) { console.warn('header behaviors error', e); }
     try { mobileMenuInit(); } catch (e) { console.warn('mobile menu error', e); }
     try { productsPanelInit(); } catch (e) { console.warn('products panel error', e); }
-    // all modules initialized
+    console.log('main.js: all modules initialized');
   }
 
   if (document.readyState === 'loading') {

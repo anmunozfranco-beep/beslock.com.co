@@ -19,10 +19,6 @@ add_action( 'wp_enqueue_scripts', function() {
   $theme_dir_uri  = get_stylesheet_directory_uri();
   $theme_dir_path = get_stylesheet_directory();
 
-  // Manual asset bump token to force cache-bust when needed.
-  // Update this string when you want clients to reload static assets.
-  $BESLOCK_ASSET_BUMP = '20251127.2';
-
   $ver_main_css = file_exists( $theme_dir_path . '/assets/css/main.css' )
     ? filemtime( $theme_dir_path . '/assets/css/main.css' )
     : null;
@@ -55,8 +51,7 @@ add_action( 'wp_enqueue_scripts', function() {
    * ------------------------------- */
   if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() ) {
     $menu_css_path = $theme_dir_path . '/assets/css/menu-products-mobile.css';
-    $ver_menu_css_raw = file_exists( $menu_css_path ) ? filemtime( $menu_css_path ) : null;
-    $ver_menu_css = $ver_menu_css_raw ? $ver_menu_css_raw . '.' . $BESLOCK_ASSET_BUMP : $BESLOCK_ASSET_BUMP;
+    $ver_menu_css = file_exists( $menu_css_path ) ? filemtime( $menu_css_path ) : null;
 
     wp_enqueue_style(
       'beslock-menu-products-mobile',
@@ -67,8 +62,7 @@ add_action( 'wp_enqueue_scripts', function() {
 
     // CSS del nuevo componente models (mobile)
     $models_css_path = $theme_dir_path . '/assets/css/models-mobile.css';
-    $ver_models_css_raw = file_exists( $models_css_path ) ? filemtime( $models_css_path ) : null;
-    $ver_models_css = $ver_models_css_raw ? $ver_models_css_raw . '.' . $BESLOCK_ASSET_BUMP : $BESLOCK_ASSET_BUMP;
+    $ver_models_css = file_exists( $models_css_path ) ? filemtime( $models_css_path ) : null;
 
     wp_enqueue_style(
       'beslock-models-mobile',
@@ -116,8 +110,7 @@ add_action( 'wp_enqueue_scripts', function() {
    * ------------------------------- */
   if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() ) {
     $menu_js_path = $theme_dir_path . '/assets/js/menu-products-mobile.js';
-    $ver_menu_js_raw = file_exists( $menu_js_path ) ? filemtime( $menu_js_path ) : null;
-    $ver_menu_js = $ver_menu_js_raw ? $ver_menu_js_raw . '.' . $BESLOCK_ASSET_BUMP : $BESLOCK_ASSET_BUMP;
+    $ver_menu_js = file_exists( $menu_js_path ) ? filemtime( $menu_js_path ) : null;
 
     wp_enqueue_script(
       'beslock-menu-products-mobile-js',
@@ -129,8 +122,7 @@ add_action( 'wp_enqueue_scripts', function() {
 
     // JS del nuevo componente models (manejo de toggle del panel Products)
     $models_js_path = $theme_dir_path . '/assets/js/models-mobile.js';
-    $ver_models_js_raw = file_exists( $models_js_path ) ? filemtime( $models_js_path ) : null;
-    $ver_models_js = $ver_models_js_raw ? $ver_models_js_raw . '.' . $BESLOCK_ASSET_BUMP : $BESLOCK_ASSET_BUMP;
+    $ver_models_js = file_exists( $models_js_path ) ? filemtime( $models_js_path ) : null;
 
     wp_enqueue_script(
       'beslock-models-mobile-js',

@@ -32,25 +32,6 @@ body {
   font-size: 1rem;
 }
 
-/* Touch responsiveness: ensure interactive controls receive taps reliably */
-a, button, input, select, textarea, .mobile-menu__link, .btn, .product-card a {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  touch-action: manipulation;
-  -ms-touch-action: manipulation;
-}
-
-/* Ensure icons inside buttons don't become the event target on touch devices.
-   This lets the parent button receive the pointer event immediately. */
-button, button * {
-  touch-action: manipulation;
-}
-
-/* Make decorative icons non-interactive so taps hit the button itself. */
-.mobile-drawer__close i,
-.mobile-menu__chev,
-.header__icon i,
-.bi { pointer-events: none; }
-
 /* ========== CONTENEDOR UNIVERSAL ========== */
 .u-container {
   width: 100%;
@@ -457,7 +438,7 @@ button, button * {
 
 /* Footer logo: tamaño = 40% del logo del header (usamos --site-logo-height) */
 /* Aquí usamos la variable definida en .header__logo img (fallback 32px) */
-.site-footer__logo {
+.footer-logo {
   display: inline-block;
   height: calc(var(--site-logo-height, 32px) * 0.85);
   width: auto;
@@ -469,7 +450,7 @@ button, button * {
 }
 
 /* Si necesitas una variante que use width (en lugar de height), descomenta y ajusta:
-.site-footer__logo { width: calc(var(--site-logo-width, 128px) * 0.4); height: auto; }
+.footer-logo { width: calc(var(--site-logo-width, 128px) * 0.4); height: auto; }
 */
 
 /* Ajustes adicionales visuales */
@@ -484,9 +465,8 @@ button, button * {
 
 /* Responsive: si quieres cambiar el ratio en pantallas grandes */
 @media (min-width: 900px) {
-  .site-footer__logo {
+  .footer-logo {
     /* ejemplo: en desktop el footer usa 40% pero del header mayor */
     height: calc(var(--site-logo-height, 32px) * 0.4);
   }
 }
-
