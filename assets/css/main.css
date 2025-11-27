@@ -450,7 +450,7 @@ body {
 }
 
 /* Si necesitas una variante que use width (en lugar de height), descomenta y ajusta:
-.footer-logo { width: calc(var(--site-logo-width, 128px) * 0.4); height: auto; }
+.site-footer__logo { width: calc(var(--site-logo-width, 128px) * 0.4); height: auto; }
 */
 
 /* Ajustes adicionales visuales */
@@ -465,7 +465,7 @@ body {
 
 /* Responsive: si quieres cambiar el ratio en pantallas grandes */
 @media (min-width: 900px) {
-  .footer-logo {
+  .site-footer__logo {
     /* ejemplo: en desktop el footer usa 40% pero del header mayor */
     height: calc(var(--site-logo-height, 32px) * 0.4);
   }

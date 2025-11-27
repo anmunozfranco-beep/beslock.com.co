@@ -310,7 +310,7 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
     box-shadow: none !important;
   }
   /* Products panel full width inside drawer in mobile */
-  nav#mobileDrawer .mobile-products-panel {
+  nav#mobileDrawer .mobile-drawer__products-panel {
     width: 100% !important;
     right: 0 !important;
   }
