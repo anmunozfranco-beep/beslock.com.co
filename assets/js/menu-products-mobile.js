@@ -577,6 +577,52 @@
   // start with a conservative retry policy (approx 8 attempts, ~1.2s total)
   startWithRetries(8, 150);
 
+  // MutationObserver fallback: if the drawer is injected later (AJAX, partials),
+  // watch the document for the `#mobileDrawer` node and initialize when seen.
+  (function observeForDrawerInsertion() {
+    if (typeof MutationObserver === 'undefined') return;
+    var attached = false;
+    var obs = new MutationObserver(function (mutations) {
+      try {
+        for (var i = 0; i < mutations.length; i++) {
+          var m = mutations[i];
+          if (!m.addedNodes || !m.addedNodes.length) continue;
+          for (var j = 0; j < m.addedNodes.length; j++) {
+            var node = m.addedNodes[j];
+            if (!node || node.nodeType !== 1) continue;
+            // direct match
+            if (node.matches && (node.matches('#mobileDrawer') || node.matches('nav.mobile-drawer'))) {
+              attached = true; break;
+            }
+            // subtree contains
+            if (node.querySelector && (node.querySelector('#mobileDrawer') || node.querySelector('nav.mobile-drawer'))) {
+              attached = true; break;
+            }
+          }
+          if (attached) break;
+        }
+        if (attached) {
+          // refresh refs and attempt init (safe if already initialized)
+          menuBtn = find(SELECTORS.menuBtn);
+          mobileDrawer = find(SELECTORS.mobileDrawer);
+          panel = find(SELECTORS.panel);
+          closeDrawer = find(SELECTORS.closeDrawer);
+          backdrop = find(SELECTORS.backdrop);
+          productsToggle = find(SELECTORS.productsToggle);
+          productsPanel = find(SELECTORS.productsPanel);
+          try { init(); } catch (e) { console.error('menu-products-mobile.js: init() threw after mutation observe', e); }
+          try { obs.disconnect(); } catch (e) {}
+        }
+      } catch (e) {
+        console.error('menu-products-mobile.js: observer error', e);
+      }
+    });
+    try {
+      obs.observe(document.documentElement || document.body, { childList: true, subtree: true });
+      console.log('menu-products-mobile.js: observing DOM for #mobileDrawer insertion');
+    } catch (e) {}
+  })();
+
   // Expose API
   window.beslock = window.beslock || {};
   window.beslock.drawer = window.beslock.drawer || {};
