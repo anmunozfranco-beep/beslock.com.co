@@ -165,8 +165,17 @@ nav#mobileDrawer .mobile-menu__link i.bi {
   pointer-events: none !important; /* decorative icon shouldn't intercept taps */
 }
 
-/* Nudge icons slightly so they visually align with the title's baseline */
-nav#mobileDrawer .mobile-menu__link i.bi { margin-top: 0.18rem !important; }
+/* Force icon to align with the top of the text block (higher specificity) */
+nav#mobileDrawer .mobile-menu__link > i.bi,
+nav#mobileDrawer .mobile-menu__item > a.mobile-menu__link > i.bi,
+nav#mobileDrawer .mobile-menu__item > button.mobile-menu__link > i.bi {
+  align-self: flex-start !important;
+  display: inline-block !important;
+  margin-top: 0.18rem !important; /* small visual nudge */
+}
+
+/* Legacy safety: if any other rule forces centering via line-height/vertical-align, unset it */
+nav#mobileDrawer .mobile-menu__link i.bi { vertical-align: top !important; }
 
 nav#mobileDrawer .mobile-menu__content {
   display: flex !important;
