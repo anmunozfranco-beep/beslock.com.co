@@ -653,4 +653,52 @@
   window.beslock.drawer.close = function () { closeDrawerAction(); };
   window.beslock.drawer.isOpen = function () { return mobileDrawer.classList.contains('is-open'); };
 
+  // Last-resort delegated click fallback: if for any reason the normal
+  // initialization didn't attach the click listener to the hamburger button,
+  // this delegated handler ensures clicks still open/close the drawer.
+  // Idempotent: will attach only once.
+  try {
+    if (!window.__beslock_menu_delegate_attached) {
+      window.__beslock_menu_delegate_attached = true;
+      document.addEventListener('click', function (ev) {
+        try {
+          var target = ev.target;
+          if (!target || !target.closest) return;
+          var btn = target.closest('#menuBtn, button.header__icon.header__icon--menu, .menu-toggle');
+          if (!btn) return;
+          ev.preventDefault();
+          // Prefer the exposed API if available
+          if (window.beslock && window.beslock.drawer && typeof window.beslock.drawer.open === 'function') {
+            window.beslock.drawer.open();
+            return;
+          }
+          // Fallback: directly toggle drawer classes/attributes (minimal safe toggle)
+          try {
+            if (!mobileDrawer) mobileDrawer = find(SELECTORS.mobileDrawer);
+            if (!panel) panel = find(SELECTORS.panel);
+            if (!backdrop) backdrop = find(SELECTORS.backdrop);
+            if (!menuBtn) menuBtn = find(SELECTORS.menuBtn);
+            if (!mobileDrawer) return;
+            if (mobileDrawer.classList.contains('is-open')) {
+              // close
+              mobileDrawer.classList.remove('is-open');
+              if (backdrop) backdrop.classList.remove('backdrop-visible');
+              try { if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false'); } catch (e) {}
+              mobileDrawer.setAttribute('aria-hidden', 'true');
+              try { unlockScroll(); } catch (e) {}
+            } else {
+              // open
+              mobileDrawer.classList.add('is-open');
+              if (backdrop) backdrop.classList.add('backdrop-visible');
+              try { if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true'); } catch (e) {}
+              mobileDrawer.setAttribute('aria-hidden', 'false');
+              try { lockScroll(); } catch (e) {}
+            }
+          } catch (e) {}
+        } catch (e) {}
+      }, { passive: false });
+      dbgLog('menu-products-mobile.js: delegated click fallback attached');
+    }
+  } catch (e) {}
+
 })();
