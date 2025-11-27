@@ -11,7 +11,7 @@
       <!-- Close/back button placed at the left side of the header -->
       <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
-        <span class="screen-reader-text"><?php esc_html_e('Back', 'beslock'); ?></span>
+        <span class="u-visually-hidden"><?php esc_html_e('Back', 'beslock'); ?></span>
       </button>
 
       <!-- Centered logo (positioned absolutely to match header behavior) -->
@@ -23,7 +23,7 @@
     <ul class="mobile-menu" role="menu">
       <li class="mobile-menu__item" role="none">
         <button class="mobile-menu__link" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem">
-          <?php esc_html_e('Products', 'beslock'); ?> <span class="chev products-chevron mobile-menu__chev" aria-hidden="true">›</span>
+          <?php esc_html_e('Products', 'beslock'); ?> <span class="products-chevron mobile-menu__chev" aria-hidden="true">›</span>
         </button>
 
         <?php
