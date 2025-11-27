@@ -31,7 +31,10 @@
   var productsToggle = find(SELECTORS.productsToggle);
   var productsPanel = find(SELECTORS.productsPanel);
 
-  if (!mobileDrawer || !panel || !menuBtn || !backdrop) return;
+  // NOTE: do NOT bail out early here. Initialization will be performed later
+  // via a retry/startup wrapper to handle cases where templates are injected
+  // or scripts run before partials are present in the DOM. This keeps the
+  // module definitions intact while making startup robust.
 
   function prefersReducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -532,11 +535,47 @@
     }, 60);
   }
 
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(init, 30);
-  } else {
-    document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 30); });
+  // Robust startup: try to initialize now, but retry a few times if core
+  // elements are missing (partial templates or late injection). If after
+  // retries the elements still aren't present we log an error and abort to
+  // avoid throwing exceptions.
+  function startWithRetries(retries, delay) {
+    var tries = 0;
+    function attempt() {
+      // refresh element refs
+      menuBtn = find(SELECTORS.menuBtn);
+      mobileDrawer = find(SELECTORS.mobileDrawer);
+      panel = find(SELECTORS.panel);
+      closeDrawer = find(SELECTORS.closeDrawer);
+      backdrop = find(SELECTORS.backdrop);
+      productsToggle = find(SELECTORS.productsToggle);
+      productsPanel = find(SELECTORS.productsPanel);
+
+      if (menuBtn && mobileDrawer && panel && backdrop) {
+        try {
+          init();
+        } catch (e) { console.error('menu-products-mobile.js: init() threw', e); }
+        return;
+      }
+
+      tries++;
+      if (tries <= retries) {
+        console.warn('menu-products-mobile.js: core elements missing, retrying init (' + tries + '/' + retries + ')');
+        setTimeout(attempt, delay);
+      } else {
+        console.error('menu-products-mobile.js: core elements not found after ' + retries + ' retries; menu will not initialize.');
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { setTimeout(attempt, 30); }, { once: true });
+    } else {
+      setTimeout(attempt, 30);
+    }
   }
+
+  // start with a conservative retry policy (approx 8 attempts, ~1.2s total)
+  startWithRetries(8, 150);
 
   // Expose API
   window.beslock = window.beslock || {};
