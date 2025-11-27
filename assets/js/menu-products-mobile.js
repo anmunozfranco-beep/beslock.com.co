@@ -241,14 +241,10 @@
         if (/^[›»>→]+$/.test(t)) toRemove.push(ch);
       } else if (ch.nodeType === Node.ELEMENT_NODE) {
         var txt = (ch.textContent || '').trim();
-        // If the element looks like a date or contains digits, keep it.
-        if (/\d/.test(txt)) continue;
         if (/^[›»>→]+$/.test(txt)) toRemove.push(ch);
         var cls = (ch.className || '').toLowerCase();
-        // detect legacy short classes specific to chevrons/indicators
-        // Use stricter matching so arbitrary classes containing the substring
-        // `indicator` won't accidentally remove unrelated nodes that may contain dates.
-        if (/\b(chev|chevron|caret|indicator|mobile-menu__chev|products-chevron)\b/.test(cls)) toRemove.push(ch);
+        // detect legacy short classes as well as BEM classes for chevrons/indicators
+        if (cls.indexOf('indicator') !== -1 || cls.indexOf('chevron') !== -1 || cls.indexOf('caret') !== -1 || cls.indexOf('mobile-menu__chev') !== -1 || cls.indexOf('products-chevron') !== -1) toRemove.push(ch);
       }
     }
     for (var j = 0; j < toRemove.length; j++) {
@@ -260,7 +256,8 @@
   // open/close drawer
   function openDrawer() {
     if (mobileDrawer.classList.contains('is-open')) return;
-    // dev logs removed
+    // Ensure products toggle is up-to-date in case the DOM was replaced since init
+    try { initProductsToggle(); } catch (e) {}
     previousActiveElement = document.activeElement;
     ensurePanelBaseline();
     menuBtn.setAttribute('aria-expanded', 'true');
@@ -303,10 +300,11 @@
 
   // Products toggle init & behavior (slide + scroll)
   function initProductsToggle() {
-    if (!productsToggle || !productsPanel) {
-      productsToggle = $(SELECTORS.productsToggle);
-      productsPanel = $(SELECTORS.productsPanel);
-    }
+    // Always refresh references here because navigation or partial re-renders
+    // may replace nodes; relying on previously-stored references can point
+    // to detached elements which causes UI inconsistencies (missing chevron).
+    productsToggle = $(SELECTORS.productsToggle);
+    productsPanel = $(SELECTORS.productsPanel);
     if (!productsToggle || !productsPanel) return;
 
     try {
@@ -318,21 +316,6 @@
 
     // sanitize stray decorations
     try { sanitizeProductsToggle(productsToggle); } catch (e) {}
-
-    // Ensure a date node is present (reconstruct from data attribute if needed)
-    try {
-      var existingDate = productsToggle.querySelector && productsToggle.querySelector('.products-date');
-      var dateFromAttr = productsToggle.getAttribute && productsToggle.getAttribute('data-menu-date') || (productsToggle.dataset && productsToggle.dataset.menuDate);
-      if (!existingDate && dateFromAttr) {
-        var dateSpan = document.createElement('span');
-        dateSpan.className = 'products-date';
-        dateSpan.setAttribute('aria-hidden', 'true');
-        dateSpan.textContent = dateFromAttr;
-        var chev = productsToggle.querySelector && productsToggle.querySelector('.products-chevron');
-        if (chev && chev.parentNode) chev.parentNode.insertBefore(dateSpan, chev);
-        else productsToggle.appendChild(dateSpan);
-      }
-    } catch (e) {}
 
     // ensure right arrow icon we control
     try {
