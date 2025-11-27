@@ -12,8 +12,43 @@
   --drawer-ease: cubic-bezier(.22,.9,.41,1);
   --drawer-duration: 360ms;
   --backdrop-duration: 240ms;
+
+  /* Productos (panel interno) - control de animación separado */
+  --products-duration: 2000ms; /* exagerado para evidenciar comportamiento */
+  --products-ease: cubic-bezier(.16,.84,.30,1);
+  --products-delay: 80ms; /* pequeño delay antes de iniciar la animación */
   --menu-link-color: #0b0b0b;
 }
+
+/* Drawer header (logo) shown at top of panel with translucent background */
+.drawer-header {
+  position: sticky;
+  top: 0;
+  z-index: 1320 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.65rem 0 !important;
+  margin: -1.25rem -1.25rem 0 -1.25rem !important; /* cancel panel padding to span full width */
+  background: rgba(255,255,255,0.85) !important; /* opacity layer */
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04) inset !important;
+}
+.drawer-header .drawer__logo img {
+  display: block !important;
+  max-height: 36px !important;
+  height: auto !important;
+}
+
+/* Ensure drawer header remains visible when products panel open */
+nav#mobileDrawer.products-open .drawer-header,
+nav#mobileDrawer.is-open .drawer-header {
+  display: flex !important;
+}
+
+/* Keep header visually above main menu even when main menu hidden for products */
+nav#mobileDrawer.products-open .mobile-menu { visibility: hidden !important; }
 
 /* Contenedor del drawer */
 nav#mobileDrawer.mobile-drawer {
@@ -162,12 +197,33 @@ nav#mobileDrawer .mobile-products-panel {
   box-shadow: none !important;
   transform: translate3d(100%, 0, 0) !important; /* off-screen to the right */
   opacity: 0 !important;
-  transition: transform var(--drawer-duration) var(--drawer-ease), opacity calc(var(--drawer-duration)/1.4) ease !important;
+  transition: transform var(--products-duration) var(--products-ease) var(--products-delay), opacity calc(var(--products-duration)/1.05) ease var(--products-delay) !important;
   padding: 1.25rem 1.25rem 10rem !important;
   box-sizing: border-box !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
   pointer-events: none !important; /* disabled until visible */
+}
+
+/* If `hidden` attribute is applied prematurely, force it to remain visually present
+   so CSS transitions (transform/opacity) still run. The JS will set `.models--hidden`
+   and we rely on that class for the visual hide animation; this selector prevents
+   the UA `display:none` from cutting the animation short. */
+nav#mobileDrawer .mobile-products-panel[hidden] {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  /* keep same transform/opacity rules as hidden state so the visual transition runs */
+  transform: translate3d(100%, 0, 0) !important;
+  opacity: 0 !important;
+}
+
+/* Be explicit for the class-driven hidden state as well (covers both attribute and class paths) */
+nav#mobileDrawer .mobile-products-panel.models--hidden,
+nav#mobileDrawer .mobile-products-panel.models--hidden[hidden] {
+  transform: translate3d(100%, 0, 0) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* Visible state: slide in and allow interaction */
@@ -176,6 +232,16 @@ nav#mobileDrawer .mobile-products-panel.models--visible {
   transform: translate3d(0, 0, 0) !important;
   opacity: 1 !important;
   pointer-events: auto !important;
+}
+
+/* Ensure that when we add the hidden class the hidden transform/opacity
+   wins even if the parent has `products-open`. This gives JS the ability
+   to keep `products-open` for other layout reasons while the panel itself
+   animates out. */
+nav#mobileDrawer.products-open .mobile-products-panel.models--hidden {
+  transform: translate3d(100%, 0, 0) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* While products panel open, hide main menu visually but keep DOM for a11y */

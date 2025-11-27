@@ -29,24 +29,40 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Attribute-based robust hide/show (keeps panel closed by default) */
-#productsPanel[aria-hidden="true"] {
-  display: none !important;
-  visibility: hidden !important;
-  height: 0 !important;
+/* Attribute-based hide/show adjusted to allow CSS transitions
+   Use opacity/transform instead of display:none so the sliding
+   transition for the products panel can animate smoothly. */
+/* Support both aria-hidden and the boolean [hidden] attribute.
+   Force display:block so that transitions may run even if JS briefly toggles
+   the `hidden` attribute. Visual state is controlled with opacity/transform. */
+#productsPanel[aria-hidden="true"],
+#productsPanel[hidden] {
+  display: block !important;
+  /* keep visibility so the element remains in the render tree while we
+     animate opacity/transform — removing `visibility: hidden` prevents a
+     white flash where the element becomes non-visible before the transition */
+  visibility: visible !important;
+  height: 100vh !important;
   overflow: hidden !important;
+  opacity: 0 !important;
+  transform: translate3d(100%, 0, 0) !important;
+  pointer-events: none !important;
 }
 
-#productsPanel[aria-hidden="false"] {
+#productsPanel[aria-hidden="false"],
+#productsPanel:not([aria-hidden])[hidden="false"] {
   display: block !important;
   visibility: visible !important;
-  height: auto !important;
+  height: 100vh !important;
   overflow: auto !important;
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+  pointer-events: auto !important;
 }
 
-/* Compatibility classes kept for JS */
-.models--hidden { display: none; }
-.models--visible { display: block; }
+/* Compatibility classes kept for JS but avoid changing display property */
+.models--hidden { opacity: 0; transform: translate3d(100%, 0, 0); pointer-events: none; }
+.models--visible { opacity: 1; transform: translate3d(0, 0, 0); pointer-events: auto; }
 
 /* Card list wrapper */
 .models__list {

@@ -6,6 +6,13 @@
 <!-- Drawer principal: no incluye botón de apertura (ese está en header.php) -->
 <nav id="mobileDrawer" class="mobile-drawer" aria-hidden="true" role="dialog" aria-label="<?php esc_attr_e('Mobile menu', 'beslock'); ?>">
   <div class="mobile-drawer__panel" role="document">
+    <!-- Drawer header: logo visible dentro del drawer (sólo logo, navegación opacada) -->
+    <div class="drawer-header" role="banner">
+      <a class="drawer__logo" href="<?php echo esc_url( home_url('/') ); ?>" aria-label="<?php esc_attr_e('Home', 'beslock'); ?>">
+        <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-green.png' ); ?>" alt="<?php esc_attr_e('BESLOCK Logo', 'beslock'); ?>" height="28" />
+      </a>
+    </div>
+
     <!-- Close: usamos Bootstrap Icons para la X y mantenemos texto accesible -->
     <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">
       <i class="bi bi-x-lg" aria-hidden="true"></i>

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: beslock_db
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wordpress:
+    image: wordpress:6.4-php8.1-apache
+    container_name: beslock_wp
+    depends_on:
+      - db
+    ports:
+      - "8000:80"
+    volumes:
+      # Monta la carpeta del repo en la ruta del tema. Ajusta si tu tema está en otra carpeta.
+      - ./:/var/www/html/wp-content/themes/beslock-custom:cached
+      - ./wp_uploads:/var/www/html/wp-content/uploads
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    restart: always
+
+volumes:
+  db_data:
