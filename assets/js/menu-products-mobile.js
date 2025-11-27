@@ -36,6 +36,17 @@
   // or scripts run before partials are present in the DOM. This keeps the
   // module definitions intact while making startup robust.
 
+  // Debug flag (opt-in). Set `window.__beslock_menu_debug = true` in console
+  // to enable verbose logs for this module.
+  var DEBUG = !!(window.__beslock_menu_debug === true || window.__beslock_debug === true);
+  function dbgLog() { if (DEBUG && console && console.log) console.log.apply(console, arguments); }
+  function dbgWarn() { if (DEBUG && console && console.warn) console.warn.apply(console, arguments); }
+
+  // Idempotency guard: ensure we only initialize this module once.
+  if (window.__beslock_menu_products_initialized) {
+    dbgLog('menu-products-mobile.js: already initialized — skipping duplicate bootstrap');
+  }
+
   function prefersReducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
@@ -491,6 +502,10 @@
 
   // Init
   function init() {
+    if (window.__beslock_menu_products_initialized) {
+      dbgLog('menu-products-mobile.js: init() called but module already initialized');
+      return;
+    }
     ensurePanelBaseline();
     mobileDrawer.classList.remove('is-open');
     backdrop.classList.remove('backdrop-visible');
@@ -533,6 +548,9 @@
       initProductsToggle();
       setCloseMode('close');
     }, 60);
+
+    // mark initialized (idempotency)
+    try { window.__beslock_menu_products_initialized = true; } catch (e) {}
   }
 
   // Robust startup: try to initialize now, but retry a few times if core
@@ -553,14 +571,18 @@
 
       if (menuBtn && mobileDrawer && panel && backdrop) {
         try {
-          init();
+          if (!window.__beslock_menu_products_initialized) {
+            init();
+          } else {
+            dbgLog('menu-products-mobile.js: init skipped (already initialized)');
+          }
         } catch (e) { console.error('menu-products-mobile.js: init() threw', e); }
         return;
       }
 
       tries++;
       if (tries <= retries) {
-        console.warn('menu-products-mobile.js: core elements missing, retrying init (' + tries + '/' + retries + ')');
+        dbgWarn('menu-products-mobile.js: core elements missing, retrying init (' + tries + '/' + retries + ')');
         setTimeout(attempt, delay);
       } else {
         console.error('menu-products-mobile.js: core elements not found after ' + retries + ' retries; menu will not initialize.');
@@ -619,7 +641,7 @@
     });
     try {
       obs.observe(document.documentElement || document.body, { childList: true, subtree: true });
-      console.log('menu-products-mobile.js: observing DOM for #mobileDrawer insertion');
+      dbgLog('menu-products-mobile.js: observing DOM for #mobileDrawer insertion');
     } catch (e) {}
   })();
 
