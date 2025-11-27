@@ -241,10 +241,14 @@
         if (/^[›»>→]+$/.test(t)) toRemove.push(ch);
       } else if (ch.nodeType === Node.ELEMENT_NODE) {
         var txt = (ch.textContent || '').trim();
+        // If the element looks like a date or contains digits, keep it.
+        if (/\d/.test(txt)) continue;
         if (/^[›»>→]+$/.test(txt)) toRemove.push(ch);
         var cls = (ch.className || '').toLowerCase();
-        // detect legacy short classes as well as BEM classes for chevrons/indicators
-        if (cls.indexOf('indicator') !== -1 || cls.indexOf('chevron') !== -1 || cls.indexOf('caret') !== -1 || cls.indexOf('mobile-menu__chev') !== -1 || cls.indexOf('products-chevron') !== -1) toRemove.push(ch);
+        // detect legacy short classes specific to chevrons/indicators
+        // Use stricter matching so arbitrary classes containing the substring
+        // `indicator` won't accidentally remove unrelated nodes that may contain dates.
+        if (/\b(chev|chevron|caret|indicator|mobile-menu__chev|products-chevron)\b/.test(cls)) toRemove.push(ch);
       }
     }
     for (var j = 0; j < toRemove.length; j++) {
