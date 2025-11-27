@@ -144,34 +144,58 @@ nav#mobileDrawer .mobile-menu__item .mobile-menu__link--plain {
 nav#mobileDrawer .mobile-menu__link {
   display: flex !important;
   align-items: center !important;
-  gap: 0.75rem !important;
-  padding: 0.35rem 0 !important;
+  gap: 1rem !important;
+  padding: 0.6rem 0.25rem !important;
+  width: 100% !important;
+  border-radius: 8px !important;
+  transition: background-color 180ms ease, transform 120ms ease;
 }
+
+/* Icon styling: slightly larger, dark neutral color matching screenshot */
 nav#mobileDrawer .mobile-menu__link i.bi {
-  font-size: 1.6rem !important;
+  font-size: 1.7rem !important;
   line-height: 1 !important;
-  color: var(--beslock-green) !important;
-  min-width: 34px !important;
+  color: #0b2b36 !important; /* dark navy-ish for icons */
+  min-width: 38px !important;
   text-align: center !important;
   pointer-events: none !important; /* decorative icon shouldn't intercept taps */
 }
+
 nav#mobileDrawer .mobile-menu__content {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
 }
+
 .mobile-menu__title {
-  font-size: 1.06rem !important;
+  font-size: 1.08rem !important;
   font-weight: 700 !important;
-  color: var(--beslock-text-main) !important;
-  line-height: 1.1 !important;
+  color: #0b2b36 !important; /* stronger dark for title */
+  line-height: 1.05 !important;
 }
+
 .mobile-menu__subtitle {
   font-size: 0.95rem !important;
   font-weight: 400 !important;
-  color: var(--beslock-text-sec) !important;
-  margin-top: 0.12rem !important;
+  color: #6f7d87 !important; /* muted blue/grey for subtitle */
+  margin-top: 0.14rem !important;
   opacity: 0.95 !important;
+}
+
+/* subtle divider between rows to match capture spacing */
+nav#mobileDrawer .mobile-menu__item { padding: 0.45rem 0 !important; }
+nav#mobileDrawer .mobile-menu__item + .mobile-menu__item { border-top: 1px solid rgba(11,43,54,0.04) !important; }
+
+/* Hover / Active interactions */
+@media (pointer: fine) {
+  nav#mobileDrawer .mobile-menu__link:hover {
+    background: rgba(11,43,54,0.04) !important; /* soft navy tint */
+    transform: translateY(-1px) !important;
+  }
+}
+nav#mobileDrawer .mobile-menu__link:active {
+  background: rgba(11,43,54,0.06) !important;
+  transform: scale(0.998) !important;
 }
 
 /* Small adjustment for chevron / products row (keep original spacing) */
