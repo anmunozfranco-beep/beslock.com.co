@@ -140,6 +140,44 @@ nav#mobileDrawer .mobile-menu__item .mobile-menu__link--plain {
   border-bottom: none !important;
 }
 
+/* Layout for icon + title + subtitle rows (as in design screenshot) */
+nav#mobileDrawer .mobile-menu__link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.35rem 0 !important;
+}
+nav#mobileDrawer .mobile-menu__link i.bi {
+  font-size: 1.6rem !important;
+  line-height: 1 !important;
+  color: var(--beslock-green) !important;
+  min-width: 34px !important;
+  text-align: center !important;
+  pointer-events: none !important; /* decorative icon shouldn't intercept taps */
+}
+nav#mobileDrawer .mobile-menu__content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+.mobile-menu__title {
+  font-size: 1.06rem !important;
+  font-weight: 700 !important;
+  color: var(--beslock-text-main) !important;
+  line-height: 1.1 !important;
+}
+.mobile-menu__subtitle {
+  font-size: 0.95rem !important;
+  font-weight: 400 !important;
+  color: var(--beslock-text-sec) !important;
+  margin-top: 0.12rem !important;
+  opacity: 0.95 !important;
+}
+
+/* Small adjustment for chevron / products row (keep original spacing) */
+nav#mobileDrawer #productsToggle .chev,
+nav#mobileDrawer .products-chevron { margin-left: auto !important; }
+
 /* Products row */
 nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron,
 nav#mobileDrawer #productsToggle {
