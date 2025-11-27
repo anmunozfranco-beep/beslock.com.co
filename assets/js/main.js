@@ -99,7 +99,7 @@
     on(window, 'beforeunload', function () {
       try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } catch (e) {}
     });
-    console.log('main.js: header behaviors initialized');
+    // header behaviors initialized
   }
 
   // ===== Lazy images =====
@@ -131,7 +131,7 @@
     } else {
       imgs.forEach(function (img) { loadImage(img); });
     }
-    console.log('main.js: lazy images init');
+    // lazy images initialized
   }
 
   // ===== GSAP reveals =====
@@ -145,21 +145,21 @@
             scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" }
           });
         });
-        console.log('main.js: GSAP reveals initialized');
+        // GSAP reveals initialized
         return;
       } catch (e) {
         console.warn('main.js: GSAP failed, falling back', e);
       }
     }
     $$('.reveal').forEach(function (el) { el.style.opacity = 1; });
-    console.log('main.js: GSAP not available, reveal fallback applied');
+    // GSAP not available, reveal fallback applied
   }
 
   // ===== Mobile menu (idempotent) =====
   function mobileMenuInit() {
     // If another menu script is present (menu-products-mobile.js), skip init to avoid double handlers.
     if (document.querySelector('script[src*="menu-products-mobile"]') && !window.__beslock_force_main_menu_init) {
-      console.log('mobileMenuInit: menu-products-mobile script present — skipping main menu init.');
+      // menu-products-mobile script present — skipping main menu init.
       return;
     }
 
@@ -227,7 +227,7 @@
       if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
       if (closeDrawer) try { closeDrawer.focus(); } catch (e) {}
       releaseTrap = trapFocus(mobileDrawer);
-      console.log('main.js: mobile menu opened');
+      // mobile menu opened
     }
 
     function closeDrawerFn() {
@@ -237,7 +237,7 @@
       if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
       try { if (menuBtn) menuBtn.focus(); } catch (e) {}
       if (typeof releaseTrap === 'function') releaseTrap();
-      console.log('main.js: mobile menu closed');
+      // mobile menu closed
     }
 
     // attach idempotent handlers with a small debounce to avoid touch->click double-fire
@@ -325,7 +325,7 @@
       mobileDrawer._swipeHandlersAttached = true;
     })();
 
-    console.log('main.js: mobile menu initialized (idempotent)');
+    // mobile menu initialized (idempotent)
   }
 
   // ===== Products panel =====
@@ -366,7 +366,7 @@
     if (productsBack) on(productsBack, 'click', hide);
     if (productsClose) on(productsClose, 'click', hide);
 
-    console.log('main.js: products panel init (lightweight)');
+    // products panel initialized (lightweight)
   }
 
   // ===== Init sequence =====
@@ -376,7 +376,7 @@
     try { headerBehaviorsInit(); } catch (e) { console.warn('header behaviors error', e); }
     try { mobileMenuInit(); } catch (e) { console.warn('mobile menu error', e); }
     try { productsPanelInit(); } catch (e) { console.warn('products panel error', e); }
-    console.log('main.js: all modules initialized');
+    // all modules initialized
   }
 
   if (document.readyState === 'loading') {

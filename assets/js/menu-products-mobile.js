@@ -36,11 +36,10 @@
   // or scripts run before partials are present in the DOM. This keeps the
   // module definitions intact while making startup robust.
 
-  // Debug flag (opt-in). Set `window.__beslock_menu_debug = true` in console
-  // to enable verbose logs for this module.
-  var DEBUG = !!(window.__beslock_menu_debug === true || window.__beslock_debug === true);
-  function dbgLog() { if (DEBUG && console && console.log) console.log.apply(console, arguments); }
-  function dbgWarn() { if (DEBUG && console && console.warn) console.warn.apply(console, arguments); }
+  // Debug flag (opt-in) — disabled for production builds.
+  var DEBUG = false;
+  function dbgLog() {}
+  function dbgWarn() {}
 
   // Idempotency guard: ensure we only initialize this module once.
   if (window.__beslock_menu_products_initialized) {
@@ -257,8 +256,7 @@
   // open/close drawer
   function openDrawer() {
     if (mobileDrawer.classList.contains('is-open')) return;
-    dbgLog('menu-products-mobile.js: openDrawer() called');
-    try { console.log('menu-products-mobile: openDrawer() called (direct log)'); } catch (e) {}
+    // dev logs removed
     previousActiveElement = document.activeElement;
     ensurePanelBaseline();
     menuBtn.setAttribute('aria-expanded', 'true');
@@ -277,8 +275,7 @@
 
   function closeDrawerAction() {
     if (!mobileDrawer.classList.contains('is-open')) return;
-    dbgLog('menu-products-mobile.js: closeDrawerAction() called');
-    try { console.log('menu-products-mobile: closeDrawerAction() called (direct log)'); } catch (e) {}
+    // dev logs removed
     mobileDrawer.classList.remove('is-open');
     backdrop.classList.remove('backdrop-visible');
     try { menuBtn.setAttribute('aria-expanded', 'false'); } catch (e) {}
@@ -509,11 +506,10 @@
   // Init
   function init() {
     if (window.__beslock_menu_products_initialized) {
-      dbgLog('menu-products-mobile.js: init() called but module already initialized');
+      // already initialized (idempotency)
       return;
     }
-    dbgLog('menu-products-mobile.js: init() starting');
-    try { console.log('menu-products-mobile: init() starting (direct log)'); } catch (e) {}
+    // init starting
     ensurePanelBaseline();
     mobileDrawer.classList.remove('is-open');
     backdrop.classList.remove('backdrop-visible');
@@ -559,8 +555,7 @@
 
     // mark initialized (idempotency)
     try { window.__beslock_menu_products_initialized = true; } catch (e) {}
-    dbgLog('menu-products-mobile.js: init() completed');
-    try { console.log('menu-products-mobile: init() completed (direct log)'); } catch (e) {}
+    // init completed
   }
 
   // Robust startup: try to initialize now, but retry a few times if core
@@ -651,8 +646,7 @@
     });
     try {
       obs.observe(document.documentElement || document.body, { childList: true, subtree: true });
-      dbgLog('menu-products-mobile.js: observing DOM for #mobileDrawer insertion');
-      try { console.log('menu-products-mobile: observing DOM for #mobileDrawer insertion (direct log)'); } catch (e) {}
+      // observing DOM for #mobileDrawer insertion
     } catch (e) {}
   })();
 
@@ -677,8 +671,7 @@
           var btn = target.closest('#menuBtn, button.header__icon.header__icon--menu, .menu-toggle');
           if (!btn) return;
           ev.preventDefault();
-          dbgLog('menu-products-mobile.js: delegated click handler fired for', btn);
-          try { console.log('menu-products-mobile: delegated click handler fired for', btn); } catch (e) {}
+          // delegated click handler fired
           // Prefer the exposed API if available
           if (window.beslock && window.beslock.drawer && typeof window.beslock.drawer.open === 'function') {
             window.beslock.drawer.open();
@@ -709,7 +702,7 @@
           } catch (e) {}
         } catch (e) {}
       }, { passive: false });
-      dbgLog('menu-products-mobile.js: delegated click fallback attached');
+      // delegated click fallback attached
     }
   } catch (e) {}
 
