@@ -276,7 +276,7 @@
       });
     }
     mobileDrawer._linkHandlers = [];
-    mobileDrawer.querySelectorAll('a.mobile-menu__link, a.product-card').forEach(function (lnk) {
+    mobileDrawer.querySelectorAll('a.mobile-menu__link, .product-card a').forEach(function (lnk) {
       var fn = function (ev) {
         if (ev.target && ev.target.closest && ev.target.closest('#productsPanel')) return;
         closeDrawerFn();
