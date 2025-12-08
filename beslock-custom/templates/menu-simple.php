@@ -45,45 +45,11 @@
         </div>
       </li>
 
-      <!-- Reemplazado: nuevos items según captura (Products permanece sin cambios) -->
       <li class="mobile-menu__item" role="none">
-        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/orders') ); ?>" role="menuitem">
-          <i class="bi bi-truck" aria-hidden="true"></i>
-          <span class="mobile-menu__content">
-            <span class="mobile-menu__title"><?php esc_html_e('Track your Orders', 'beslock'); ?></span>
-            <span class="mobile-menu__subtitle"><?php esc_html_e('Get online updated status', 'beslock'); ?></span>
-          </span>
-        </a>
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/contact') ); ?>" role="menuitem"><?php esc_html_e('Contact', 'beslock'); ?></a>
       </li>
-
       <li class="mobile-menu__item" role="none">
-        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/offers') ); ?>" role="menuitem">
-          <i class="bi bi-percent" aria-hidden="true"></i>
-          <span class="mobile-menu__content">
-            <span class="mobile-menu__title"><?php esc_html_e('Catch our Limited Offers', 'beslock'); ?></span>
-            <span class="mobile-menu__subtitle"><?php esc_html_e('Save and boost profits', 'beslock'); ?></span>
-          </span>
-        </a>
-      </li>
-
-      <li class="mobile-menu__item" role="none">
-        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/contact') ); ?>" role="menuitem">
-          <i class="bi bi-headset" aria-hidden="true"></i>
-          <span class="mobile-menu__content">
-            <span class="mobile-menu__title"><?php esc_html_e('Contact us Now', 'beslock'); ?></span>
-            <span class="mobile-menu__subtitle"><?php esc_html_e('We are right back with you', 'beslock'); ?></span>
-          </span>
-        </a>
-      </li>
-
-      <li class="mobile-menu__item" role="none">
-        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/docs') ); ?>" role="menuitem">
-          <i class="bi bi-hand-thumbs-up" aria-hidden="true"></i>
-          <span class="mobile-menu__content">
-            <span class="mobile-menu__title"><?php esc_html_e('Technical Documentation', 'beslock'); ?></span>
-            <span class="mobile-menu__subtitle"><?php esc_html_e('Top products on specifications', 'beslock'); ?></span>
-          </span>
-        </a>
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/about') ); ?>" role="menuitem"><?php esc_html_e('About', 'beslock'); ?></a>
       </li>
     </ul>
   </div>
