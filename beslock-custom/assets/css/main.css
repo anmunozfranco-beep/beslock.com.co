@@ -125,13 +125,42 @@ body {
    visible content reduces to 75% (25% smaller). Transform origin at top keeps
    the shrink visually anchored. */
 .header__bar {
-  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-  transform-origin: top center;
-  will-change: transform;
+  transition: padding 0.35s cubic-bezier(0.4,0,0.2,1), gap 0.35s cubic-bezier(0.4,0,0.2,1);
+  will-change: padding, gap;
 }
 
+/* When header is scrolled reduce vertical space and element sizes by 25%.
+   We reduce padding, logo height and icon sizes rather than using transform
+   to avoid horizontal movement; elements will re-flow vertically into the
+   reduced header space while preserving proportions. */
 .header.header--scrolled .header__bar {
-  transform: scale(0.75); /* shrink to 75% of original size */
+  padding: calc(0.4rem * 0.75) 0 !important; /* mobile */
+  gap: calc(0.5rem * 0.75) !important;
+}
+
+/* Mobile: scale down logo and icons proportionally */
+.header.header--scrolled .header__logo img {
+  height: calc(var(--site-logo-height, 32px) * 0.75) !important;
+}
+.header.header--scrolled .header__icon {
+  font-size: calc(2rem * 0.75) !important;
+  min-width: calc(40px * 0.75) !important;
+  min-height: calc(40px * 0.75) !important;
+}
+
+/* Desktop breakpoint adjustments */
+@media (min-width: 600px) {
+  .header.header--scrolled .header__bar {
+    padding: calc(0.7rem * 0.75) 0 !important; /* desktop */
+  }
+  .header.header--scrolled .header__logo img {
+    height: calc(var(--site-logo-height, 38px) * 0.75) !important;
+  }
+  .header.header--scrolled .header__icon {
+    font-size: calc(2.25rem * 0.75) !important;
+    min-width: calc(44px * 0.75) !important;
+    min-height: calc(44px * 0.75) !important;
+  }
 }
 .header__icon {
   background: none;
