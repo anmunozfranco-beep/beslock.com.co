@@ -357,3 +357,50 @@ button#productsToggle {
 .mobile-menu__link {
   padding: 0 !important;
 }
+
+/* ============== Custom menu items (icons + layout) ==============
+   - Reserve 70% of viewport for the menu content area
+   - Only apply inline icon layout to anchor links (not the Products button)
+   - Icons aligned centre with text and subtitle
+*/
+nav#mobileDrawer .mobile-drawer__panel .mobile-menu {
+  height: 70vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-evenly !important;
+  padding: 0 !important;
+}
+
+/* Apply to anchor links only so #productsToggle (button) is not changed */
+nav#mobileDrawer .mobile-menu__item a.mobile-menu__link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.25rem 0 !important;
+}
+
+nav#mobileDrawer .mobile-menu__item a.mobile-menu__link .bi {
+  font-size: 1.25rem !important;
+  flex-shrink: 0 !important;
+  color: var(--menu-link-color) !important;
+  line-height: 1 !important;
+}
+
+.mobile-menu__meta {
+  display: flex !important;
+  flex-direction: column !important;
+}
+.mobile-menu__title {
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  line-height: 1.1 !important;
+}
+.mobile-menu__subtitle {
+  font-size: 0.9rem !important;
+  color: #6b7280 !important;
+  font-weight: 400 !important;
+  margin-top: 0.12rem !important;
+}
+
+/* small tweak: keep the Products control visually unchanged (we don't modify its text/content) */
+nav#mobileDrawer button#productsToggle { padding: 0 !important; }

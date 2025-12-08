@@ -46,10 +46,43 @@
       </li>
 
       <li class="mobile-menu__item" role="none">
-        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/contact') ); ?>" role="menuitem"><?php esc_html_e('Contact', 'beslock'); ?></a>
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/orders') ); ?>" role="menuitem">
+          <i class="bi bi-truck" aria-hidden="true"></i>
+          <div class="mobile-menu__meta">
+            <span class="mobile-menu__title">Track your Orders</span>
+            <span class="mobile-menu__subtitle">Get online updated status</span>
+          </div>
+        </a>
       </li>
+
       <li class="mobile-menu__item" role="none">
-        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/about') ); ?>" role="menuitem"><?php esc_html_e('About', 'beslock'); ?></a>
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/offers') ); ?>" role="menuitem">
+          <i class="bi bi-percent" aria-hidden="true"></i>
+          <div class="mobile-menu__meta">
+            <span class="mobile-menu__title">Catch our Limited Offers</span>
+            <span class="mobile-menu__subtitle">Save and boost profits</span>
+          </div>
+        </a>
+      </li>
+
+      <li class="mobile-menu__item" role="none">
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/contact') ); ?>" role="menuitem">
+          <i class="bi bi-headset" aria-hidden="true"></i>
+          <div class="mobile-menu__meta">
+            <span class="mobile-menu__title">Contact us Now</span>
+            <span class="mobile-menu__subtitle">We are right back with you</span>
+          </div>
+        </a>
+      </li>
+
+      <li class="mobile-menu__item" role="none">
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/docs') ); ?>" role="menuitem">
+          <i class="bi bi-hand-thumbs-up" aria-hidden="true"></i>
+          <div class="mobile-menu__meta">
+            <span class="mobile-menu__title">Technical Documentation</span>
+            <span class="mobile-menu__subtitle">Top products on specifications</span>
+          </div>
+        </a>
       </li>
     </ul>
   </div>
