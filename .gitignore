@@ -22,3 +22,7 @@ Thumbs.db
 # OS files
 ehthumbs.db
 Icon?
+
+# Prevent accidental top-level assets/templates (use beslock-custom/)
+/assets/
+/templates/
