@@ -156,6 +156,49 @@
   }
 
   // ===== Mobile menu (idempotent) =====
+  /*
+   * Dynamic loader for the mobile menu script
+   * - Ensures `menu-products-mobile.js` is loaded when needed even if server
+   *   did not enqueue it (desktop loads without mobile assets).
+   * - Loads on first click of the menu button or proactively when viewport is small.
+   */
+  (function(){
+    var MENU_SCRIPT = '/wp-content/themes/beslock-custom/assets/js/menu-products-mobile.js';
+    function isMobileViewport(){ return window.innerWidth <= 900; }
+    function scriptPresent(){ return !!(window.beslock && window.beslock.drawer) || document.querySelector('script[src*="menu-products-mobile"]') || document.querySelector('script[data-beslock-menu-loader]'); }
+    function loadMenuScript(cb){
+      if (scriptPresent()) { if (cb) cb(); return; }
+      // prevent duplicate insertion
+      if (document.querySelector('script[data-beslock-menu-loader]')) { if (cb) cb(); return; }
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = MENU_SCRIPT;
+      s.setAttribute('data-beslock-menu-loader','1');
+      s.onload = function(){ console.log('beslock: menu-products-mobile.js loaded'); if (cb) cb(); };
+      s.onerror = function(){ console.warn('beslock: failed to load menu-products-mobile.js'); if (cb) cb && cb(new Error('load failed')); };
+      (document.head || document.documentElement).appendChild(s);
+    }
+
+    // delegated click: if user clicks menu button and script not present, load it and open
+    document.addEventListener('click', function onDocClick(e){
+      try {
+        var sel = '#menuBtn, button.header__icon.header__icon--menu, .menu-toggle';
+        var t = e.target;
+        if (!t) return;
+        var hit = (t.matches && t.matches(sel)) || (t.closest && t.closest(sel));
+        if (!hit) return;
+        // load script and attempt to open drawer after load
+        loadMenuScript(function(err){
+          try { if (!err && window.beslock && window.beslock.drawer && typeof window.beslock.drawer.open === 'function') window.beslock.drawer.open(); }
+          catch (ex) { /* ignore */ }
+        });
+      } catch (e) {}
+    }, true);
+
+    // proactively load for small viewports
+    try { if (isMobileViewport()) loadMenuScript(); } catch(e){}
+    window.addEventListener('resize', function(){ try { if (isMobileViewport()) loadMenuScript(); } catch(e){} });
+  })();
   function mobileMenuInit() {
     // If another menu script is present (menu-products-mobile.js), skip init to avoid double handlers.
     if (document.querySelector('script[src*="menu-products-mobile"]') && !window.__beslock_force_main_menu_init) {
