@@ -1,0 +1,93 @@
+<?php
+// /wp-content/themes/beslock-custom/menu-simple.php
+// Partial minimal para drawer móvil — SOLO el drawer (no incluye botón de abrir)
+// Asegúrate de que el botón de apertura esté en header.php con id="menuBtn".
+?>
+<!-- Drawer principal: no incluye botón de apertura (ese está en header.php) -->
+<nav id="mobileDrawer" class="mobile-drawer" aria-hidden="true" role="dialog" aria-label="<?php esc_attr_e('Mobile menu', 'beslock'); ?>">
+  <div class="mobile-drawer__panel" role="document">
+    <!-- Drawer header: close/back button at left and centered logo (same height as main header) -->
+    <div class="drawer-header" role="banner">
+      <!-- Close/back button placed at the left side of the header -->
+      <button id="closeDrawer" class="mobile-drawer__close" aria-label="<?php esc_attr_e('Close menu', 'beslock'); ?>">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        <span class="screen-reader-text"><?php esc_html_e('Back', 'beslock'); ?></span>
+      </button>
+
+      <!-- Centered logo (positioned absolutely to match header behavior) -->
+      <a class="drawer__logo" href="<?php echo esc_url( home_url('/') ); ?>" aria-label="<?php esc_attr_e('Home', 'beslock'); ?>">
+        <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-green.png' ); ?>" alt="<?php esc_attr_e('BESLOCK Logo', 'beslock'); ?>" />
+      </a>
+    </div>
+
+    <ul class="mobile-menu" role="menu">
+      <li class="mobile-menu__item" role="none">
+        <button class="mobile-menu__link mobile-menu__link--products" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem">
+          <?php esc_html_e('Products', 'beslock'); ?> <span class="chev" aria-hidden="true">›</span>
+        </button>
+
+        <?php
+        /**
+         * Panel semántico para Products.
+         * - Oculto por defecto (aria-hidden="true")
+         * - id="productsPanel" enlazado desde aria-controls en el botón
+         * - role="region" para describir área del drawer que contiene el contenido de Products
+         * - Contenido provisto por template-part: templates/models-mobile.php
+         *
+         * Nota: la visibilidad se controla con aria-* y clases (.models--hidden / .models--visible).
+         */
+        ?>
+        <div id="productsPanel" class="mobile-products-panel models models--hidden" role="region" aria-hidden="true" aria-labelledby="productsToggle">
+          <?php
+            // Cargamos el template-part con las tarjetas (models)
+            get_template_part( 'templates/models-mobile' );
+          ?>
+        </div>
+      </li>
+
+      <!-- Reemplazado: nuevos items según captura (Products permanece sin cambios) -->
+      <li class="mobile-menu__item" role="none">
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/orders') ); ?>" role="menuitem">
+          <i class="bi bi-truck" aria-hidden="true"></i>
+          <span class="mobile-menu__content">
+            <span class="mobile-menu__title"><?php esc_html_e('Track your Orders', 'beslock'); ?></span>
+            <span class="mobile-menu__subtitle"><?php esc_html_e('Get online updated status', 'beslock'); ?></span>
+          </span>
+        </a>
+      </li>
+
+      <li class="mobile-menu__item" role="none">
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/offers') ); ?>" role="menuitem">
+          <i class="bi bi-percent" aria-hidden="true"></i>
+          <span class="mobile-menu__content">
+            <span class="mobile-menu__title"><?php esc_html_e('Catch our Limited Offers', 'beslock'); ?></span>
+            <span class="mobile-menu__subtitle"><?php esc_html_e('Save and boost profits', 'beslock'); ?></span>
+          </span>
+        </a>
+      </li>
+
+      <li class="mobile-menu__item" role="none">
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/contact') ); ?>" role="menuitem">
+          <i class="bi bi-headset" aria-hidden="true"></i>
+          <span class="mobile-menu__content">
+            <span class="mobile-menu__title"><?php esc_html_e('Contact us Now', 'beslock'); ?></span>
+            <span class="mobile-menu__subtitle"><?php esc_html_e('We are right back with you', 'beslock'); ?></span>
+          </span>
+        </a>
+      </li>
+
+      <li class="mobile-menu__item" role="none">
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/docs') ); ?>" role="menuitem">
+          <i class="bi bi-hand-thumbs-up" aria-hidden="true"></i>
+          <span class="mobile-menu__content">
+            <span class="mobile-menu__title"><?php esc_html_e('Technical Documentation', 'beslock'); ?></span>
+            <span class="mobile-menu__subtitle"><?php esc_html_e('Top products on specifications', 'beslock'); ?></span>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Backdrop para cerrar tocando afuera -->
+  <div class="mobile-drawer__backdrop" id="drawerBackdrop" tabindex="-1" aria-hidden="true"></div>
+</nav>
