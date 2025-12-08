@@ -242,6 +242,18 @@ nav#mobileDrawer #productsToggle {
   padding-right: 0.25rem !important;
 }
 
+/* Remove any background/rounded box on the Products toggle so it appears as plain text. */
+nav#mobileDrawer #productsToggle,
+nav#mobileDrawer button#productsToggle,
+nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0.6rem 0 !important;
+  margin: 0 !important;
+  color: var(--menu-link-color) !important;
+}
+
 /* Products chevron (controlado por JS) */
 nav#mobileDrawer .products-chevron {
   display: inline-flex;

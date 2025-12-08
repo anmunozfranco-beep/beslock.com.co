@@ -1,5 +1,5 @@
 <section class="hero section reveal">
-  <video autoplay muted loop playsinline class="hero__video">
+  <video autoplay muted loop playsinline class="hero__video" preload="metadata">
     <source src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/hero.mp4" type="video/mp4">
   </video>
   <div class="hero__overlay"></div>
