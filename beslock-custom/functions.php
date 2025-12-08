@@ -133,12 +133,3 @@ add_action( 'wp_enqueue_scripts', function() {
 
 });
 
-// Temporary inline override: ensure Products toggle has no background/border/hover
-// This helps live sites where cached/combined CSS may still apply an unwanted style.
-add_action('wp_head', function() {
-  echo "<style id=\"beslock-products-toggle-override\">\n" .
-       "#productsToggle, button#productsToggle, .mobile-menu__item > button#productsToggle.mobile-menu__link, .mobile-menu__item > a#productsToggle { background: transparent !important; border: none !important; box-shadow: none !important; outline: none !important; }\n" .
-       "#productsToggle:hover, button#productsToggle:hover, #productsToggle:active, button#productsToggle:active, #productsToggle:focus, button#productsToggle:focus { background: transparent !important; border: none !important; box-shadow: none !important; outline: none !important; }\n" .
-       "#productsToggle::before, #productsToggle::after, button#productsToggle::before, button#productsToggle::after { background: transparent !important; content: none !important; }\n" .
-       "</style>";
-}, 9999);
