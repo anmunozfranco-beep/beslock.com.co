@@ -529,6 +529,27 @@
       initProductsToggle();
       setCloseMode('close');
     }, 60);
+
+    // Runtime safeguard: apply inline override to #productsToggle to ensure
+    // no background/border/box-shadow is visible even if a stale CSS is served.
+    // Using inline styles with !important via setProperty guarantees highest priority.
+    (function applyProductsToggleInlineOverride(){
+      try {
+        var t = document.getElementById('productsToggle') || document.querySelector('button#productsToggle');
+        if (!t) return;
+        t.style.setProperty('background', 'transparent', 'important');
+        t.style.setProperty('border', 'none', 'important');
+        t.style.setProperty('box-shadow', 'none', 'important');
+        t.style.setProperty('outline', 'none', 'important');
+        // remove any hover-like inline styles that may be present from other scripts
+        t.addEventListener('mouseover', function(){
+          try { t.style.setProperty('background', 'transparent', 'important'); } catch(e){}
+        }, { passive: true });
+        t.addEventListener('focus', function(){
+          try { t.style.setProperty('outline', 'none', 'important'); } catch(e){}
+        }, { passive: true });
+      } catch (e) {}
+    })();
   }
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
