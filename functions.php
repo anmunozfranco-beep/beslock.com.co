@@ -104,6 +104,17 @@ add_action( 'wp_enqueue_scripts', function() {
     true
   );
 
+  // Expose the mobile menu script path to `main.js` so the client-side
+  // loader can load it dynamically when needed (avoids hardcoded paths).
+  $menu_js_url = $theme_dir_uri . '/assets/js/menu-products-mobile.js';
+  wp_localize_script(
+    'beslock-main-js',
+    'beslock_settings',
+    array(
+      'menuProductsScript' => $menu_js_url,
+    )
+  );
+
   /* -------------------------------
    * JS ESPECÍFICO PARA MENÚ PRODUCTOS MÓVIL
    * (encolado sólo en móvil; depende del main JS para asegurar orden)

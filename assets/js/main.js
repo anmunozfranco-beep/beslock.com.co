@@ -163,7 +163,7 @@
    * - Loads on first click of the menu button or proactively when viewport is small.
    */
   (function(){
-    var MENU_SCRIPT = '/wp-content/themes/beslock-custom/assets/js/menu-products-mobile.js';
+    var MENU_SCRIPT = (window.beslock_settings && window.beslock_settings.menuProductsScript) || '/wp-content/themes/beslock-custom/assets/js/menu-products-mobile.js';
     function isMobileViewport(){ return window.innerWidth <= 900; }
     function scriptPresent(){ return !!(window.beslock && window.beslock.drawer) || document.querySelector('script[src*="menu-products-mobile"]') || document.querySelector('script[data-beslock-menu-loader]'); }
     function loadMenuScript(cb){
