@@ -47,31 +47,30 @@ add_action( 'wp_enqueue_scripts', function() {
 
   /* -------------------------------
    * CSS ESPECÍFICO PARA MENÚ PRODUCTOS MÓVIL
-   * Encolamos siempre el CSS del menú y de models para que la vista
-   * responsive sea consistente tanto en inspector como en acceso directo
-   * desde escritorio. Los scripts móviles continúan siendo encolados
-   * únicamente cuando wp_is_mobile() devuelve true (se mantienen abajo).
+   * (solo en móvil para optimizar; quita wp_is_mobile() si quieres cargar siempre)
    * ------------------------------- */
-  $menu_css_path = $theme_dir_path . '/assets/css/menu-products-mobile.css';
-  $ver_menu_css = file_exists( $menu_css_path ) ? filemtime( $menu_css_path ) : null;
+  if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() ) {
+    $menu_css_path = $theme_dir_path . '/assets/css/menu-products-mobile.css';
+    $ver_menu_css = file_exists( $menu_css_path ) ? filemtime( $menu_css_path ) : null;
 
-  wp_enqueue_style(
-    'beslock-menu-products-mobile',
-    $theme_dir_uri . '/assets/css/menu-products-mobile.css',
-    [ 'beslock-main-style' ],
-    $ver_menu_css
-  );
+    wp_enqueue_style(
+      'beslock-menu-products-mobile',
+      $theme_dir_uri . '/assets/css/menu-products-mobile.css',
+      [ 'beslock-main-style' ],
+      $ver_menu_css
+    );
 
-  // CSS del nuevo componente models (mobile)
-  $models_css_path = $theme_dir_path . '/assets/css/models-mobile.css';
-  $ver_models_css = file_exists( $models_css_path ) ? filemtime( $models_css_path ) : null;
+    // CSS del nuevo componente models (mobile)
+    $models_css_path = $theme_dir_path . '/assets/css/models-mobile.css';
+    $ver_models_css = file_exists( $models_css_path ) ? filemtime( $models_css_path ) : null;
 
-  wp_enqueue_style(
-    'beslock-models-mobile',
-    $theme_dir_uri . '/assets/css/models-mobile.css',
-    [ 'beslock-main-style', 'beslock-menu-products-mobile' ],
-    $ver_models_css
-  );
+    wp_enqueue_style(
+      'beslock-models-mobile',
+      $theme_dir_uri . '/assets/css/models-mobile.css',
+      [ 'beslock-main-style', 'beslock-menu-products-mobile' ],
+      $ver_models_css
+    );
+  }
 
   /* -------------------------------
    * GSAP + ScrollTrigger desde CDN
