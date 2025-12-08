@@ -1,0 +1,474 @@
+:root {
+  --beslock-black:      #070505;
+  --beslock-white:      #FFFFFF;
+  --beslock-text-main:  #070505;
+  --beslock-text-sec:   #444444;
+  --beslock-bg-1:       #F2F2F2;
+  --beslock-bg-2:       #C9CACA;
+  --beslock-green:      #034526;
+  --beslock-green-lite: #046739;
+
+  /* Nota: No definimos aquí --site-logo-height porque lo atamos al header (ver más abajo).
+     Si prefieres, puedes establecer un valor global aquí, por ejemplo:
+     --site-logo-height: 38px;
+  */
+}
+
+/* ========== RESET Y BASE ========== */
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+  /* Disable global smooth scroll to avoid jumpy behaviour with mouse wheel.
+     Programmatic smooth scrolling is handled selectively in JS for anchors. */
+  scroll-behavior: auto;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: var(--beslock-bg-1);
+  color: var(--beslock-text-main);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* ========== CONTENEDOR UNIVERSAL ========== */
+.u-container {
+  width: 100%;
+  max-width: 540px;
+  padding: 0 1.25rem;
+  margin: 0 auto;
+}
+@media (min-width: 768px) {
+  .u-container {
+    max-width: 860px;
+    padding: 0 2rem;
+  }
+}
+@media (min-width: 1200px) {
+  .u-container {
+    max-width: 1180px;
+    padding: 0 2.5rem;
+  }
+}
+
+/* ========== SECCIÓN BASE ========== */
+.section {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+.section--lined {
+  position: relative;
+}
+.section--lined::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2rem;
+  bottom: 2rem;
+  width: 3px;
+  background: var(--beslock-bg-2);
+  border-radius: 3px;
+  z-index: 1;
+  display: none;
+}
+@media (min-width: 600px) {
+  .section--lined::before {
+    display: block;
+  }
+  .section--lined .u-container {
+    padding-left: 2rem;
+  }
+}
+
+/* ========== HEADER & FOOTER ========== */
+/* Nota: tu regla original aplicaba position: sticky tanto a header como a .footer.
+   Dejamos esa regla, pero creamos una clase .site-footer que *anula* lo sticky
+   y aplica el diseño concreto del footer que ahora queremos usar. */
+.header,
+.footer {
+  background: var(--beslock-bg-2);
+  color: var(--beslock-black);
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  opacity: 1;
+  transform: scaleY(1);
+}
+.header.header--scrolled {
+  opacity: 0.25; /* 25% */
+  /*transform: scaleY(0.7);  Altura reducida al 70% */
+}
+.header *,
+.header.header--scrolled * {
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.logo, .header__logo {
+  color: var(--beslock-green);
+  font-size: 1.9rem;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  margin: 0;
+  padding: 1.4rem 0 1.1rem 0;
+  text-align: left;
+}
+.header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0.4rem 0;
+  gap: 0.5rem;
+}
+.header__icon {
+  background: none;
+  border: none;
+  color: var(--beslock-green);
+  font-size: 2rem;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.18s;
+}
+.header__icon--menu {}
+.header__icon--cart {}
+
+.header__logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+}
+/* ---------- Aquí enlazamos la variable --site-logo-height al header ---------- */
+/* Definimos la variable en el elemento que controla el tamaño del logo del header.
+   Si el header cambia, actualiza estos valores (32px / 38px). */
+.header__logo img {
+  height: 32px;
+  display: block;
+  /* variable usada por el footer (fallback: 32px) */
+  --site-logo-height: 32px;
+  height: var(--site-logo-height);
+}
+.header__logo img.invert {
+  filter: invert(1) brightness(2);
+}
+@media (min-width: 600px) {
+  .header__bar {
+    padding: 0.7rem 0;
+  }
+  /* en pantallas >=600px actualizamos la variable al nuevo tamaño */
+  .header__logo img {
+    --site-logo-height: 38px;
+    height: var(--site-logo-height);
+  }
+}
+
+/* ========== BOTONES PRINCIPALES ========== */
+.btn, .beslock-btn, .discover__btn {
+  display: inline-block;
+  background: var(--beslock-bg-2);
+  color: var(--beslock-green);
+  border-radius: 24px;
+  border: 2px solid var(--beslock-bg-2);
+  padding: 0.92em 2em;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  font-size: 1.09rem;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+  cursor: pointer;
+  outline: none;
+}
+.btn:hover,
+.beslock-btn:hover,
+.discover__btn:hover,
+.btn:active,
+.beslock-btn:active,
+.discover__btn:active,
+.btn:focus,
+.beslock-btn:focus,
+.discover__btn:focus {
+  background: var(--beslock-bg-2);
+  color: var(--beslock-green-lite);
+  border: 2px solid var(--beslock-green-lite);
+}
+
+/* ========== HERO: BOTÓN CONTRASTE INVERTIDO ========== */
+.hero__cta {
+  display: inline-block;
+  background: var(--beslock-white);
+  color: var(--beslock-green);
+  border: 2px solid var(--beslock-green);
+  border-radius: 24px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  font-size: 1.09rem;
+  padding: 0.92em 2em;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+  box-shadow: 0 4px 16px rgba(7,5,5,0.08);
+  cursor: pointer;
+  outline: none;
+}
+.hero__cta:hover,
+.hero__cta:active,
+.hero__cta:focus {
+  background: var(--beslock-bg-2);
+  color: var(--beslock-green-lite);
+  border: 2px solid var(--beslock-green-lite);
+}
+
+/* ========== HERO ========== */
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 74vh;
+  background: var(--beslock-bg-2);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  color: var(--beslock-black);
+  overflow: hidden;
+}
+.hero__video {
+  position: absolute;
+  z-index: 0;
+  top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.77;
+  pointer-events: none;
+}
+.hero__overlay {
+  position: absolute;
+  z-index: 1;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+.hero__overlay::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 40%;
+  background: linear-gradient(
+    to top,
+    rgba(201,202,202,0.94) 0%,
+    rgba(201,202,202,0.55) 40%,
+    rgba(201,202,202,0.0) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+.hero__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 3rem auto;
+  padding: 0 1rem;
+}
+.hero__title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  color: var(--beslock-green);
+  margin-bottom: 0.7rem;
+}
+.hero__subtitle {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--beslock-black);
+  margin-bottom: 1.8rem;
+  text-align: center;
+}
+
+/* ========== DISCOVER ========== */
+.discover {
+  background: var(--beslock-white);
+  color: var(--beslock-text-main);
+}
+.discover__block {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: stretch;
+}
+.discover__text {
+  text-align: left;
+}
+.discover__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--beslock-text-main);
+  margin-bottom: 1rem;
+}
+.discover__title span {
+  color: var(--beslock-green);
+}
+.discover__desc {
+  color: var(--beslock-text-sec);
+  margin-bottom: 1.35rem;
+  font-size: 1rem;
+  text-align: justify;
+}
+.discover__image {
+  text-align: center;
+  width: 100%;
+}
+.discover__image img {
+  width: 100%;
+  max-width: 370px;
+  border-radius: 16px;
+  box-shadow: 0 6px 26px rgba(0,0,0,0.10);
+}
+@media (min-width: 768px) {
+  .discover__block {
+    flex-direction: row;
+    gap: 3.5rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .discover__text {
+    flex: 1 1 330px;
+  }
+  .discover__image {
+    flex: 1 1 330px;
+  }
+}
+
+/* ========== PRODUCT PORTFOLIO CARDS ========== */
+.products-portfolio__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+@media (min-width: 600px) {
+  .products-portfolio__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .product-card {
+    flex: 1 1 270px;
+    max-width: 300px;
+  }
+}
+.product-card {
+  background: var(--beslock-white);
+  border-radius: 20px;
+  box-shadow: 0 2px 18px rgba(7,5,5,0.09);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow .20s;
+}
+.product-card:hover {
+  box-shadow: 0 8px 30px rgba(7,5,5,0.12);
+}
+.product-card__image {
+  padding-top: 34px;    /* 85% del padding vertical (antes solo abajo) */
+  padding-bottom: 6px;  /* 15% del padding vertical (antes solo abajo) */
+  /* Ajusta estos valores si el padding total debe ser mayor o menor */
+}
+.product-card__image img {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 16px 16px 0 0;
+  display: block;
+}
+.product-card__content {
+  padding: 1rem 1.2rem 1.5rem;
+  text-align: center;
+}
+.product-card__title {
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  color: var(--beslock-green);
+}
+.product-card__desc {
+  color: var(--beslock-text-sec);
+  font-size: 0.96rem;
+  min-height: 50px;
+  margin-bottom: 1rem;
+}
+.product-card__btn {
+  margin-top: 1rem;
+}
+
+/* ========== DETALLE VISUAL SUAVE EN SECCIONES GRANDES ========== */
+@media (min-width: 510px) {
+  .hero__content,
+  .discover__text,
+  .product-card__content {
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(0.5px);
+  }
+}
+
+/* ========== ANIMACIÓN REVEAL ========== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+/* ========== FOOTER ESPECÍFICO (site-footer) ========== */
+/* .footer (global) se mantiene por compatibilidad, pero .site-footer
+   anula lo que haga falta para el footer real que usamos en footer.php */
+.site-footer {
+  background: transparent; /* deja el fondo del tema */
+  color: var(--beslock-text-main);
+  padding: 2rem 0;
+  text-align: center;
+  position: static; /* importante: anulamos sticky si heredó */
+  top: auto;
+  z-index: auto;
+}
+
+/* Footer logo: tamaño = 40% del logo del header (usamos --site-logo-height) */
+/* Aquí usamos la variable definida en .header__logo img (fallback 32px) */
+.footer-logo {
+  display: inline-block;
+  height: calc(var(--site-logo-height, 32px) * 0.85);
+  width: auto;
+  max-width: 40vw; /* protección en pantallas muy pequeñas */
+  vertical-align: middle;
+  -webkit-user-drag: none;
+  user-select: none;
+  object-fit: contain;
+}
+
+/* Si necesitas una variante que use width (en lugar de height), descomenta y ajusta:
+.footer-logo { width: calc(var(--site-logo-width, 128px) * 0.4); height: auto; }
+*/
+
+/* Ajustes adicionales visuales */
+.site-footer .u-container {
+  padding: 2rem 0;
+}
+.site-footer .footer-copy {
+  margin-top: 0.6rem;
+  color: var(--beslock-text-sec);
+  font-size: 0.95rem;
+}
+
+/* Responsive: si quieres cambiar el ratio en pantallas grandes */
+@media (min-width: 900px) {
+  .footer-logo {
+    /* ejemplo: en desktop el footer usa 40% pero del header mayor */
+    height: calc(var(--site-logo-height, 32px) * 0.4);
+  }
+}
