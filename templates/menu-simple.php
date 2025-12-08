@@ -22,7 +22,7 @@
 
     <ul class="mobile-menu" role="menu">
       <li class="mobile-menu__item" role="none">
-        <button class="mobile-menu__link" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem">
+        <button class="mobile-menu__link mobile-menu__link--products" id="productsToggle" aria-expanded="false" aria-controls="productsPanel" role="menuitem">
           <?php esc_html_e('Products', 'beslock'); ?> <span class="chev" aria-hidden="true">›</span>
         </button>
 

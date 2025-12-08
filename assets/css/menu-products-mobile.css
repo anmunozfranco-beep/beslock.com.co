@@ -254,6 +254,26 @@ nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link {
   color: var(--menu-link-color) !important;
 }
 
+/* Target the dedicated modifier class for the Products toggle (BEM).
+   This prevents global button styles from affecting this control. */
+nav#mobileDrawer .mobile-menu__link--products,
+nav#mobileDrawer .mobile-menu__link--products:hover,
+nav#mobileDrawer .mobile-menu__link--products:active,
+nav#mobileDrawer .mobile-menu__link--products:focus,
+nav#mobileDrawer .mobile-menu__link--products:focus-visible {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Ensure pseudo-elements don't draw boxes either */
+nav#mobileDrawer .mobile-menu__link--products::before,
+nav#mobileDrawer .mobile-menu__link--products::after {
+  content: none !important;
+  background: transparent !important;
+}
+
 /* Strong override: remove any focus/hover/active background or border applied by theme
    (covers pseudo-elements and accessibility :focus-visible). */
 nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link,
