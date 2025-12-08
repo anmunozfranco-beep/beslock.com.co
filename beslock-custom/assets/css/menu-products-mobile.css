@@ -112,11 +112,7 @@ nav#mobileDrawer.is-open .mobile-drawer__backdrop,
 }
 
 /* Menu principal: items */
-/* Menu principal: items */
-/* We make the menu a column flex container and give it 70vh so items
-  distribute vertically filling ~70% of the viewport height. This
-  places the last item near the 70% mark as requested. */
-nav#mobileDrawer .mobile-menu { margin: 0; padding: 0; display: flex !important; flex-direction: column !important; justify-content: space-between !important; height: 70vh !important; box-sizing: border-box !important; }
+nav#mobileDrawer .mobile-menu { margin: 0; padding: 0; }
 nav#mobileDrawer .mobile-menu__item {
   list-style: none !important;
   margin: 0 !important;
@@ -144,101 +140,12 @@ nav#mobileDrawer .mobile-menu__item .mobile-menu__link--plain {
   border-bottom: none !important;
 }
 
-/* Layout for icon + title + subtitle rows (as in design screenshot) */
-nav#mobileDrawer .mobile-menu__link {
-  display: flex !important;
-  align-items: flex-start !important; /* align icon with the top/title line */
-  gap: 1rem !important;
-  padding: 0.6rem 0.25rem !important;
-  width: 100% !important;
-  border-radius: 8px !important;
-  transition: background-color 180ms ease, transform 120ms ease;
-}
-
-/* Icon styling: slightly larger, dark neutral color matching screenshot */
-nav#mobileDrawer .mobile-menu__link i.bi {
-  font-size: 1.7rem !important;
-  line-height: 1 !important;
-  color: #0b2b36 !important; /* dark navy-ish for icons */
-  min-width: 38px !important;
-  text-align: center !important;
-  pointer-events: none !important; /* decorative icon shouldn't intercept taps */
-}
-
-/* Force icon to align with the top of the text block (higher specificity) */
-nav#mobileDrawer .mobile-menu__link > i.bi,
-nav#mobileDrawer .mobile-menu__item > a.mobile-menu__link > i.bi,
-nav#mobileDrawer .mobile-menu__item > button.mobile-menu__link > i.bi {
-  align-self: flex-start !important;
-  display: inline-block !important;
-  margin-top: 0.18rem !important; /* small visual nudge */
-}
-
-/* Legacy safety: if any other rule forces centering via line-height/vertical-align, unset it */
-nav#mobileDrawer .mobile-menu__link i.bi { vertical-align: top !important; }
-
-/* Ensure non-Products rows align icon/text to top even if another rule applies
-   Products (#productsToggle) keeps its centered behavior. This selector is
-   specific and uses :not(#productsToggle) to avoid affecting Products. */
-nav#mobileDrawer .mobile-menu__item > a.mobile-menu__link:not(#productsToggle),
-nav#mobileDrawer .mobile-menu__item > button.mobile-menu__link:not(#productsToggle) {
-  display: flex !important;
-  align-items: flex-start !important;
-}
-nav#mobileDrawer .mobile-menu__item > a.mobile-menu__link:not(#productsToggle) > i.bi,
-nav#mobileDrawer .mobile-menu__item > button.mobile-menu__link:not(#productsToggle) > i.bi {
-  align-self: flex-start !important;
-  margin-top: 0.18rem !important;
-}
-
-nav#mobileDrawer .mobile-menu__content {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-}
-
-.mobile-menu__title {
-  font-size: 1.08rem !important;
-  font-weight: 700 !important;
-  color: #0b2b36 !important; /* stronger dark for title */
-  line-height: 1.05 !important;
-}
-
-.mobile-menu__subtitle {
-  font-size: 0.95rem !important;
-  font-weight: 400 !important;
-  color: #6f7d87 !important; /* muted blue/grey for subtitle */
-  margin-top: 0.14rem !important;
-  opacity: 0.95 !important;
-}
-
-/* subtle divider between rows to match capture spacing */
-nav#mobileDrawer .mobile-menu__item { padding: 0.45rem 0 !important; }
-nav#mobileDrawer .mobile-menu__item + .mobile-menu__item { border-top: 1px solid rgba(11,43,54,0.04) !important; }
-
-/* Hover / Active interactions */
-@media (pointer: fine) {
-  nav#mobileDrawer .mobile-menu__link:hover {
-    background: rgba(11,43,54,0.04) !important; /* soft navy tint */
-    transform: translateY(-1px) !important;
-  }
-}
-nav#mobileDrawer .mobile-menu__link:active {
-  background: rgba(11,43,54,0.06) !important;
-  transform: scale(0.998) !important;
-}
-
-/* Small adjustment for chevron / products row (keep original spacing) */
-nav#mobileDrawer #productsToggle .chev,
-nav#mobileDrawer .products-chevron { margin-left: 0.45rem !important; }
-
-/* Products row: keep chevron next to the word 'Products' (not pushed to far right) */
+/* Products row */
 nav#mobileDrawer .mobile-menu__item .mobile-menu__link--has-chevron,
 nav#mobileDrawer #productsToggle {
-  display: inline-flex !important;
-  align-items: center !important; /* keep Products centered vertically */
-  justify-content: flex-start !important;
-  gap: 0.45rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   padding-right: 0.25rem !important;
 }
 
@@ -416,4 +323,24 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
   width: 1px; height: 1px;
   padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Strong override to ensure Products control has no background, border or shadow
+   across all viewports. This defends against parent theme/global BEM button rules. */
+#productsToggle,
+.mobile-menu__link--products,
+.mobile-menu__link--products *,
+button#productsToggle {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+#productsToggle::before,
+#productsToggle::after,
+.mobile-menu__link--products::before,
+.mobile-menu__link--products::after {
+  display: none !important;
+  content: none !important;
 }
