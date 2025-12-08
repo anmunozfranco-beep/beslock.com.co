@@ -89,20 +89,23 @@ body {
 .footer {
   background: var(--beslock-bg-2);
   color: var(--beslock-black);
-  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  /* transition only the properties we animate for better performance */
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s cubic-bezier(0.4,0,0.2,1);
   position: sticky;
   top: 0;
   z-index: 100;
   opacity: 1;
-  transform: scaleY(1);
+  transform: scale(1);
+  transform-origin: top center; /* scale from the top so header 'shrinks' toward content */
+  will-change: transform, opacity;
 }
+
 .header.header--scrolled {
-  opacity: 0.95;
-  /* Reduce visual height by 25% (scale to 75%) while keeping it sticky.
-     We scale the header visually and reduce inner paddings and logo size
-     using more specific rules below so the layout remains consistent. */
+  /* Mantener la opacidad existente pero reducir la altura visual en 25%.
+     Usamos una escala uniforme para conservar proporciones (no deformar) */
+  opacity: 0.25; /* 25% (mantener comportamiento previo) */
+  transform: scale(0.75); /* reduce size to 75% uniformly */
   transform-origin: top center;
-  transform: scaleY(0.75);
 }
 .header *,
 .header.header--scrolled * {
@@ -171,33 +174,6 @@ body {
     --site-logo-height: 38px;
     height: var(--site-logo-height);
   }
-}
-
-/* ========== Shrink header smoothly on scroll (header--scrolled) ========== */
-/* Smooth transitions for logo and header padding */
-.header__logo img {
-  transition: height 200ms cubic-bezier(.22,.9,.41,1);
-}
-.header__bar {
-  transition: padding 200ms cubic-bezier(.22,.9,.41,1);
-}
-
-/* When header has the scrolled class, reduce paddings and logo size by 25%.
-   We use calc() referencing the runtime variable --site-logo-height so the
-   JS-driven value remains the source of truth. */
-.header.header--scrolled .header__bar {
-  padding-top: calc(0.4rem * 0.75);
-  padding-bottom: calc(0.4rem * 0.75);
-}
-@media (min-width: 600px) {
-  .header.header--scrolled .header__bar {
-    padding-top: calc(0.7rem * 0.75);
-    padding-bottom: calc(0.7rem * 0.75);
-  }
-}
-
-.header.header--scrolled .header__logo img {
-  height: calc(var(--site-logo-height, 32px) * 0.75) !important;
 }
 
 /* ========== BOTONES PRINCIPALES ========== */
