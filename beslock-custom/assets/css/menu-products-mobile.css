@@ -325,22 +325,35 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* Strong override to ensure Products control has no background, border or shadow
-   across all viewports. This defends against parent theme/global BEM button rules. */
+/* ==========================
+   Overrides: remove background and border from "Products" control
+   Forces transparent background, no border, and no box-shadow so the
+   Products button matches the mobile design across all viewports.
+   ========================== */
 #productsToggle,
-.mobile-menu__link--products,
-.mobile-menu__link--products *,
+.mobile-menu__link,
+.mobile-menu__link:focus,
+.mobile-menu__link:hover,
+.mobile-menu__item > .mobile-menu__link,
 button#productsToggle {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
+  color: var(--menu-link-color) !important;
 }
 
+/* Remove any pseudo elements that could render a background/border */
 #productsToggle::before,
 #productsToggle::after,
-.mobile-menu__link--products::before,
-.mobile-menu__link--products::after {
+.mobile-menu__link::before,
+.mobile-menu__link::after {
   display: none !important;
   content: none !important;
+}
+
+/* If parent rules add padding + background, ensure padding preserved but transparent */
+#productsToggle,
+.mobile-menu__link {
+  padding: 0 !important;
 }

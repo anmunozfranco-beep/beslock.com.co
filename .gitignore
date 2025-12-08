@@ -26,3 +26,8 @@ Icon?
 # Prevent accidental top-level assets/templates (use beslock-custom/)
 /assets/
 /templates/
+
+# Docker / local
+wp-uploads/
+db_data/
+.env

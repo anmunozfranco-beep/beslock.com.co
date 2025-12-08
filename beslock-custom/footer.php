@@ -1,8 +1,8 @@
 <?php
 // /wp-content/themes/beslock-custom/footer.php
 // Footer minimal con logo blanco centrado.
-// Incluye aquè´ø los elementos que removimos del header: el script de sticky header,
-// la sincronizaciè´—n de la variable CSS del logo (para que el footer calcule 40%),
+// Incluye aquÔøΩÔøΩÔøΩ los elementos que removimos del header: el script de sticky header,
+// la sincronizaciÔøΩÔøΩÔøΩn de la variable CSS del logo (para que el footer calcule 40%),
 // y la llamada a wp_footer() seguida de los cierres </body></html>.
 ?>
 <footer class="site-footer">
@@ -36,19 +36,19 @@
   }
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  // Sincroniza el tamaè´–o del logo del header con la variable CSS --site-logo-height
+  // Sincroniza el tamaÔøΩÔøΩÔøΩo del logo del header con la variable CSS --site-logo-height
   // para que el footer pueda usar calc(var(--site-logo-height) * 0.4)
   function updateSiteLogoHeight() {
     var logo = document.querySelector('.header__logo img');
     if (!logo) return;
-    // Si la imagen aè´‚n no tiene tamaè´–o, intenta esperar a load
+    // Si la imagen aÔøΩÔøΩÔøΩn no tiene tamaÔøΩÔøΩÔøΩo, intenta esperar a load
     var setVar = function() {
       var h = logo.clientHeight || logo.naturalHeight || 0;
       if (h && h > 0) {
         document.documentElement.style.setProperty('--site-logo-height', h + 'px');
       }
     };
-    // Si la imagen ya estè´° cargada
+    // Si la imagen ya estÔøΩÔøΩÔøΩ cargada
     if (logo.complete) {
       setVar();
     } else {
@@ -73,3 +73,42 @@
 <?php wp_footer(); ?>
 </body>
 </html>
+
+<script>
+// Fallback ligero: si por alguna raz√≥n no se inicializ√≥ el drawer JS, este handler
+// garantiza que el bot√≥n del men√∫ abra/cierre el drawer de forma b√°sica.
+(function(){
+  function initFallback() {
+    try {
+      var menuBtn = document.getElementById('menuBtn');
+      var mobileDrawer = document.getElementById('mobileDrawer');
+      var backdrop = document.getElementById('drawerBackdrop') || document.querySelector('.mobile-drawer__backdrop');
+      if (!menuBtn || !mobileDrawer) return;
+
+      // No sobrescribimos si ya existe la API moderna
+      if (window.beslock && window.beslock.drawer && (typeof window.beslock.drawer.open === 'function')) return;
+
+      function open() {
+        mobileDrawer.classList.add('is-open');
+        mobileDrawer.setAttribute('aria-hidden','false');
+        menuBtn.setAttribute('aria-expanded','true');
+        if (backdrop) backdrop.classList.add('backdrop-visible');
+        document.documentElement.classList.add('has-drawer-open');
+        document.body.style.position = 'fixed';
+      }
+      function close() {
+        mobileDrawer.classList.remove('is-open');
+        mobileDrawer.setAttribute('aria-hidden','true');
+        menuBtn.setAttribute('aria-expanded','false');
+        if (backdrop) backdrop.classList.remove('backdrop-visible');
+        document.documentElement.classList.remove('has-drawer-open');
+        document.body.style.position = '';
+      }
+
+      menuBtn.addEventListener('click', function(e){ e && e.preventDefault && e.preventDefault(); if (mobileDrawer.classList.contains('is-open')) close(); else open(); });
+      if (backdrop) backdrop.addEventListener('click', function(e){ e && e.preventDefault && e.preventDefault(); close(); });
+    } catch (e) { /* silent */ }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initFallback); else initFallback();
+})();
+</script>
