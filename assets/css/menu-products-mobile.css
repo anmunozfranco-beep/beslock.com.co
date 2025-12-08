@@ -254,6 +254,45 @@ nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link {
   color: var(--menu-link-color) !important;
 }
 
+/* Strong override: remove any focus/hover/active background or border applied by theme
+   (covers pseudo-elements and accessibility :focus-visible). */
+nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link,
+nav#mobileDrawer button#productsToggle,
+nav#mobileDrawer #productsToggle,
+nav#mobileDrawer #productsToggle::before,
+nav#mobileDrawer #productsToggle::after,
+nav#mobileDrawer button#productsToggle::before,
+nav#mobileDrawer button#productsToggle::after {
+  background: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link:focus,
+nav#mobileDrawer button#productsToggle:focus,
+nav#mobileDrawer #productsToggle:focus,
+nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link:active,
+nav#mobileDrawer button#productsToggle:active,
+nav#mobileDrawer #productsToggle:active,
+nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link:hover,
+nav#mobileDrawer button#productsToggle:hover,
+nav#mobileDrawer #productsToggle:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* If keyboard focus styles are added via :focus-visible, remove them for this control */
+nav#mobileDrawer .mobile-menu__item > button#productsToggle.mobile-menu__link:focus-visible,
+nav#mobileDrawer button#productsToggle:focus-visible,
+nav#mobileDrawer #productsToggle:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Products chevron (controlado por JS) */
 nav#mobileDrawer .products-chevron {
   display: inline-flex;
