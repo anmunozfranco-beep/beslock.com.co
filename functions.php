@@ -21,18 +21,15 @@ if ( ! function_exists( 'beslock_asset_uri' ) ) {
     $root_dir = get_stylesheet_directory();
     $root_uri = get_stylesheet_directory_uri();
 
-    $bc_dir = $root_dir . '/beslock-custom';
-    $bc_uri = $root_uri . '/beslock-custom';
-
     $root_candidate = $root_dir . '/' . ltrim( $relative_path, '/' );
-    $bc_candidate = $bc_dir . '/' . ltrim( $relative_path, '/' );
+    $bc_candidate = $root_dir . '/beslock-custom/' . ltrim( $relative_path, '/' );
 
     if ( file_exists( $root_candidate ) ) {
-      return $root_uri . '/' . ltrim( $relative_path, '/' );
+      return str_replace( $root_dir, $root_uri, $root_candidate );
     }
 
     if ( file_exists( $bc_candidate ) ) {
-      return $bc_uri . '/' . ltrim( $relative_path, '/' );
+      return str_replace( $root_dir, $root_uri, $bc_candidate );
     }
 
     // Fallback to root URI even if missing — allows WP to show 404 for missing resource.
