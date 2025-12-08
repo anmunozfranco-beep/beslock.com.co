@@ -301,6 +301,19 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
   .drawer-header .drawer__logo img { height: var(--site-logo-height, 38px) !important; }
 }
 
+/* Make drawer header match the visual height of the site header
+   We compute height using the site logo variable plus the header bar vertical padding.
+   Mobile: padding 0.4rem top+bottom (0.8rem). Desktop (>=600px): 0.7rem top+bottom (1.4rem). */
+.drawer-header {
+  /* default (mobile) */
+  height: calc(var(--site-logo-height, 32px) + 0.8rem) !important;
+}
+@media (min-width: 600px) {
+  .drawer-header {
+    height: calc(var(--site-logo-height, 38px) + 1.4rem) !important;
+  }
+}
+
 /* Full-width ONLY in small screens (<=768px) */
 @media (max-width: 768px) {
   nav#mobileDrawer .mobile-drawer__panel {
