@@ -89,23 +89,14 @@ body {
 .footer {
   background: var(--beslock-bg-2);
   color: var(--beslock-black);
-  /* transition only the properties we animate for better performance */
-  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s cubic-bezier(0.4,0,0.2,1);
+  transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
   position: sticky;
   top: 0;
   z-index: 100;
   opacity: 1;
-  transform: scale(1);
-  transform-origin: top center; /* scale from the top so header 'shrinks' toward content */
-  will-change: transform, opacity;
 }
-
 .header.header--scrolled {
-  /* Mantener la opacidad existente pero reducir la altura visual en 25%.
-     Usamos una escala uniforme para conservar proporciones (no deformar) */
-  opacity: 0.25; /* 25% (mantener comportamiento previo) */
-  transform: scale(0.75); /* reduce size to 75% uniformly */
-  transform-origin: top center;
+  opacity: 0.25; /* preserve existing opacity animation */
 }
 .header *,
 .header.header--scrolled * {
@@ -127,6 +118,20 @@ body {
   position: relative;
   padding: 0.4rem 0;
   gap: 0.5rem;
+}
+
+/* Scale header content proportionally on scroll without deforming elements.
+   We scale the inner bar so the header background remains full-width while the
+   visible content reduces to 75% (25% smaller). Transform origin at top keeps
+   the shrink visually anchored. */
+.header__bar {
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  transform-origin: top center;
+  will-change: transform;
+}
+
+.header.header--scrolled .header__bar {
+  transform: scale(0.75); /* shrink to 75% of original size */
 }
 .header__icon {
   background: none;
