@@ -69,14 +69,6 @@ nav#mobileDrawer.mobile-drawer {
   pointer-events: none;
 }
 
-/* Ensure the menu button is always above other header elements so clicks reach it */
-.header__icon--menu,
-button#menuBtn {
-  position: relative !important;
-  z-index: 1401 !important;
-  pointer-events: auto !important;
-}
-
 /* Backdrop */
 nav#mobileDrawer .mobile-drawer__backdrop,
 #drawerBackdrop {
