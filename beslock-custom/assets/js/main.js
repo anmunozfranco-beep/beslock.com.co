@@ -469,6 +469,18 @@
       // Ensure overlays start hidden when (re)showing the slide so transitions run on each loop
       ovs.forEach(function(o){ o.classList.remove('overlay--visible'); });
       if (!(vid && ovs.length)) return;
+      // helper to schedule overlays using simple timeouts relative to when playback starts
+      function scheduleOverlaysFromPlaying(){
+        try{
+          ovs.forEach(function(o){
+            try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){}
+            var startAt = parseFloat(o.getAttribute('data-start')); if (isNaN(startAt)) startAt = H.overlayStartAt;
+            var ms = Math.max(0, Math.round(startAt * 1000));
+            var t = setTimeout(function(){ if (!o.classList.contains('overlay--visible')) o.classList.add('overlay--visible'); }, ms);
+            overlayTimeouts.push(t);
+          });
+        }catch(e){}
+      }
       // attach a loop watcher to reset overlays when the video loops internally
       if (!vid._loopWatcher) {
         vid._lastCurrent = typeof vid.currentTime === 'number' ? vid.currentTime : 0;
@@ -495,6 +507,17 @@
           vid._lastCurrent = vid.currentTime;
         };
         vid.addEventListener('timeupdate', vid._loopWatcher, { passive:true });
+      }
+
+      // If overlays need to appear very early (<=~200ms), schedule them from the `playing` event
+      // to avoid relying on low-frequency `timeupdate` ticks immediately after play.
+      var earliest = ovs.reduce(function(acc,o){ var s=parseFloat(o.getAttribute('data-start')); if (isNaN(s)) s=H.overlayStartAt; return Math.min(acc, s); }, Infinity);
+      if (!isNaN(earliest) && earliest <= 0.2) {
+        // remove any existing playing handler
+        try{ if (vid._onPlaying) { vid.removeEventListener('playing', vid._onPlaying); delete vid._onPlaying; } }catch(e){}
+        vid._onPlaying = function(){ scheduleOverlaysFromPlaying(); try{ vid.removeEventListener('playing', vid._onPlaying); delete vid._onPlaying; }catch(e){} };
+        // If already playing or has currentTime > 0, schedule immediately, else wait for playing
+        if (!vid.paused && vid.currentTime > 0) scheduleOverlaysFromPlaying(); else vid.addEventListener('playing', vid._onPlaying, { passive:true });
       }
 
       ovs.forEach(function(ov){
