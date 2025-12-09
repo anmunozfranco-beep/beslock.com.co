@@ -454,8 +454,10 @@
         else { s.classList.remove('is-active'); s.setAttribute('aria-hidden','true'); }
       });
       dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); d.setAttribute('aria-selected', i===idx? 'true':'false'); });
-      // play video for current, pause others
-      slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
+      // play video for current, pause others. Avoid resetting currentTime for
+      // videos that were intentionally set to preload="none" to prevent
+      // forcing a download.
+      slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); if (v.getAttribute('preload') !== 'none') { v.currentTime = 0; } }catch(e){} } });
       // overlay show logic - support multiple overlays per slide, each may have a data-start attribute
       var sl = slides[idx];
       // helper to activate one overlay and immediately hide the others in the same slide

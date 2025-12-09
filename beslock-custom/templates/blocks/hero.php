@@ -40,8 +40,15 @@
       ?>
       <article class="hero-slide" data-index="<?php echo $i; ?>" aria-roledescription="slide" aria-label="Slide <?php echo $i+1; ?>">
         <div class="slide-inner">
-          <video class="slide-video" muted playsinline preload="auto" loop src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>"></video>
-          <img class="slide-overlay" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/' . $ov ); ?>" alt="" aria-hidden="true" />
+          <?php
+            // Use preload="auto" only for the first slide to avoid downloading
+            // all clips at once. Use the overlay image as poster to show a static
+            // fallback while the clip loads.
+            $pre = ($i === 0) ? 'auto' : 'none';
+            $poster = esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/' . $ov );
+          ?>
+          <video class="slide-video" muted playsinline preload="<?php echo $pre; ?>" poster="<?php echo $poster; ?>" loop src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>"></video>
+          <img class="slide-overlay" src="<?php echo $poster; ?>" alt="" aria-hidden="true" loading="lazy" />
           <?php if ($i === 5): // Add second orbit overlay image that enters at 3.55s ?>
             <img class="slide-overlay" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/e-orbit_2_hero.png' ); ?>" data-start="3.55" alt="" aria-hidden="true" />
           <?php endif; ?>
