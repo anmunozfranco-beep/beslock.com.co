@@ -504,11 +504,12 @@ body {
    HERO BESLOCK STYLES (appended)
    ========================== */
 .beslock-hero { position: relative; width:100%; height:85vh; max-height:100vh; overflow:hidden; background:#000; color:#fff; isolation:isolate; }
-.beslock-loader { position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#070505; z-index:9999; transition:opacity 420ms ease, visibility 420ms linear; }
+.beslock-loader { position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#ffffff; z-index:9999; transition:opacity 700ms ease, visibility 700ms linear; }
 .beslock-loader[aria-hidden="true"]{ opacity:0; visibility:hidden; pointer-events:none; }
+.beslock-loader__img{ width:64px; height:64px; display:block; object-fit:contain; }
 .beslock-loader__svg{ width:84px; height:84px; display:block; }
-.beslock-loader__pulse{ position:absolute; width:120px; height:120px; border-radius:50%; background:transparent; --pulse-color: rgba(255,255,255,0.06); box-shadow:0 0 40px var(--pulse-color); animation: loader-pulse 1.6s infinite ease-in-out; pointer-events:none; }
-@keyframes loader-pulse{0%{transform:scale(.95);opacity:.9}50%{transform:scale(1.08);opacity:1}100%{transform:scale(.95);opacity:.9}}
+.beslock-loader__pulse{ position:absolute; width:120px; height:120px; border-radius:50%; background:transparent; --pulse-color: rgba(0,0,0,0.06); box-shadow:0 0 40px var(--pulse-color); animation: loader-pulse 1.6s infinite ease-in-out; pointer-events:none; }
+.@keyframes loader-pulse{0%{transform:scale(.95);opacity:.9}50%{transform:scale(1.08);opacity:1}100%{transform:scale(.95);opacity:.9}}
 .hero-viewport{ position:relative; width:100%; height:100%; opacity:0; transition:opacity 420ms ease; }
 .beslock-hero.ready .hero-viewport{ opacity:1; }
 .hero-slides{ position:absolute; inset:0; width:100%; height:100%; overflow:hidden; }
