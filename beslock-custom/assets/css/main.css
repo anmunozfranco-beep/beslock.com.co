@@ -574,6 +574,34 @@ body {
   100%{ opacity:1; transform:translateY(0); }
 }
 
+/* ==========================
+  PAGE-TURN / BOOK-LIKE TRANSITION
+  ========================== */
+/* Add a subtle 3D page-turn feel using perspective and Y-rotation.
+  The JS controls inline transforms during the transition to avoid
+  conflicting with the fade already present on .hero-slide. */
+.beslock-hero { perspective: 1400px; -webkit-perspective: 1400px; }
+.hero-slides { transform-style: preserve-3d; }
+.slide-inner { transform-style: preserve-3d; backface-visibility: hidden; }
+
+/* Transition timing; keep in sync with JS animation duration (680ms) */
+.slide-inner.page-turn-anim { transition: transform 680ms cubic-bezier(.22,.9,.41,1), box-shadow 680ms cubic-bezier(.22,.9,.41,1); }
+
+/* Initial states for incoming/outgoing presets (applied inline by JS)
+  We define these classes to make the effect consistent and to provide
+  graceful fallbacks on platforms that don't support 3D transforms. */
+.hero-slide .slide-inner { will-change: transform, box-shadow; }
+.hero-slide.is-active .slide-inner { transform: none; }
+
+/* Small visual lift/shadow during the page turn for depth feeling */
+.slide-inner.page-turn-shadow { box-shadow: 0 30px 60px rgba(0,0,0,0.42); }
+
+/* Reduced motion support: if user prefers reduced motion, make transitions simple fade/translate */
+@media (prefers-reduced-motion: reduce) {
+  .slide-inner.page-turn-anim { transition: transform 260ms ease-out; }
+  .beslock-hero { perspective: none; }
+}
+
 /* end hero styles */
 .site-footer .footer-copy {
   margin-top: 0.6rem;
