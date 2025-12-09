@@ -334,6 +334,14 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
   }
 }
 
+/* Small-screen tweak: nudge drawer logo down to match front-page header top spacing */
+@media (max-width: 600px) {
+  .drawer-header .drawer__logo {
+    /* front-page header uses .header__bar padding of 0.4rem; apply same offset to drawer logo */
+    top: calc(50% + 0.4rem) !important;
+  }
+}
+
 /* Utility */
 .u-visually-hidden {
   position: absolute !important;
