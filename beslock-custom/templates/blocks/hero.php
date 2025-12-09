@@ -50,13 +50,18 @@
               // Derive a human-friendly title from the overlay filename.
               $base = pathinfo($ov, PATHINFO_FILENAME); // e-flex_hero
               $title_raw = str_replace('_', ' ', $base); // e-flex hero
+              // remove the word "hero" if present and collapse whitespace
+              $title_raw = preg_replace('/\bhero\b/i', '', $title_raw);
+              $title_raw = trim(preg_replace('/\s+/', ' ', $title_raw));
+              // capitalize the character after a hyphen (e.g. e-flex -> e-Flex)
               $pos = strpos($title_raw, '-');
               if ($pos !== false && isset($title_raw[$pos + 1])) {
                 $title_raw = substr_replace($title_raw, strtoupper($title_raw[$pos + 1]), $pos + 1, 1);
               }
+              $subtitle = ucwords($title_raw);
             ?>
             <h1 class="slide-title"><?php echo esc_html($title_raw); ?></h1>
-            <p class="slide-subtitle"><?php echo esc_html(ucfirst($title_raw)); ?></p>
+            <p class="slide-subtitle"><?php echo esc_html($subtitle); ?></p>
           </div>
         </div>
       </article>
