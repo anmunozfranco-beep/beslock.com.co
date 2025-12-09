@@ -454,10 +454,8 @@
         else { s.classList.remove('is-active'); s.setAttribute('aria-hidden','true'); }
       });
       dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); d.setAttribute('aria-selected', i===idx? 'true':'false'); });
-      // play video for current, pause others. Avoid resetting currentTime for
-      // videos that were intentionally set to preload="none" to prevent
-      // forcing a download.
-      slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); if (v.getAttribute('preload') !== 'none') { v.currentTime = 0; } }catch(e){} } });
+      // play video for current, pause others
+      slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
       // overlay show logic - support multiple overlays per slide, each may have a data-start attribute
       var sl = slides[idx];
       // helper to activate one overlay and immediately hide the others in the same slide
@@ -500,6 +498,31 @@
               vid._lastCurrent = vid.currentTime;
             };
             vid.addEventListener('timeupdate', vid._loopWatcher, { passive:true });
+            // Quick loop-fix for files that show initial frames on loop (skip first frames)
+            try {
+              var _src = vid.getAttribute('src') || vid.currentSrc || '';
+              if (/_?e-(orbit|shield)/i.test(_src)) {
+                if (!vid._loopFix) {
+                  vid._loopFixPending = false;
+                  vid._loopFix = function(){
+                    try {
+                      if (!vid.duration || !isFinite(vid.duration)) return;
+                      var SKIP_EPS = 0.06; // skip first ~60ms on loop
+                      var NEAR_END = Math.max(0.06, vid.duration - 0.08);
+                      if (vid.currentTime >= NEAR_END) {
+                        if (!vid._loopFixPending) {
+                          vid._loopFixPending = true;
+                          // jump to a small positive time to avoid showing initial frames
+                          try { vid.currentTime = SKIP_EPS; } catch(e){}
+                          setTimeout(function(){ vid._loopFixPending = false; }, 120);
+                        }
+                      }
+                    } catch (e) {}
+                  };
+                  vid.addEventListener('timeupdate', vid._loopFix, { passive:true });
+                }
+              }
+            } catch (e) {}
           }
 
           ovs.forEach(function(ov){
