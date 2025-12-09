@@ -6,8 +6,10 @@
 <section class="beslock-hero" id="beslockHero" aria-roledescription="carousel" aria-label="Hero carousel">
   <div class="beslock-loader" id="beslockLoader" role="status" aria-live="polite" aria-hidden="false">
     <div class="beslock-loader__bg" aria-hidden="true"></div>
-    <!-- Fallback uses the favicon image inside assets/images (white background requested) -->
-    <img class="beslock-loader__img" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Favicon_Beslock.png' ); ?>" alt="Beslock" aria-hidden="true" />
+    <!-- Use transparent logo (logo-white.png) and wrap to allow circular reveal + spinner -->
+    <span class="beslock-loader__wrap" aria-hidden="true">
+      <img class="beslock-loader__img" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-white.png' ); ?>" alt="Beslock" aria-hidden="true" />
+    </span>
     <div class="beslock-loader__pulse" aria-hidden="true"></div>
   </div>
 
