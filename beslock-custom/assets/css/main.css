@@ -523,8 +523,8 @@ body {
 
 @keyframes loader-reveal {
   0% { clip-path: circle(0% at 50% 50%); -webkit-clip-path: circle(0% at 50% 50%); transform: scale(.92); opacity:0; }
-  50% { clip-path: circle(60% at 50% 50%); -webkit-clip-path: circle(60% at 50% 50%); transform: scale(1.06); opacity:1; }
-  100% { clip-path: circle(60% at 50% 50%); -webkit-clip-path: circle(60% at 50% 50%); transform: scale(1); opacity:1; }
+  60% { clip-path: circle(85% at 50% 50%); -webkit-clip-path: circle(85% at 50% 50%); transform: scale(1.06); opacity:1; }
+  100% { clip-path: circle(100% at 50% 50%); -webkit-clip-path: circle(100% at 50% 50%); transform: scale(1); opacity:1; }
 }
 
 @keyframes loader-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }

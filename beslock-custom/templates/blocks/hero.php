@@ -8,7 +8,7 @@
     <div class="beslock-loader__bg" aria-hidden="true"></div>
     <!-- Use transparent logo (logo-white.png) and wrap to allow circular reveal + spinner -->
     <span class="beslock-loader__wrap" aria-hidden="true">
-      <img class="beslock-loader__img" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-white.png' ); ?>" alt="Beslock" aria-hidden="true" />
+      <img class="beslock-loader__img" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/logo-green.png' ); ?>" alt="Beslock" aria-hidden="true" />
     </span>
     <div class="beslock-loader__pulse" aria-hidden="true"></div>
   </div>
