@@ -450,8 +450,12 @@
         overlayTimeouts.forEach(function(t){ try{ clearTimeout(t); }catch(e){} });
         overlayTimeouts = [];
       }
-      // remove any per-overlay timeupdate handlers left on the previous video's overlays
-      slides.forEach(function(s){ var pv = s.querySelector('.slide-video'); if (!pv) return; s.querySelectorAll('.slide-overlay').forEach(function(o){ try{ if (o._ontime) { pv.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} }); });
+      // remove any per-overlay timeupdate handlers and loop watchers left on previous videos
+      slides.forEach(function(s){
+        var pv = s.querySelector('.slide-video'); if (!pv) return;
+        s.querySelectorAll('.slide-overlay').forEach(function(o){ try{ if (o._ontime) { pv.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} });
+        try{ if (pv._loopWatcher) { pv.removeEventListener('timeupdate', pv._loopWatcher); delete pv._loopWatcher; delete pv._lastCurrent; } }catch(e){}
+      });
       slides.forEach(function(s,i){
         if (i===idx){ s.classList.add('is-active'); s.setAttribute('aria-hidden','false'); }
         else { s.classList.remove('is-active'); s.setAttribute('aria-hidden','true'); }
@@ -464,7 +468,37 @@
       if (sl){
         var vid = sl.querySelector('.slide-video');
         var ovs = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
+        // Ensure overlays start hidden when (re)showing the slide so transitions run on each loop
+        ovs.forEach(function(o){ o.classList.remove('overlay--visible'); });
         if (vid && ovs.length){
+          // attach a loop watcher to reset overlays when the video loops internally
+          if (!vid._loopWatcher) {
+            vid._lastCurrent = typeof vid.currentTime === 'number' ? vid.currentTime : 0;
+            vid._loopWatcher = function(){
+              try{
+                if (typeof vid._lastCurrent === 'number' && vid.currentTime < 0.2 && vid._lastCurrent > vid.currentTime + 0.5) {
+                  // video looped: hide overlays and reattach per-overlay listeners
+                  var curOvs = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
+                  curOvs.forEach(function(o){ o.classList.remove('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} });
+                  // re-schedule overlays for the new loop
+                  curOvs.forEach(function(o){
+                    var startAtLoop = parseFloat(o.getAttribute('data-start'));
+                    if (isNaN(startAtLoop)) startAtLoop = H.overlayStartAt;
+                    if (vid.currentTime >= startAtLoop) { o.classList.add('overlay--visible'); }
+                    else {
+                      o._ontime = function(){ if (vid.currentTime >= startAtLoop){ o.classList.add('overlay--visible'); try{ vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; }catch(e){} } };
+                      vid.addEventListener('timeupdate', o._ontime, { passive:true });
+                      var t2 = setTimeout(function(){ if (!o.classList.contains('overlay--visible')) o.classList.add('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} }, Math.max(200, H.slideDuration-1200));
+                      overlayTimeouts.push(t2);
+                    }
+                  });
+                }
+              }catch(e){}
+              vid._lastCurrent = vid.currentTime;
+            };
+            vid.addEventListener('timeupdate', vid._loopWatcher, { passive:true });
+          }
+
           ovs.forEach(function(ov){
             var startAt = parseFloat(ov.getAttribute('data-start'));
             if (isNaN(startAt)) startAt = H.overlayStartAt;
