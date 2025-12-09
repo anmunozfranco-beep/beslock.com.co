@@ -659,17 +659,21 @@
         // don't exceed actual video duration
         thresholdSec = Math.min(thresholdSec, video.duration);
       }
+      console.log('Hero: startAutoplay', { index: current, src: (video && video.currentSrc) || (video && video.src), duration: video.duration, thresholdSec: thresholdSec });
       autoplayVid = video;
       video._autoplayWatcher = function(){
         try{
-          if (video.currentTime >= thresholdSec) {
+          // add small leeway to avoid exact equality issues near video end
+          var now = video.currentTime;
+          if (now >= thresholdSec - 0.12) {
+            console.log('Hero: autoplay threshold reached', { now: now, thresholdSec: thresholdSec, idx: current });
             // remove watcher and advance
             try{ video.removeEventListener('timeupdate', video._autoplayWatcher); }catch(e){}
-            delete video._autoplayWatcher;
+            try{ delete video._autoplayWatcher; }catch(e){}
             autoplayVid = null;
             nextSlide();
           }
-        }catch(e){}
+        }catch(e){ console.warn('Hero: autoplay watcher error', e); }
       };
       video.addEventListener('timeupdate', video._autoplayWatcher, { passive:true });
       // Fallback: in case timeupdate doesn't fire reliably, keep a timeout slightly after threshold
