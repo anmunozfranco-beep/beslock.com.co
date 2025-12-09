@@ -527,7 +527,7 @@ body {
 .hero-slide{ position:absolute; inset:0; width:100%; height:100%; opacity:0; transition:opacity 1000ms cubic-bezier(.22,.9,.41,1); pointer-events:none; will-change:opacity; display:flex; align-items:center; justify-content:center; overflow:visible; }
 .hero-slide.is-active{ opacity:1; pointer-events:auto; z-index:2; }
 .slide-inner{ position:relative; width:100%; height:100%; touch-action:pan-y; overflow:hidden; display:flex; align-items:stretch; justify-content:center; }
-.slide-video{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center; background:#000; display:block; z-index:0 }
+.slide-video{ position:absolute; top:0; right:0; left:auto; width:calc(100% - var(--overlay-w)); height:100%; object-fit:cover; object-position:right center; background:#000; display:block; z-index:0 }
 .hero-slide { --overlay-w: clamp(240px, 32vw, 560px); }
 .slide-overlay{
   position: absolute;
@@ -556,7 +556,7 @@ body {
 }
 
 /* Video (clip) width should take remaining space after overlay width */
-.hero-slide .slide-video { width: calc(100% - var(--overlay-w)); left: 0; right: auto; }
+.hero-slide .slide-video { width: calc(100% - var(--overlay-w)); left: auto; right: 0; object-position: right center; }
 
 /* Keep overlay unchanged up to 1020px */
 @media (min-width: 1021px) {
