@@ -503,7 +503,7 @@ body {
 /* ==========================
    HERO BESLOCK STYLES (appended)
    ========================== */
-.beslock-hero { position: relative; width:100%; height:85vh; max-height:100vh; overflow:hidden; background:#000; color:#fff; isolation:isolate; }
+.beslock-hero { position: relative; width:100%; height:85vh; max-height:100vh; overflow:visible; background:#000; color:#fff; isolation:isolate; }
 .beslock-loader { position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#ffffff; z-index:9999; transition:opacity 1.2s ease, visibility 1.2s linear; }
 .beslock-loader[aria-hidden="true"]{ opacity:0; visibility:hidden; pointer-events:none; }
 .beslock-loader__wrap{ display:inline-block; /* responsive size: min 140px, fluid up to 30vw, max 416px */ width: clamp(140px, 30vw, 416px); height: clamp(140px, 30vw, 416px); position:relative; }
@@ -523,43 +523,60 @@ body {
 @keyframes loader-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 .hero-viewport{ position:relative; width:100%; height:100%; opacity:0; transition:opacity 420ms ease; }
 .beslock-hero.ready .hero-viewport{ opacity:1; }
-.hero-slides{ position:absolute; inset:0; width:100%; height:100%; overflow:hidden; }
-.hero-slide{ position:absolute; inset:0; width:100%; height:100%; opacity:0; transition:opacity 1000ms cubic-bezier(.22,.9,.41,1); pointer-events:none; will-change:opacity; display:flex; align-items:center; justify-content:center; }
+.hero-slides{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+.hero-slide{ position:absolute; inset:0; width:100%; height:100%; opacity:0; transition:opacity 1000ms cubic-bezier(.22,.9,.41,1); pointer-events:none; will-change:opacity; display:flex; align-items:center; justify-content:center; overflow:visible; }
 .hero-slide.is-active{ opacity:1; pointer-events:auto; z-index:2; }
 .slide-inner{ position:relative; width:100%; height:100%; touch-action:pan-y; overflow:hidden; display:flex; align-items:stretch; justify-content:center; }
-.slide-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; background:#000; display:block; z-index:0 }
+.slide-video{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center; background:#000; display:block; z-index:0 }
+.hero-slide { --overlay-w: clamp(240px, 32vw, 560px); }
 .slide-overlay{
   position: absolute;
   right: 0;
   left: auto;
-    /* center vertically using translate - overlay will size to the hero container
-      so it scales down responsively instead of being clipped under the clip. */
-    top: 50%;
-    transform: translateY(-50%) scale(1);
-    /* size relative to hero: match container height (so it scales when viewport
-      or hero height changes) and allow a small overshoot when needed */
-    height: 100%;
-    min-height: 0;
-    max-height: 120vh;
-  /* width remains responsive and constrained to avoid covering whole hero */
-    /* responsive width: prefer a vw-based width but cap it so it never hides
-      the content when hero gets shorter — reduce on small viewports via media
-      queries below if necessary. */
-    width: clamp(240px, 32vw, 560px);
-    max-width: 60%;
-    transform-origin: right center;
-  overflow: hidden;
+  /* center vertically using translate - overlay will size to the hero container */
+  top: 50%;
+  transform: translateY(-50%) scale(1);
+  /* overlay width controlled by a variable so we can redistribute space to the clip */
+  width: var(--overlay-w);
+  max-width: 60%;
+  height: 100%;
+  overflow: visible;
   display: block;
   object-fit: cover;            /* scale & crop to fill the defined box */
   object-position: right center;/* keep the right side visible, crop left */
   opacity: 0;
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
+  transform-origin: right center;
   transition: opacity 520ms cubic-bezier(.22,.9,.41,1), transform 720ms ease-out;
 }
 .slide-overlay.overlay--visible{
   opacity: 0.95;
   transform: translateY(-50%) scale(1.02);
+}
+
+/* Video (clip) width should take remaining space after overlay width */
+.hero-slide .slide-video { width: calc(100% - var(--overlay-w)); left: 0; right: auto; }
+
+/* Keep overlay unchanged up to 1020px */
+@media (min-width: 1021px) {
+  .hero-slide { --overlay-w: clamp(240px, 32vw, 560px); }
+}
+
+/* Between 1020px and 721px keep the same overlay width (defined by default variable) */
+@media (max-width: 1020px) and (min-width: 721px) {
+  .hero-slide { --overlay-w: clamp(240px, 32vw, 560px); }
+}
+
+/* At 720px reduce overlay by 15% (multiply the computed clamp by 0.85) */
+@media (max-width: 720px) and (min-width: 481px) {
+  .hero-slide { --overlay-w: calc(clamp(240px, 32vw, 560px) * 0.85); }
+}
+
+/* Below 480px (mobile) overlay occupies 50% of horizontal space */
+@media (max-width: 480px) {
+  .hero-slide { --overlay-w: 50%; }
+  .hero-slide .slide-video { width: calc(100% - var(--overlay-w)); }
 }
 
 /* If viewport height becomes small, reduce overlay width so it remains fully visible */
