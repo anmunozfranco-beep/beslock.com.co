@@ -529,26 +529,30 @@ body {
 .slide-inner{ position:relative; width:100%; height:100%; touch-action:pan-y; overflow:hidden; display:flex; align-items:stretch; justify-content:center; }
 .slide-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; background:#000; display:block; z-index:0 }
 .slide-overlay{
-  position:absolute;
-  right:0;
-  left:auto;
-  top:50%;
-  /* Align overlay to the right edge of the hero clip and preserve aspect ratio */
-  height:100%;
-  width:auto;
-  max-width:60%;
-  max-height:100%;
-  object-fit:contain;
-  object-position:right center;
-  transform:translateY(-50%) scale(1);
-  opacity:0;
-  z-index:1;
-  pointer-events:none;
-  transition:opacity 700ms cubic-bezier(.22,.9,.41,1), transform 900ms ease-out;
+  position: absolute;
+  right: 0;
+  left: auto;
+  top: 50%;
+  /* Force a stable visual footprint and let the image be cropped via object-fit:cover
+     so replacing images with greater vertical length will be cropped vertically
+     and on the left (object-position: right center). */
+  width: clamp(220px, 32vw, 520px);
+  height: clamp(220px, 40vh, 520px);
+  max-width: 60%;
+  max-height: 90%;
+  overflow: hidden;
+  display: block;
+  object-fit: cover;            /* scale & crop to fill the defined box */
+  object-position: right center;/* keep the right side visible, crop left */
+  transform: translateY(-50%) scale(1);
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 520ms cubic-bezier(.22,.9,.41,1), transform 720ms ease-out;
 }
 .slide-overlay.overlay--visible{
-  opacity:0.9;
-  transform:translateY(-50%) scale(1.02);
+  opacity: 0.95;
+  transform: translateY(-50%) scale(1.02);
 }
 .slide-content{ position:absolute; left:calc(3rem + 100px); transform:none; bottom:12vh; text-align:left; z-index:3; padding:0 1.25rem; width:min(92%,900px); pointer-events:none; }
 @media (max-width:600px){ .slide-content{ left:1rem; right:1rem; width:auto; } }
