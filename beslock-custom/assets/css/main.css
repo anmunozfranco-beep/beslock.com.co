@@ -641,23 +641,6 @@ body {
   }
 }
 
-/* Make overlays occupy 40% of viewport width for viewports up to 900px
-   - Mobile-first rule: for widths <=900px the overlay's horizontal size
-     should be proportional to the viewport (40vw).
-   - This block only touches overlays; DO NOT modify `.slide-video` here. */
-@media (max-width: 900px) {
-  .slide-overlay {
-    /* Use a responsive clamp: never smaller than 120px, approx 40vw, never larger than 320px */
-    width: clamp(120px, 40vw, 320px) !important;
-    /* allow overlay to scale proportionally while constraining height */
-    height: auto !important;
-    max-height: 60vh !important;
-    object-fit: contain !important;
-    transform: translateY(-50%) scale(1) !important;
-    transition: opacity 220ms ease, transform 220ms cubic-bezier(.22,.9,.41,1);
-  }
-}
-
 /* end hero styles */
 .site-footer .footer-copy {
   margin-top: 0.6rem;
