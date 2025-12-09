@@ -506,7 +506,7 @@ body {
 .beslock-hero { position: relative; width:100%; height:85vh; max-height:100vh; overflow:hidden; background:#000; color:#fff; isolation:isolate; }
 .beslock-loader { position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#ffffff; z-index:9999; transition:opacity 1.2s ease, visibility 1.2s linear; }
 .beslock-loader[aria-hidden="true"]{ opacity:0; visibility:hidden; pointer-events:none; }
-.beslock-loader__wrap{ display:inline-block; /* doubled size: 416px */ width:416px; height:416px; position:relative; }
+.beslock-loader__wrap{ display:inline-block; /* responsive size: min 140px, fluid up to 30vw, max 416px */ width: clamp(140px, 30vw, 416px); height: clamp(140px, 30vw, 416px); position:relative; }
 .beslock-loader__img{ width:100%; height:100%; display:block; object-fit:contain; /* no decorative background; show logo natural */
   opacity: 0; transform: scale(.92); animation: loader-reveal 1.2s cubic-bezier(.22,.9,.41,1) forwards; }
 /* remove decorative pseudo-element and pulse: keep only the logo image */
