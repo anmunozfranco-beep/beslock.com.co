@@ -532,16 +532,22 @@ body {
   position: absolute;
   right: 0;
   left: auto;
-  /* center vertically using translate - works even if overlay height > container */
-  top: 50%;
-  transform: translateY(-50%) scale(1);
-  /* Force vertical coverage: match viewport height and allow a small overshoot */
-  height: 100vh;            /* primary: full viewport height */
-  min-height: 100vh;
-  max-height: 120vh;        /* slight overshoot if desired */
+    /* center vertically using translate - overlay will size to the hero container
+      so it scales down responsively instead of being clipped under the clip. */
+    top: 50%;
+    transform: translateY(-50%) scale(1);
+    /* size relative to hero: match container height (so it scales when viewport
+      or hero height changes) and allow a small overshoot when needed */
+    height: 100%;
+    min-height: 0;
+    max-height: 120vh;
   /* width remains responsive and constrained to avoid covering whole hero */
-  width: clamp(280px, 34vw, 560px);
-  max-width: 60%;
+    /* responsive width: prefer a vw-based width but cap it so it never hides
+      the content when hero gets shorter — reduce on small viewports via media
+      queries below if necessary. */
+    width: clamp(240px, 32vw, 560px);
+    max-width: 60%;
+    transform-origin: right center;
   overflow: hidden;
   display: block;
   object-fit: cover;            /* scale & crop to fill the defined box */
@@ -554,6 +560,14 @@ body {
 .slide-overlay.overlay--visible{
   opacity: 0.95;
   transform: translateY(-50%) scale(1.02);
+}
+
+/* If viewport height becomes small, reduce overlay width so it remains fully visible */
+@media (max-height: 640px) {
+  .slide-overlay { width: clamp(180px, 28vw, 420px); }
+}
+@media (max-width: 480px) {
+  .slide-overlay { width: clamp(160px, 40vw, 360px); }
 }
 .slide-content{ position:absolute; left:calc(3rem + 100px); transform:none; bottom:12vh; text-align:left; z-index:3; padding:0 1.25rem; width:min(92%,900px); pointer-events:none; }
 @media (max-width:600px){ .slide-content{ left:1rem; right:1rem; width:auto; } }
