@@ -649,6 +649,7 @@ body {
   .slide-overlay {
     width: 40vw !important;
     max-width: none !important;
+    min-width: 120px !important;
     /* allow overlay to scale proportionally while constraining height */
     height: auto !important;
     max-height: 60vh !important;
