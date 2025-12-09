@@ -31,7 +31,7 @@
     var isScrolled = header && header.classList.contains('header--scrolled');
     var logoAnchor = document.querySelector('.header__logo a') || document.querySelector('.header__logo');
 
-    function updateHeader() {
+      var nextSlideEl = slides[idx];
       if (!header) return;
       var y = window.scrollY || window.pageYOffset || 0;
       // Only toggle when crossing thresholds to avoid rapid on/off when user
@@ -81,7 +81,7 @@
       if (logoAnchor._beslockLogoHandler) {
         off(logoAnchor, 'click', logoAnchor._beslockLogoHandler);
         delete logoAnchor._beslockLogoHandler;
-      }
+      var nextSlideEl = slides[idx];
       logoAnchor._beslockLogoHandler = function (ev) {
         try { ev.preventDefault(); } catch (e) {}
         closeDrawerIfOpen();
