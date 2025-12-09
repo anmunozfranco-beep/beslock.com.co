@@ -424,14 +424,7 @@
     var loader = $q('.beslock-loader', root);
     var current = 0, timer = null, isPlaying = false, overlayTimeouts = [];
 
-    // inline loader svg already handled by template PHP - but ensure stroke-run if present
-    (function inlineLoader(){
-      var c = $q('.beslock-loader__svg', root);
-      if (!c) return;
-      var src = c.getAttribute('data-src');
-      if (!src) return;
-      fetch(src).then(function(r){ return r.text(); }).then(function(txt){ c.innerHTML = txt; });
-    })();
+    // Loader image is handled by template (favicon); no inline SVG injection needed.
 
     function waitFirst(){
       return new Promise(function(resolve){
