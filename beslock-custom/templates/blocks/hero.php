@@ -46,8 +46,17 @@
             <img class="slide-overlay" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/e-orbit_2_hero.png' ); ?>" data-start="3.55" alt="" aria-hidden="true" />
           <?php endif; ?>
           <div class="slide-content">
-            <h1 class="slide-title"><?php echo esc_html("Title " . ($i+1)); ?></h1>
-            <p class="slide-subtitle"><?php echo esc_html("Subtitle " . ($i+1)); ?></p>
+            <?php
+              // Derive a human-friendly title from the overlay filename.
+              $base = pathinfo($ov, PATHINFO_FILENAME); // e-flex_hero
+              $title_raw = str_replace('_', ' ', $base); // e-flex hero
+              $pos = strpos($title_raw, '-');
+              if ($pos !== false && isset($title_raw[$pos + 1])) {
+                $title_raw = substr_replace($title_raw, strtoupper($title_raw[$pos + 1]), $pos + 1, 1);
+              }
+            ?>
+            <h1 class="slide-title"><?php echo esc_html($title_raw); ?></h1>
+            <p class="slide-subtitle"><?php echo esc_html(ucfirst($title_raw)); ?></p>
           </div>
         </div>
       </article>
