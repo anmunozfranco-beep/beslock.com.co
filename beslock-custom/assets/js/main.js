@@ -406,7 +406,9 @@
   var H = {
     slideCount: 6,
     slideDuration: 8000,
-    overlayStartAt: 5,
+    // Start overlay animation immediately at 0s so the overlay fades in smoothly
+    // as the video plays (user requested overlay starting at second 0).
+    overlayStartAt: 0,
     resistanceFactor: 0.3,
     swipeThreshold: 50
   };
@@ -420,7 +422,7 @@
     var slides = $qa('.hero-slide', root);
     var dots = $qa('.hero-dot', root);
     var loader = $q('.beslock-loader', root);
-    var current = 0, timer = null, isPlaying = false, overlayTimeout = null;
+    var current = 0, timer = null, isPlaying = false, overlayTimeouts = [];
 
     // inline loader svg already handled by template PHP - but ensure stroke-run if present
     (function inlineLoader(){
@@ -443,8 +445,13 @@
 
     function showSlide(idx, opts){
       opts = opts||{}; idx = (idx + slides.length) % slides.length; current = idx;
-      // clear overlay timer
-      clearTimeout(overlayTimeout);
+      // clear overlay timers and remove any attached timeupdate listeners
+      if (Array.isArray(overlayTimeouts)) {
+        overlayTimeouts.forEach(function(t){ try{ clearTimeout(t); }catch(e){} });
+        overlayTimeouts = [];
+      }
+      // remove any per-overlay timeupdate handlers left on the previous video's overlays
+      slides.forEach(function(s){ var pv = s.querySelector('.slide-video'); if (!pv) return; s.querySelectorAll('.slide-overlay').forEach(function(o){ try{ if (o._ontime) { pv.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} }); });
       slides.forEach(function(s,i){
         if (i===idx){ s.classList.add('is-active'); s.setAttribute('aria-hidden','false'); }
         else { s.classList.remove('is-active'); s.setAttribute('aria-hidden','true'); }
@@ -452,15 +459,28 @@
       dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); d.setAttribute('aria-selected', i===idx? 'true':'false'); });
       // play video for current, pause others
       slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
-      // overlay show logic
-      var sl = slides[idx]; if (sl){
-        var vid = sl.querySelector('.slide-video'); var ov = sl.querySelector('.slide-overlay');
-        if (vid && ov){
-          if (vid.currentTime >= H.overlayStartAt) ov.classList.add('overlay--visible'); else {
-            var ontime = function(){ if (vid.currentTime >= H.overlayStartAt){ ov.classList.add('overlay--visible'); vid.removeEventListener('timeupdate', ontime); } };
-            vid.addEventListener('timeupdate', ontime, { passive:true });
-            overlayTimeout = setTimeout(function(){ ov.classList.add('overlay--visible'); try{ vid.removeEventListener('timeupdate', ontime); }catch(e){} }, H.slideDuration-1200);
-          }
+      // overlay show logic - support multiple overlays per slide, each may have a data-start attribute
+      var sl = slides[idx];
+      if (sl){
+        var vid = sl.querySelector('.slide-video');
+        var ovs = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
+        if (vid && ovs.length){
+          ovs.forEach(function(ov){
+            var startAt = parseFloat(ov.getAttribute('data-start'));
+            if (isNaN(startAt)) startAt = H.overlayStartAt;
+            // If already past start time, show immediately
+            if (vid.currentTime >= startAt) {
+              ov.classList.add('overlay--visible');
+            } else {
+              // attach a timeupdate listener specific for this overlay
+              ov._ontime = function(){ if (vid.currentTime >= startAt){ ov.classList.add('overlay--visible'); try{ vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; }catch(e){} } };
+              vid.addEventListener('timeupdate', ov._ontime, { passive:true });
+              // fallback: ensure overlay becomes visible before slide ends
+              var fallbackDelay = Math.max(200, H.slideDuration - 1200);
+              var t = setTimeout(function(){ if (!ov.classList.contains('overlay--visible')) ov.classList.add('overlay--visible'); try{ if (ov._ontime) { vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; } }catch(e){} }, fallbackDelay);
+              overlayTimeouts.push(t);
+            }
+          });
         }
       }
     }

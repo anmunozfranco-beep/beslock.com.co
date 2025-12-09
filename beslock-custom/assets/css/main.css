@@ -516,8 +516,26 @@ body {
 .hero-slide.is-active{ opacity:1; pointer-events:auto; z-index:2; }
 .slide-inner{ position:relative; width:100%; height:100%; touch-action:pan-y; overflow:hidden; display:flex; align-items:stretch; justify-content:center; }
 .slide-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; background:#000; display:block; z-index:0 }
-.slide-overlay{ position:absolute; left:50%; top:50%; width:110%; transform:translate(-50%,-50%) scale(1); opacity:0; z-index:1; pointer-events:none; transition:opacity 700ms cubic-bezier(.22,.9,.41,1), transform 3200ms ease-out; }
-.slide-overlay.overlay--visible{ opacity:0.8; transform:translate(-50%,-50%) scale(1.08); }
+.slide-overlay{
+  position:absolute;
+  left:50%;
+  top:50%;
+  /* Constrain overlay to hero viewport dimensions and preserve aspect ratio */
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain; /* keep the full overlay visible without overflow */
+  transform:translate(-50%,-50%) scale(1);
+  opacity:0;
+  z-index:1;
+  pointer-events:none;
+  transition:opacity 700ms cubic-bezier(.22,.9,.41,1), transform 900ms ease-out;
+}
+.slide-overlay.overlay--visible{
+  opacity:0.9;
+  transform:translate(-50%,-50%) scale(1.02);
+}
 .slide-content{ position:absolute; left:50%; transform:translateX(-50%); bottom:15vh; text-align:center; z-index:3; padding:0 1.25rem; width:min(92%,900px); pointer-events:none; }
 .slide-title{ margin:0; color:#fff; font-weight:700; line-height:1.02; font-size:clamp(1.15rem,4.6vw,2.25rem); text-shadow:0 6px 22px rgba(0,0,0,0.65); }
 .slide-subtitle{ margin:.5rem 0 0; color:rgba(255,255,255,0.92); font-weight:400; font-size:clamp(.9rem,3.6vw,1.1rem); text-shadow:0 4px 16px rgba(0,0,0,0.55); }
