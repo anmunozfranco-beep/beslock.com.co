@@ -548,7 +548,7 @@ body {
   opacity:0.9;
   transform:translate(-50%,-50%) scale(1.02);
 }
-.slide-content{ position:absolute; left:3rem; transform:none; bottom:12vh; text-align:left; z-index:3; padding:0 1.25rem; width:min(92%,900px); pointer-events:none; }
+.slide-content{ position:absolute; left:calc(3rem + 100px); transform:none; bottom:12vh; text-align:left; z-index:3; padding:0 1.25rem; width:min(92%,900px); pointer-events:none; }
 @media (max-width:600px){ .slide-content{ left:1rem; right:1rem; width:auto; } }
 .slide-title{ margin:0; color:#fff; font-weight:700; line-height:1.02; font-size:clamp(1.6rem,6.4vw,3.15rem); text-shadow:0 6px 22px rgba(0,0,0,0.65); will-change:transform,opacity; }
 .slide-subtitle{ margin:.5rem 0 0; color:rgba(255,255,255,0.92); font-weight:400; font-size:clamp(1.26rem,5.04vw,1.54rem); text-shadow:0 4px 16px rgba(0,0,0,0.55); will-change:opacity,transform; }
