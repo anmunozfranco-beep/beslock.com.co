@@ -430,9 +430,21 @@
       return new Promise(function(resolve){
         var v = slides[0] && slides[0].querySelector('.slide-video');
         if (!v) return resolve();
+        // Prefer waiting until the video is actually playing (frames decoded)
+        // because some browsers fire `canplaythrough` early but rendering may
+        // not progress until the element receives a real `playing` signal.
         if (v.readyState >= 4) return resolve();
-        var t = setTimeout(function(){ resolve(); }, 5000);
-        v.addEventListener('canplaythrough', function(){ clearTimeout(t); resolve(); }, { once:true });
+        var t = setTimeout(function(){ cleanup(); resolve(); }, 7000);
+        function cleanup(){ try{ v.removeEventListener('playing', onPlaying); v.removeEventListener('canplaythrough', onCanplay); }catch(e){} clearTimeout(t); }
+        function onPlaying(){ cleanup(); resolve(); }
+        function onCanplay(){
+          // try to nudge playback — some engines need a .play() call to start
+          try{ v.play().catch(function(){}); }catch(e){}
+        }
+        v.addEventListener('playing', onPlaying, { once:true });
+        v.addEventListener('canplaythrough', onCanplay, { once:true });
+        // try an initial play attempt to encourage rendering (muted allows autoplay)
+        try{ v.play().catch(function(){}); }catch(e){}
       });
     }
 
@@ -457,7 +469,24 @@
       // play video for current, pause others. Avoid resetting currentTime for
       // videos that were intentionally set to preload="none" to prevent
       // forcing a download.
-      slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); if (v.getAttribute('preload') !== 'none') { v.currentTime = 0; } }catch(e){} } });
+      slides.forEach(function(s,i){
+        var v = s.querySelector('.slide-video'); if (!v) return;
+        if (i === idx) {
+          try {
+            // ensure sources/metadata are loaded before playing; calling load
+            // is safe and helps some browsers to begin decoding frames.
+            if (typeof v.readyState === 'number' && v.readyState < 3) {
+              try { v.load(); } catch (e) {}
+            }
+            v.play().catch(function(){
+              // if the first play fails, attempt a load then a second play
+              try { if (v.readyState < 3) v.load(); v.play().catch(function(){}); } catch (e) {}
+            });
+          } catch (e) {}
+        } else {
+          try { v.pause(); if (v.getAttribute('preload') !== 'none') { v.currentTime = 0; } } catch (e) {}
+        }
+      });
       // overlay show logic - support multiple overlays per slide, each may have a data-start attribute
       var sl = slides[idx];
       // Inject video sources for deferred slides on demand (network-aware)
