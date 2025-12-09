@@ -530,22 +530,25 @@ body {
 .slide-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; background:#000; display:block; z-index:0 }
 .slide-overlay{
   position:absolute;
-  left:50%;
+  right:0;
+  left:auto;
   top:50%;
-  /* Constrain overlay to hero viewport dimensions and preserve aspect ratio */
-  width:100%;
+  /* Align overlay to the right edge of the hero clip and preserve aspect ratio */
   height:100%;
-  max-width:100%;
+  width:auto;
+  max-width:60%;
   max-height:100%;
-  object-fit:contain; /* keep the full overlay visible without overflow */
-  transform:translate(-50%,-50%) scale(1);
+  object-fit:contain;
+  object-position:right center;
+  transform:translateY(-50%) scale(1);
   opacity:0;
   z-index:1;
   pointer-events:none;
+  transition:opacity 700ms cubic-bezier(.22,.9,.41,1), transform 900ms ease-out;
 }
 .slide-overlay.overlay--visible{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1.02);
+  opacity:0.9;
+  transform:translateY(-50%) scale(1.02);
 }
 .slide-content{ position:absolute; left:calc(3rem + 100px); transform:none; bottom:12vh; text-align:left; z-index:3; padding:0 1.25rem; width:min(92%,900px); pointer-events:none; }
 @media (max-width:600px){ .slide-content{ left:1rem; right:1rem; width:auto; } }
@@ -571,34 +574,6 @@ body {
 @keyframes slide-subtitle-in{
   0%{ opacity:0; transform:translateY(10px); }
   100%{ opacity:1; transform:translateY(0); }
-}
-
-/* ==========================
-  PAGE-TURN / BOOK-LIKE TRANSITION
-  ========================== */
-/* Add a subtle 3D page-turn feel using perspective and Y-rotation.
-  The JS controls inline transforms during the transition to avoid
-  conflicting with the fade already present on .hero-slide. */
-.beslock-hero { perspective: 1400px; -webkit-perspective: 1400px; }
-.hero-slides { transform-style: preserve-3d; }
-.slide-inner { transform-style: preserve-3d; backface-visibility: hidden; }
-
-/* Transition timing; keep in sync with JS animation duration (680ms) */
-.slide-inner.page-turn-anim { transition: transform 680ms cubic-bezier(.22,.9,.41,1), box-shadow 680ms cubic-bezier(.22,.9,.41,1); }
-
-/* Initial states for incoming/outgoing presets (applied inline by JS)
-  We define these classes to make the effect consistent and to provide
-  graceful fallbacks on platforms that don't support 3D transforms. */
-.hero-slide .slide-inner { will-change: transform, box-shadow; }
-.hero-slide.is-active .slide-inner { transform: none; }
-
-/* Small visual lift/shadow during the page turn for depth feeling */
-.slide-inner.page-turn-shadow { box-shadow: 0 30px 60px rgba(0,0,0,0.42); }
-
-/* Reduced motion support: if user prefers reduced motion, make transitions simple fade/translate */
-@media (prefers-reduced-motion: reduce) {
-  .slide-inner.page-turn-anim { transition: transform 260ms ease-out; }
-  .beslock-hero { perspective: none; }
 }
 
 /* end hero styles */
