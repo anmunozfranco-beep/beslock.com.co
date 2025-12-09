@@ -423,6 +423,7 @@
     var dots = $qa('.hero-dot', root);
     var loader = $q('.beslock-loader', root);
     var current = 0, timer = null, isPlaying = false, overlayTimeouts = [];
+    var transitioning = false; // guard to prevent overlapping slide transitions
     var autoplayVid = null; // video element currently driving autoplay
 
     // Loader image is handled by template (favicon); no inline SVG injection needed.
@@ -512,11 +513,12 @@
         overlayTimeouts.forEach(function(t){ try{ clearTimeout(t); }catch(e){} });
         overlayTimeouts = [];
       }
-      // remove any per-overlay timeupdate handlers and loop watchers left on previous videos
+      // remove any per-overlay timeupdate handlers, loop watchers and ended handlers left on previous videos
       slides.forEach(function(s){
         var pv = s.querySelector('.slide-video'); if (!pv) return;
         s.querySelectorAll('.slide-overlay').forEach(function(o){ try{ if (o._ontime) { pv.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} });
         try{ if (pv._loopWatcher) { pv.removeEventListener('timeupdate', pv._loopWatcher); delete pv._loopWatcher; delete pv._lastCurrent; } }catch(e){}
+        try{ if (pv._endedHandler) { pv.removeEventListener('ended', pv._endedHandler); delete pv._endedHandler; } }catch(e){}
       });
 
       var prevIdx = current;
@@ -555,6 +557,11 @@
                 try{ v.removeEventListener('playing', onPlaying); }catch(e){}
               };
               v.addEventListener('playing', onPlaying, { passive:true });
+              // attach ended handler to reliably advance to next slide when video finishes
+              try{
+                v._endedHandler = function(){ if (!transitioning) { console.log('Hero: ended event on slide', idx); nextSlide(); } };
+                v.addEventListener('ended', v._endedHandler, { passive:true });
+              }catch(e){}
             }catch(e){}
           } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
         // schedule overlays after play
@@ -613,6 +620,8 @@
       // add classes that apply transition timing (CSS fallback)
       nextInner.classList.add('page-turn-anim','page-turn-shadow'); prevInner.classList.add('page-turn-anim','page-turn-shadow');
 
+      // mark as transitioning then trigger the animation on the next RAF tick
+      transitioning = true;
       // trigger the animation on the next RAF tick
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
@@ -637,8 +646,12 @@
         // pause/reset previous video's playback
         try{ var pv = prevSlide.querySelector('.slide-video'); if (pv){ pv.pause(); pv.currentTime = 0; } }catch(e){}
         // play next video and schedule overlays
-        try{ var nv = nextSlide.querySelector('.slide-video'); if (nv){ try{ nv.muted = true; }catch(e){} var p = nv.play(); if (p && typeof p.then === 'function'){ p.then(function(){ /* ok */ }).catch(function(err){ console.warn('Hero: play() rejected for next slide', idx, err); nextSlide.querySelectorAll('.slide-overlay').forEach(function(o){ o.classList.add('overlay--visible'); }); }); } } }catch(e){}
+        try{ var nv = nextSlide.querySelector('.slide-video'); if (nv){ try{ nv.muted = true; }catch(e){}
+            try{ nv._endedHandler = function(){ if (!transitioning) { console.log('Hero: ended event on incoming slide', idx); nextSlide(); } }; nv.addEventListener('ended', nv._endedHandler, { passive:true }); }catch(e){}
+            var p = nv.play(); if (p && typeof p.then === 'function'){ p.then(function(){ /* ok */ }).catch(function(err){ console.warn('Hero: play() rejected for next slide', idx, err); nextSlide.querySelectorAll('.slide-overlay').forEach(function(o){ o.classList.add('overlay--visible'); }); }); }
+          } }catch(e){}
         scheduleSlideOverlays(nextSlide);
+        transitioning = false;
       }
 
       // listen for transitionend on the nextInner; fallback timeout
@@ -665,6 +678,7 @@
         try{
           // add small leeway to avoid exact equality issues near video end
           var now = video.currentTime;
+          if (transitioning) return; // skip autoplay while transitioning
           if (now >= thresholdSec - 0.12) {
             console.log('Hero: autoplay threshold reached', { now: now, thresholdSec: thresholdSec, idx: current });
             // remove watcher and advance
