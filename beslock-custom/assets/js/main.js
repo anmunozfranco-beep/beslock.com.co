@@ -404,9 +404,9 @@
   var H = {
     slideCount: 6,
     slideDuration: 8000,
-    // Start overlay animation immediately at 0s so the overlay fades in smoothly
-    // as the video plays (user requested overlay starting at second 0).
-    overlayStartAt: 0,
+    // Start overlay animation shortly after video starts so it fades in smoothly
+    // Use 0.08s (80ms) to let the first frame render and then fade overlay in.
+    overlayStartAt: 0.08,
     resistanceFactor: 0.3,
     swipeThreshold: 50
   };
@@ -427,8 +427,10 @@
     // Loader image is handled by template (favicon); no inline SVG injection needed.
 
     function waitFirst(){
-      // Wait until the first slide's video reports canplaythrough (or fallback 5s)
-      // and ensure a minimum loader display of 1200ms so the loader isn't too brief.
+      // Ensure loader stays visible at least MIN_MS and try to start the first
+      // video's playback early to avoid a black frame. Resolve when we receive
+      // an actual frame (`playing`) or `loadeddata` or timeout (5s), but never
+      // before MIN_MS.
       var MIN_MS = 1200;
       return new Promise(function(resolve){
         var start = Date.now();
@@ -438,9 +440,25 @@
           setTimeout(resolve, rem);
         }
         if (!v) { setTimeout(resolve, MIN_MS); return; }
-        if (v.readyState >= 4) { finish(); return; }
+
+        // Attempt to start playback early (muted) so the browser can present first frame.
+        try{ v.muted = true; }catch(e){}
+        try{
+          var p = v.play();
+          if (p && typeof p.then === 'function'){
+            p.catch(function(){ /* ignore play rejection here; we'll still wait for loadeddata/timeout */ });
+          }
+        }catch(e){}
+
+        if (v.readyState >= 3) { // HAVE_FUTURE_DATA / HAVE_ENOUGH_DATA
+          finish(); return;
+        }
+
         var t = setTimeout(function(){ finish(); }, 5000);
-        v.addEventListener('canplaythrough', function(){ clearTimeout(t); finish(); }, { once:true });
+        var onPlaying = function(){ clearTimeout(t); try{ v.removeEventListener('playing', onPlaying); }catch(e){} finish(); };
+        var onLoaded = function(){ /* loaded some data, good enough */ clearTimeout(t); try{ v.removeEventListener('loadeddata', onLoaded); }catch(e){} finish(); };
+        v.addEventListener('playing', onPlaying, { once:true });
+        v.addEventListener('loadeddata', onLoaded, { once:true });
       });
     }
 
@@ -726,23 +744,8 @@
       root.classList.add('ready');
       showSlide(0, { immediate:true });
       var v = slides[0] && slides[0].querySelector('.slide-video');
-      if (!v) { startAutoplay(); return; }
-      // Try to play the first video and start autoplay after successful start.
-      try{
-        var p = v.play();
-        if (p && typeof p.then === 'function'){
-          p.then(function(){ startAutoplay(v); }).catch(function(){
-            // Autoplay blocked — ensure muted and retry briefly before starting autoplay fallback
-            try{ v.muted = true; v.playsInline = true; v.setAttribute('playsinline',''); }catch(e){}
-            setTimeout(function(){ startAutoplay(v); }, 300);
-          });
-        } else {
-          startAutoplay(v);
-        }
-      }catch(e){
-        // If play throws synchronously, still start autoplay fallback
-        setTimeout(function(){ startAutoplay(v); }, 300);
-      }
+      // after waitFirst we've attempted to play already; start autoplay watcher
+      try{ if (v) startAutoplay(v); else startAutoplay(); }catch(e){ startAutoplay(); }
     });
 
     // expose for debug
