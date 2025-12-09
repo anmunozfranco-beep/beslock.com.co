@@ -56,6 +56,8 @@
             ?>
             <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.720.webm' ); ?>" type="video/webm" media="(min-width:1024px)">
             <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.480.webm' ); ?>" type="video/webm" media="(max-width:1023px)">
+            <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.720.mp4' ); ?>" type="video/mp4" media="(min-width:1024px)">
+            <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.480.mp4' ); ?>" type="video/mp4" media="(max-width:1023px)">
             <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>" type="video/mp4">
           </video>
           <img class="slide-overlay" src="<?php echo $poster; ?>" alt="" aria-hidden="true" loading="lazy" />
