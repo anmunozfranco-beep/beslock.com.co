@@ -532,19 +532,20 @@ body {
   position: absolute;
   right: 0;
   left: auto;
+  /* center vertically using translate - works even if overlay height > container */
   top: 50%;
-  /* Force a stable visual footprint and let the image be cropped via object-fit:cover
-     so replacing images with greater vertical length will be cropped vertically
-     and on the left (object-position: right center). */
-  width: clamp(220px, 32vw, 520px);
-  height: clamp(220px, 40vh, 520px);
+  transform: translateY(-50%) scale(1);
+  /* Force vertical coverage: match viewport height and allow a small overshoot */
+  height: 100vh;            /* primary: full viewport height */
+  min-height: 100vh;
+  max-height: 120vh;        /* slight overshoot if desired */
+  /* width remains responsive and constrained to avoid covering whole hero */
+  width: clamp(280px, 34vw, 560px);
   max-width: 60%;
-  max-height: 90%;
   overflow: hidden;
   display: block;
   object-fit: cover;            /* scale & crop to fill the defined box */
   object-position: right center;/* keep the right side visible, crop left */
-  transform: translateY(-50%) scale(1);
   opacity: 0;
   z-index: 1;
   pointer-events: none;
