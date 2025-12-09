@@ -24,12 +24,25 @@
   function headerBehaviorsInit() {
     var SCROLL_THRESHOLD = 10;
     var header = $('.header');
+    // Hysteresis thresholds to prevent flicker when user scrolls around the boundary.
+    // Enter threshold = when we add the scrolled class; Exit threshold = when we remove it.
+    var ENTER_THRESHOLD = 28; // px scrolled before applying shrink state
+    var EXIT_THRESHOLD = 12;  // px scrolled below this removes the shrink state
+    var isScrolled = header && header.classList.contains('header--scrolled');
     var logoAnchor = document.querySelector('.header__logo a') || document.querySelector('.header__logo');
 
     function updateHeader() {
       if (!header) return;
-      if (window.scrollY > SCROLL_THRESHOLD) header.classList.add('header--scrolled');
-      else header.classList.remove('header--scrolled');
+      var y = window.scrollY || window.pageYOffset || 0;
+      // Only toggle when crossing thresholds to avoid rapid on/off when user
+      // is hovering near the trigger point.
+      if (!isScrolled && y > ENTER_THRESHOLD) {
+        header.classList.add('header--scrolled');
+        isScrolled = true;
+      } else if (isScrolled && y < EXIT_THRESHOLD) {
+        header.classList.remove('header--scrolled');
+        isScrolled = false;
+      }
     }
 
     function setScrollRestorationManualIfReload() {
