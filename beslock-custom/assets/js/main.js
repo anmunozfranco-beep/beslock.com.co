@@ -31,7 +31,6 @@
     var isScrolled = header && header.classList.contains('header--scrolled');
     var logoAnchor = document.querySelector('.header__logo a') || document.querySelector('.header__logo');
 
-      var nextSlideEl = slides[idx];
       if (!header) return;
       var y = window.scrollY || window.pageYOffset || 0;
       // Only toggle when crossing thresholds to avoid rapid on/off when user
@@ -81,7 +80,6 @@
       if (logoAnchor._beslockLogoHandler) {
         off(logoAnchor, 'click', logoAnchor._beslockLogoHandler);
         delete logoAnchor._beslockLogoHandler;
-      var nextSlideEl = slides[idx];
       logoAnchor._beslockLogoHandler = function (ev) {
         try { ev.preventDefault(); } catch (e) {}
         closeDrawerIfOpen();
@@ -506,6 +504,7 @@
 
     function showSlide(idx, opts){
       opts = opts||{}; idx = (idx + slides.length) % slides.length;
+      console.log('Hero: showSlide called', { idx: idx, prev: current, opts: opts });
       // no-op when same slide and not forced
       if (idx === current && !opts.force) return;
       // clear overlay timers and remove any attached timeupdate listeners
@@ -538,6 +537,7 @@
               if (p && typeof p.then === 'function'){
                 p.then(function(){
                   console.log('Hero: played slide', idx);
+                  try{ startAutoplay(v); }catch(e){}
                 }).catch(function(err){
                   console.warn('Hero: play() rejected for slide', idx, err);
                   // show overlay fallback to avoid black screen
@@ -571,7 +571,7 @@
 
       // Animated page-turn transition
       var prevSlide = slides[prevIdx];
-      var nextSlide = slides[idx];
+      var nextSlideEl = slides[idx];
       if (!prevSlide || !nextSlide) {
         // fallback to immediate
         current = idx;
@@ -583,12 +583,12 @@
       }
 
       var prevInner = prevSlide.querySelector('.slide-inner');
-      var nextInner = nextSlide.querySelector('.slide-inner');
+      var nextInner = nextSlideEl.querySelector('.slide-inner');
       // Decide direction (next / prev)
       var dir = ( (idx > prevIdx) || (prevIdx === slides.length-1 && idx === 0) ) ? 'next' : 'prev';
 
       // Prepare next slide to become visible and set starting transform
-      nextSlide.classList.add('is-active'); nextSlide.setAttribute('aria-hidden','false');
+      nextSlideEl.classList.add('is-active'); nextSlideEl.setAttribute('aria-hidden','false');
       dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); d.setAttribute('aria-selected', i===idx? 'true':'false'); });
 
       // ensure inners exist
@@ -646,11 +646,11 @@
         // pause/reset previous video's playback
         try{ var pv = prevSlide.querySelector('.slide-video'); if (pv){ pv.pause(); pv.currentTime = 0; } }catch(e){}
         // play next video and schedule overlays
-        try{ var nv = nextSlide.querySelector('.slide-video'); if (nv){ try{ nv.muted = true; }catch(e){}
+        try{ var nv = nextSlideEl.querySelector('.slide-video'); if (nv){ try{ nv.muted = true; }catch(e){}
             try{ nv._endedHandler = function(){ if (!transitioning) { console.log('Hero: ended event on incoming slide', idx); nextSlide(); } }; nv.addEventListener('ended', nv._endedHandler, { passive:true }); }catch(e){}
-            var p = nv.play(); if (p && typeof p.then === 'function'){ p.then(function(){ /* ok */ }).catch(function(err){ console.warn('Hero: play() rejected for next slide', idx, err); nextSlide.querySelectorAll('.slide-overlay').forEach(function(o){ o.classList.add('overlay--visible'); }); }); }
+            var p = nv.play(); if (p && typeof p.then === 'function'){ p.then(function(){ try{ startAutoplay(nv);}catch(e){} }).catch(function(err){ console.warn('Hero: play() rejected for next slide', idx, err); nextSlideEl.querySelectorAll('.slide-overlay').forEach(function(o){ o.classList.add('overlay--visible'); }); }); }
           } }catch(e){}
-        scheduleSlideOverlays(nextSlide);
+        scheduleSlideOverlays(nextSlideEl);
         transitioning = false;
       }
 
