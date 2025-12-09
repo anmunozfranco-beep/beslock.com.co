@@ -47,24 +47,17 @@
             $pre = ($i === 0) ? 'auto' : 'none';
             $poster = esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/' . $ov );
           ?>
-          <?php $base = pathinfo($vid, PATHINFO_FILENAME); ?>
-          <?php if ($i === 0): // keep full sources for first slide so it preloads normally ?>
-            <video class="slide-video" muted playsinline preload="<?php echo $pre; ?>" poster="<?php echo $poster; ?>" loop>
-              <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.720.webm' ); ?>" type="video/webm" media="(min-width:1024px)">
-              <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.480.webm' ); ?>" type="video/webm" media="(max-width:1023px)">
-              <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.720.mp4' ); ?>" type="video/mp4" media="(min-width:1024px)">
-              <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.480.mp4' ); ?>" type="video/mp4" media="(max-width:1023px)">
-              <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>" type="video/mp4">
-            </video>
-          <?php else: // defer loading for non-first slides; store URLs in data-attrs ?>
-            <video class="slide-video" muted playsinline preload="none" poster="<?php echo $poster; ?>" loop
-              data-webm-720="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.720.webm' ); ?>"
-              data-webm-480="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.480.webm' ); ?>"
-              data-mp4-720="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.720.mp4' ); ?>"
-              data-mp4-480="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.480.mp4' ); ?>"
-              data-mp4="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>">
-            </video>
-          <?php endif; ?>
+          <video class="slide-video" muted playsinline preload="<?php echo $pre; ?>" poster="<?php echo $poster; ?>" loop>
+            <?php
+              // Responsive sources: prefer WebM (VP9) when supported, serve
+              // 720p for wide screens and 480p for smaller screens. Fallback
+              // to MP4 (already optimized above).
+              $base = pathinfo($vid, PATHINFO_FILENAME);
+            ?>
+            <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.720.webm' ); ?>" type="video/webm" media="(min-width:1024px)">
+            <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $base . '.480.webm' ); ?>" type="video/webm" media="(max-width:1023px)">
+            <source src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>" type="video/mp4">
+          </video>
           <img class="slide-overlay" src="<?php echo $poster; ?>" alt="" aria-hidden="true" loading="lazy" />
           <?php if ($i === 5): // Add second orbit overlay image that enters at 3.55s ?>
             <img class="slide-overlay" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/e-orbit_2_hero.png' ); ?>" data-start="3.55" alt="" aria-hidden="true" />

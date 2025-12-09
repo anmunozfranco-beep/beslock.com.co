@@ -430,21 +430,9 @@
       return new Promise(function(resolve){
         var v = slides[0] && slides[0].querySelector('.slide-video');
         if (!v) return resolve();
-        // Prefer waiting until the video is actually playing (frames decoded)
-        // because some browsers fire `canplaythrough` early but rendering may
-        // not progress until the element receives a real `playing` signal.
         if (v.readyState >= 4) return resolve();
-        var t = setTimeout(function(){ cleanup(); resolve(); }, 7000);
-        function cleanup(){ try{ v.removeEventListener('playing', onPlaying); v.removeEventListener('canplaythrough', onCanplay); }catch(e){} clearTimeout(t); }
-        function onPlaying(){ cleanup(); resolve(); }
-        function onCanplay(){
-          // try to nudge playback — some engines need a .play() call to start
-          try{ v.play().catch(function(){}); }catch(e){}
-        }
-        v.addEventListener('playing', onPlaying, { once:true });
-        v.addEventListener('canplaythrough', onCanplay, { once:true });
-        // try an initial play attempt to encourage rendering (muted allows autoplay)
-        try{ v.play().catch(function(){}); }catch(e){}
+        var t = setTimeout(function(){ resolve(); }, 5000);
+        v.addEventListener('canplaythrough', function(){ clearTimeout(t); resolve(); }, { once:true });
       });
     }
 
@@ -469,61 +457,9 @@
       // play video for current, pause others. Avoid resetting currentTime for
       // videos that were intentionally set to preload="none" to prevent
       // forcing a download.
-      slides.forEach(function(s,i){
-        var v = s.querySelector('.slide-video'); if (!v) return;
-        if (i === idx) {
-          try {
-            // ensure sources/metadata are loaded before playing; calling load
-            // is safe and helps some browsers to begin decoding frames.
-            if (typeof v.readyState === 'number' && v.readyState < 3) {
-              try { v.load(); } catch (e) {}
-            }
-            v.play().catch(function(){
-              // if the first play fails, attempt a load then a second play
-              try { if (v.readyState < 3) v.load(); v.play().catch(function(){}); } catch (e) {}
-            });
-          } catch (e) {}
-        } else {
-          try { v.pause(); if (v.getAttribute('preload') !== 'none') { v.currentTime = 0; } } catch (e) {}
-        }
-      });
+      slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); if (v.getAttribute('preload') !== 'none') { v.currentTime = 0; } }catch(e){} } });
       // overlay show logic - support multiple overlays per slide, each may have a data-start attribute
       var sl = slides[idx];
-      // Inject video sources for deferred slides on demand (network-aware)
-      function injectSourcesForVideo(v, opts){
-        if (!v) return;
-        if (v._sourcesInjected) return;
-        try{
-          var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
-          var effectiveType = conn && conn.effectiveType;
-          var downlink = conn && conn.downlink;
-          var slow = (effectiveType && (effectiveType.indexOf('2g') !== -1 || effectiveType === 'slow-2g')) || (downlink && downlink < 1.5);
-          var prefer480 = slow || (window.innerWidth && window.innerWidth < 900);
-          var res = prefer480 ? '480' : '720';
-          // prefer WebM when available
-          var webm = v.getAttribute('data-webm-' + res);
-          var mp4 = v.getAttribute('data-mp4-' + res) || v.getAttribute('data-mp4');
-          // if neither webm nor mp4 for chosen res, try the other res as fallback
-          if (!webm && !mp4) {
-            var other = (res === '720') ? '480' : '720';
-            webm = v.getAttribute('data-webm-' + other) || webm;
-            mp4 = v.getAttribute('data-mp4-' + other) || mp4;
-          }
-          // create source elements in preferred order
-          if (webm) {
-            var s = document.createElement('source'); s.src = webm; s.type = 'video/webm'; v.appendChild(s);
-          }
-          if (mp4) {
-            var s2 = document.createElement('source'); s2.src = mp4; s2.type = 'video/mp4'; v.appendChild(s2);
-          }
-          // mark and trigger load only if we actually added sources
-          v._sourcesInjected = true;
-          // set preload strategy: active slide -> auto, prefetched -> metadata
-          if (opts && opts.preload) v.setAttribute('preload', opts.preload);
-          try { v.setAttribute('fetchpriority', (opts && opts.priority) || 'auto'); } catch(e){}
-          try { v.load(); } catch(e){}
-        }catch(e){}
-      }
       // helper to activate one overlay and immediately hide the others in the same slide
       function activateOverlay(targetOverlay) {
         try {
@@ -534,14 +470,6 @@
       }
       if (sl){
         var vid = sl.querySelector('.slide-video');
-        // ensure video sources are injected for current slide
-        if (vid) injectSourcesForVideo(vid, { preload: 'auto', priority: 'high' });
-        // prefetch next slide's video sources (metadata only)
-        try{
-          var nextIdx = (idx + 1) % slides.length;
-          var nextSlide = slides[nextIdx];
-          if (nextSlide){ var nextVid = nextSlide.querySelector('.slide-video'); if (nextVid) injectSourcesForVideo(nextVid, { preload: 'metadata', priority: 'low' }); }
-        }catch(e){}
         var ovs = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
         // Ensure overlays start hidden when (re)showing the slide so transitions run on each loop
         ovs.forEach(function(o){ o.classList.remove('overlay--visible'); });
