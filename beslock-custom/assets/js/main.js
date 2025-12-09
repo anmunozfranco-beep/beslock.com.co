@@ -529,7 +529,34 @@
         });
         dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); d.setAttribute('aria-selected', i===idx? 'true':'false'); });
         // play video for current, pause others
-        slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
+        slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){
+            try{ v.muted = true; }catch(e){}
+            try{
+              var p = v.play();
+              if (p && typeof p.then === 'function'){
+                p.then(function(){
+                  console.log('Hero: played slide', idx);
+                }).catch(function(err){
+                  console.warn('Hero: play() rejected for slide', idx, err);
+                  // show overlay fallback to avoid black screen
+                  var ovs = slides[idx].querySelectorAll('.slide-overlay');
+                  ovs.forEach(function(o){ o.classList.add('overlay--visible'); });
+                });
+              }
+            }catch(e){
+              console.warn('Hero: play() threw for slide', idx, e);
+              var ovs2 = slides[idx].querySelectorAll('.slide-overlay');
+              ovs2.forEach(function(o){ o.classList.add('overlay--visible'); });
+            }
+            // ensure when video actually starts playing we hide overlays (first frame)
+            try{
+              var onPlaying = function(){
+                try{ slides[idx].querySelectorAll('.slide-overlay').forEach(function(o){ o.classList.remove('overlay--visible'); }); }catch(e){}
+                try{ v.removeEventListener('playing', onPlaying); }catch(e){}
+              };
+              v.addEventListener('playing', onPlaying, { passive:true });
+            }catch(e){}
+          } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
         // schedule overlays after play
         scheduleSlideOverlays(slides[idx]);
         return;
@@ -610,7 +637,7 @@
         // pause/reset previous video's playback
         try{ var pv = prevSlide.querySelector('.slide-video'); if (pv){ pv.pause(); pv.currentTime = 0; } }catch(e){}
         // play next video and schedule overlays
-        try{ var nv = nextSlide.querySelector('.slide-video'); if (nv){ nv.play().catch(function(){}); } }catch(e){}
+        try{ var nv = nextSlide.querySelector('.slide-video'); if (nv){ try{ nv.muted = true; }catch(e){} var p = nv.play(); if (p && typeof p.then === 'function'){ p.then(function(){ /* ok */ }).catch(function(err){ console.warn('Hero: play() rejected for next slide', idx, err); nextSlide.querySelectorAll('.slide-overlay').forEach(function(o){ o.classList.add('overlay--visible'); }); }); } } }catch(e){}
         scheduleSlideOverlays(nextSlide);
       }
 
