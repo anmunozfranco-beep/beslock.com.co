@@ -504,17 +504,14 @@
             if (isNaN(startAt)) startAt = H.overlayStartAt;
             // If already past start time, show immediately
             if (vid.currentTime >= startAt) {
-              console.log('Hero: overlay immediate show', ov.getAttribute('src') || ov, 'startAt=', startAt, 'currentTime=', vid.currentTime);
               ov.classList.add('overlay--visible');
             } else {
-              console.log('Hero: schedule overlay', ov.getAttribute('src') || ov, 'startAt=', startAt, 'currentTime=', vid.currentTime);
               // attach a timeupdate listener specific for this overlay
               ov._ontime = function(){
                 // debug log to trace timeupdate
-                // eslint-disable-next-line no-console
-                console.log('Hero: timeupdate', ov.getAttribute('src') || ov, 'ct=', vid.currentTime, 'startAt=', startAt);
+                // timeupdate handler
                 if (vid.currentTime >= startAt){
-                  console.log('Hero: overlay activating via timeupdate', ov.getAttribute('src') || ov, 'at', vid.currentTime);
+                  // overlay activating
                   ov.classList.add('overlay--visible');
                   try{ vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; }catch(e){}
                 }
