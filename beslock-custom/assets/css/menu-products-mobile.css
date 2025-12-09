@@ -40,14 +40,16 @@
 .drawer-header .drawer__logo {
   position: absolute !important;
   left: 50% !important;
-  transform: translateX(-50%) !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
   z-index: 2 !important;
   display: flex !important;
   align-items: center !important;
 }
 .drawer-header .drawer__logo img {
   display: block !important;
-  height: var(--site-logo-height, 32px) !important; /* match header logo size */
+  /* Use fixed logo sizes for the drawer so it does not react to --site-logo-height changes */
+  height: 32px !important;
   width: auto !important;
 }
 
@@ -301,16 +303,18 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
   .drawer-header .drawer__logo img { height: var(--site-logo-height, 38px) !important; }
 }
 
-/* Make drawer header match the visual height of the site header
-   We compute height using the site logo variable plus the header bar vertical padding.
-   Mobile: padding 0.4rem top+bottom (0.8rem). Desktop (>=600px): 0.7rem top+bottom (1.4rem). */
+/* Make drawer header match the visual height of the site header but keep it fixed
+   so it won't change when --site-logo-height is updated elsewhere. */
 .drawer-header {
-  /* default (mobile) */
-  height: calc(var(--site-logo-height, 32px) + 0.8rem) !important;
+  /* default (mobile): logo 32px + vertical padding 0.8rem */
+  height: calc(32px + 0.8rem) !important;
+  display: flex !important;
+  align-items: center !important;
 }
 @media (min-width: 600px) {
   .drawer-header {
-    height: calc(var(--site-logo-height, 38px) + 1.4rem) !important;
+    /* desktop: logo 38px + vertical padding 1.4rem */
+    height: calc(38px + 1.4rem) !important;
   }
 }
 
