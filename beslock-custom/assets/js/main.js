@@ -449,13 +449,33 @@
       if (!first) { hideLoader(); startAutoplay(); return; }
 
       var isWeChat = /MicroMessenger/i.test(navigator.userAgent || '');
+      var timeoutId = null;
+
+      function doStart(){
+        try{
+          root.classList.add('ready');
+          hideLoader();
+          startAutoplay();
+        }catch(e){}
+      }
 
       function tryHide(){
         try{
-          if (first.readyState >= 2 && first.currentTime > 0) {
-            root.classList.add('ready');
-            hideLoader();
-            startAutoplay();
+          if (first.readyState >= 2) {
+            // If the video hasn't advanced (currentTime===0), try to play muted to satisfy autoplay policies
+            if (first.currentTime === 0) {
+              first.muted = true;
+              try{ first.setAttribute('playsinline',''); }catch(e){}
+              var p = first.play();
+              if (p && typeof p.then === 'function') {
+                p.then(function(){ doStart(); }).catch(function(){ doStart(); });
+              } else {
+                doStart();
+              }
+            } else {
+              doStart();
+            }
+            if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
           }
         }catch(e){}
       }
@@ -470,11 +490,13 @@
           root.classList.add('ready'); hideLoader(); startAutoplay();
         }, { once:true });
       } else {
-        // normal browsers: wait for loadeddata or small timeupdate
+        // normal browsers: wait for loadeddata or canplay, but be resilient if play is blocked
         var onLoaded = function(){ try{ first.removeEventListener('loadeddata', onLoaded); tryHide(); }catch(e){} };
+        var onCanPlay = function(){ try{ first.removeEventListener('canplay', onCanPlay); tryHide(); }catch(e){} };
         first.addEventListener('loadeddata', onLoaded, { once:true });
-        // safety fallback
-        var t = setTimeout(function(){ tryHide(); }, 3500);
+        first.addEventListener('canplay', onCanPlay, { once:true });
+        // safety fallback: try to hide after 5s no matter what
+        timeoutId = setTimeout(function(){ tryHide(); }, 5000);
       }
     })();
 
