@@ -401,187 +401,153 @@
 })();
 
 /* === HERO BESLOCK LOGIC (appended) === */
-(function () {
+(function (){
   'use strict';
-  var H = {
-    slideCount: 6,
-    slideDuration: 8000,
-    // Start overlay animation immediately at 0s so the overlay fades in smoothly
-    // as the video plays (user requested overlay starting at second 0).
-    overlayStartAt: 0,
-    resistanceFactor: 0.3,
-    swipeThreshold: 50
+
+  var SELECTORS = {
+    root: '#heroCarousel',
+    slide: '.slide',
+    slideInner: '.slide-inner',
+    video: '.slide-video',
+    overlay: '.slide-overlay',
+    dots: '.carousel-dot',
+    loader: '#heroLoader'
   };
 
-  function $q(sel, ctx){ return (ctx||document).querySelector(sel); }
-  function $qa(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); }
+  var SLIDE_DURATION = 8000; // ms
+  var SWIPE_THRESHOLD = 50; // px
+  var RESISTANCE = 0.3;
 
-  function HeroInit(selector){
-    var root = typeof selector === 'string' ? document.querySelector(selector) : selector;
-    if (!root) return null;
-    var slides = $qa('.hero-slide', root);
-    var dots = $qa('.hero-dot', root);
-    var loader = $q('.beslock-loader', root);
-    var current = 0, timer = null, isPlaying = false, overlayTimeouts = [];
+  function $(sel, ctx){ return (ctx || document).querySelector(sel); }
+  function $all(sel, ctx){ return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
-    // Loader image is handled by template (favicon); no inline SVG injection needed.
+  function initHeroCarousel(){
+    var root = document.querySelector(SELECTORS.root);
+    if (!root) return;
 
-    function waitFirst(){
-      return new Promise(function(resolve){
-        var v = slides[0] && slides[0].querySelector('.slide-video');
-        if (!v) return resolve();
-        if (v.readyState >= 4) return resolve();
-        var t = setTimeout(function(){ resolve(); }, 5000);
-        v.addEventListener('canplaythrough', function(){ clearTimeout(t); resolve(); }, { once:true });
-      });
-    }
+    var slides = $all(SELECTORS.slide, root);
+    var dots = $all(SELECTORS.dots, root);
+    var loader = $(SELECTORS.loader);
+    var currentIndex = 0;
+    var slideTimer = null;
+    var isPlaying = false;
 
-    function showSlide(idx, opts){
-      opts = opts||{}; idx = (idx + slides.length) % slides.length; current = idx;
-      // clear overlay timers and remove any attached timeupdate listeners
-      if (Array.isArray(overlayTimeouts)) {
-        overlayTimeouts.forEach(function(t){ try{ clearTimeout(t); }catch(e){} });
-        overlayTimeouts = [];
-      }
-      // remove any per-overlay timeupdate handlers and loop watchers left on previous videos
-      slides.forEach(function(s){
-        var pv = s.querySelector('.slide-video'); if (!pv) return;
-        s.querySelectorAll('.slide-overlay').forEach(function(o){ try{ if (o._ontime) { pv.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} });
-        try{ if (pv._loopWatcher) { pv.removeEventListener('timeupdate', pv._loopWatcher); delete pv._loopWatcher; delete pv._lastCurrent; } }catch(e){}
-      });
-      slides.forEach(function(s,i){
-        if (i===idx){ s.classList.add('is-active'); s.setAttribute('aria-hidden','false'); }
-        else { s.classList.remove('is-active'); s.setAttribute('aria-hidden','true'); }
-      });
-      dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); d.setAttribute('aria-selected', i===idx? 'true':'false'); });
-      // play video for current, pause others
-      slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (i===idx){ v.play().catch(function(){}); } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
-      // overlay show logic - support multiple overlays per slide, each may have a data-start attribute
-      var sl = slides[idx];
-      // helper to activate one overlay and immediately hide the others in the same slide
-      function activateOverlay(targetOverlay) {
-        try {
-          var siblings = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
-          siblings.forEach(function(s){ if (s !== targetOverlay) s.classList.remove('overlay--visible'); });
-          targetOverlay.classList.add('overlay--visible');
-        } catch (e) {}
-      }
-      if (sl){
-        var vid = sl.querySelector('.slide-video');
-        var ovs = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
-        // Ensure overlays start hidden when (re)showing the slide so transitions run on each loop
-        ovs.forEach(function(o){ o.classList.remove('overlay--visible'); });
-        if (vid && ovs.length){
-          // attach a loop watcher to reset overlays when the video loops internally
-          if (!vid._loopWatcher) {
-            vid._lastCurrent = typeof vid.currentTime === 'number' ? vid.currentTime : 0;
-            vid._loopWatcher = function(){
-              try{
-                if (typeof vid._lastCurrent === 'number' && vid.currentTime < 0.2 && vid._lastCurrent > vid.currentTime + 0.5) {
-                  // video looped: hide overlays and reattach per-overlay listeners
-                  var curOvs = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
-                  curOvs.forEach(function(o){ o.classList.remove('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} });
-                  // re-schedule overlays for the new loop
-                  curOvs.forEach(function(o){
-                    var startAtLoop = parseFloat(o.getAttribute('data-start'));
-                    if (isNaN(startAtLoop)) startAtLoop = H.overlayStartAt;
-                    if (vid.currentTime >= startAtLoop) { activateOverlay(o); }
-                    else {
-                      o._ontime = function(){ if (vid.currentTime >= startAtLoop){ o.classList.add('overlay--visible'); try{ vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; }catch(e){} } };
-                      vid.addEventListener('timeupdate', o._ontime, { passive:true });
-                      var t2 = setTimeout(function(){ if (!o.classList.contains('overlay--visible')) o.classList.add('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} }, Math.max(200, H.slideDuration-1200));
-                      overlayTimeouts.push(t2);
-                    }
-                  });
-                }
-              }catch(e){}
-              vid._lastCurrent = vid.currentTime;
-            };
-            vid.addEventListener('timeupdate', vid._loopWatcher, { passive:true });
-            // Quick loop-fix for files that show initial frames on loop (skip first frames)
-            try {
-              var _src = vid.getAttribute('src') || vid.currentSrc || '';
-              if (/_?e-(orbit|shield)/i.test(_src)) {
-                if (!vid._loopFix) {
-                  vid._loopFixPending = false;
-                  vid._loopFix = function(){
-                    try {
-                      if (!vid.duration || !isFinite(vid.duration)) return;
-                      var SKIP_EPS = 0.06; // skip first ~60ms on loop
-                      var NEAR_END = Math.max(0.06, vid.duration - 0.08);
-                      if (vid.currentTime >= NEAR_END) {
-                        if (!vid._loopFixPending) {
-                          vid._loopFixPending = true;
-                          // jump to a small positive time to avoid showing initial frames
-                          try { vid.currentTime = SKIP_EPS; } catch(e){}
-                          setTimeout(function(){ vid._loopFixPending = false; }, 120);
-                        }
-                      }
-                    } catch (e) {}
-                  };
-                  vid.addEventListener('timeupdate', vid._loopFix, { passive:true });
-                }
-              }
-            } catch (e) {}
-          }
+    // Ensure only first video preloads aggressively
+    slides.forEach(function(s,i){
+      var v = $(SELECTORS.video, s);
+      if (!v) return;
+      if (i===0) { v.setAttribute('preload','auto'); }
+      else { v.setAttribute('preload','metadata'); }
+    });
 
-          ovs.forEach(function(ov){
-            var startAt = parseFloat(ov.getAttribute('data-start'));
-            if (isNaN(startAt)) startAt = H.overlayStartAt;
-            // If already past start time, show immediately
-            if (vid.currentTime >= startAt) {
-              activateOverlay(ov);
-            } else {
-              // attach a timeupdate listener specific for this overlay
-              ov._ontime = function(){
-                // debug log to trace timeupdate
-                // timeupdate handler
-                if (vid.currentTime >= startAt){
-                  // overlay activating — hide previous overlay immediately
-                  activateOverlay(ov);
-                  try{ vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; }catch(e){}
-                }
-              };
-              vid.addEventListener('timeupdate', ov._ontime, { passive:true });
-              // fallback: ensure overlay becomes visible before slide ends
-              var fallbackDelay = Math.max(200, H.slideDuration - 1200);
-              var t = setTimeout(function(){ if (!ov.classList.contains('overlay--visible')) activateOverlay(ov); try{ if (ov._ontime) { vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; } }catch(e){} }, fallbackDelay);
-              overlayTimeouts.push(t);
-            }
-          });
-        }
-      }
-    }
+    function showLoader(){ if (loader) { loader.style.display='flex'; loader.setAttribute('aria-hidden','false'); } }
+    function hideLoader(){ if (!loader) return; loader.style.opacity='0'; loader.setAttribute('aria-hidden','true'); setTimeout(function(){ loader.style.display='none'; }, 600); }
 
-    function startAutoplay(){ stopAutoplay(); isPlaying=true; timer = setTimeout(nextSlide, H.slideDuration); }
-    function stopAutoplay(){ if (timer){ clearTimeout(timer); timer=null; } isPlaying=false; }
-    function resetAutoplay(){ stopAutoplay(); setTimeout(function(){ startAutoplay(); }, 120); }
-    function nextSlide(){ showSlide(current+1); startAutoplay(); }
-
-    // bind dots
-    dots.forEach(function(d){ d.addEventListener('click', function(){ var i=parseInt(d.getAttribute('data-index'),10); showSlide(i); resetAutoplay(); }, { passive:true }); });
-
-    // touch swipe with resistance
+    // Loader logic + WeChat fallback
     (function(){
-      var touch={startX:0,deltaX:0,dragging:false}; var activeInner=null, rafId=null;
-      function onStart(e){ if (!e.touches || e.touches.length>1) return; touch.startX=e.touches[0].clientX; touch.deltaX=0; touch.dragging=true; activeInner = slides[current] && slides[current].querySelector('.slide-inner'); stopAutoplay(); }
-      function onMove(e){ if (!touch.dragging) return; var x=e.touches[0].clientX; touch.deltaX = x - touch.startX; var moveX = touch.deltaX; if ((current===0 && moveX>0) || (current===slides.length-1 && moveX<0)) moveX = moveX * H.resistanceFactor; if (activeInner){ if (rafId) cancelAnimationFrame(rafId); rafId=requestAnimationFrame(function(){ activeInner.style.transform = 'translateX(' + moveX + 'px)'; }); } }
-      function onEnd(e){ if (!touch.dragging) return; touch.dragging=false; var dx = touch.deltaX; if (activeInner){ activeInner.style.transition='transform 260ms cubic-bezier(.22,.9,.41,1)'; activeInner.style.transform=''; setTimeout(function(){ if (activeInner) activeInner.style.transition=''; },300); }
-        if (Math.abs(dx) > H.swipeThreshold){ if (dx<0) { showSlide(current+1); } else { showSlide(current-1); } resetAutoplay(); } else { resetAutoplay(); } }
-      document.addEventListener('touchstart', onStart, { passive:true }); document.addEventListener('touchmove', onMove, { passive:true }); document.addEventListener('touchend', onEnd, { passive:true }); document.addEventListener('touchcancel', onEnd, { passive:true });
+      var first = slides[0] && $(SELECTORS.video, slides[0]);
+      if (!first) { hideLoader(); startAutoplay(); return; }
+
+      var isWeChat = /MicroMessenger/i.test(navigator.userAgent || '');
+
+      function tryHide(){
+        try{
+          if (first.readyState >= 2 && first.currentTime > 0) {
+            root.classList.add('ready');
+            hideLoader();
+            startAutoplay();
+          }
+        }catch(e){}
+      }
+
+      if (isWeChat) {
+        // show CTA and wait for user gesture
+        var cta = loader && loader.querySelector('.loader-cta-text');
+        if (cta) { cta.textContent = 'Unlock experience'; cta.style.cursor='pointer'; }
+        if (loader) loader.addEventListener('click', function(){
+          // user gesture, play all videos
+          slides.forEach(function(s){ var v=$(SELECTORS.video,s); if (v) { v.play().catch(function(){}); } });
+          root.classList.add('ready'); hideLoader(); startAutoplay();
+        }, { once:true });
+      } else {
+        // normal browsers: wait for loadeddata or small timeupdate
+        var onLoaded = function(){ try{ first.removeEventListener('loadeddata', onLoaded); tryHide(); }catch(e){} };
+        first.addEventListener('loadeddata', onLoaded, { once:true });
+        // safety fallback
+        var t = setTimeout(function(){ tryHide(); }, 3500);
+      }
     })();
 
-    // visibility pause
+    // Crossfade activation
+    function activateSlide(newIndex){
+      if (newIndex === currentIndex) return;
+      var oldSlide = slides[currentIndex];
+      var newSlide = slides[newIndex];
+      if (!newSlide) return;
+
+      // Prepare new slide
+      newSlide.classList.add('active');
+      newSlide.style.zIndex = 3;
+      var newVideo = $(SELECTORS.video, newSlide);
+      if (newVideo){ try{ newVideo.currentTime = 0; newVideo.play().catch(function(){}); }catch(e){} }
+
+      // overlay enter
+      var newOverlay = $(SELECTORS.overlay, newSlide);
+      if (newOverlay){
+        newOverlay.classList.remove('overlay-exit','overlay-kenburns');
+        // trigger enter then kenburns
+        newOverlay.classList.add('overlay-enter');
+        setTimeout(function(){ newOverlay.classList.add('overlay-kenburns'); }, 520);
+      }
+
+      // start crossfade: old fades out while new is visible
+      if (oldSlide){
+        oldSlide.classList.add('is-exiting');
+        // overlay exit on old
+        var oldOverlay = $(SELECTORS.overlay, oldSlide);
+        if (oldOverlay){ oldOverlay.classList.add('overlay-exit'); }
+        setTimeout(function(){ try{ oldSlide.classList.remove('active','is-exiting'); oldSlide.style.zIndex=''; }catch(e){} }, 700);
+      }
+
+      // update dots
+      dots.forEach(function(d){ d.classList.remove('active'); });
+      if (dots[newIndex]) dots[newIndex].classList.add('active');
+
+      currentIndex = newIndex;
+    }
+
+    function nextSlide(){ var idx = (currentIndex + 1) % slides.length; activateSlide(idx); }
+    function prevSlide(){ var idx = (currentIndex -1 + slides.length) % slides.length; activateSlide(idx); }
+
+    function startAutoplay(){ stopAutoplay(); slideTimer = setInterval(nextSlide, SLIDE_DURATION); isPlaying = true; }
+    function stopAutoplay(){ if (slideTimer) { clearInterval(slideTimer); slideTimer = null; } isPlaying = false; }
+
+    // dots handlers
+    dots.forEach(function(d){ d.addEventListener('click', function(){ var idx = parseInt(d.getAttribute('data-slide'),10) || 0; activateSlide(idx); stopAutoplay(); setTimeout(startAutoplay, 120); }); });
+
+    // Swipe handling
+    (function(){
+      var startX=0, deltaX=0, dragging=false, activeInner=null, rafId=null;
+      var rootEl = root;
+      function onStart(e){ if (!e.touches || e.touches.length>1) return; startX = e.touches[0].clientX; deltaX=0; dragging=true; activeInner = slides[currentIndex] && slides[currentIndex].querySelector('.slide-inner'); stopAutoplay(); }
+      function onMove(e){ if (!dragging) return; var x = e.touches[0].clientX; deltaX = x - startX; var move = deltaX; if ((currentIndex===0 && move>0) || (currentIndex===slides.length-1 && move<0)) move = move * RESISTANCE; if (activeInner){ if (rafId) cancelAnimationFrame(rafId); rafId = requestAnimationFrame(function(){ activeInner.style.transform = 'translateX(' + move + 'px)'; }); } if (Math.abs(deltaX) > 10) e.preventDefault(); }
+      function onEnd(e){ if (!dragging) return; dragging=false; if (activeInner){ activeInner.style.transition='transform 260ms cubic-bezier(.22,.9,.41,1)'; activeInner.style.transform=''; setTimeout(function(){ if (activeInner) activeInner.style.transition=''; },320); }
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD){ if (deltaX < 0) { nextSlide(); } else { prevSlide(); } }
+        setTimeout(startAutoplay, 120);
+      }
+      rootEl.addEventListener('touchstart', onStart, { passive:true }); rootEl.addEventListener('touchmove', onMove, { passive:false }); rootEl.addEventListener('touchend', onEnd); rootEl.addEventListener('touchcancel', onEnd);
+    })();
+
+    // visibility change
     document.addEventListener('visibilitychange', function(){ if (document.hidden) stopAutoplay(); else startAutoplay(); });
 
-    // wait first video then hide loader and start
-    waitFirst().then(function(){ if (loader) loader.setAttribute('aria-hidden','true'); root.classList.add('ready'); showSlide(0, { immediate:true }); startAutoplay(); });
-
     // expose for debug
-    window.__beslockHero = { show: showSlide, next: nextSlide, prev:function(){ showSlide(current-1); }, stop:stopAutoplay, start:startAutoplay };
-    return window.__beslockHero;
+    window.__beslockHero = { next: nextSlide, prev: prevSlide, goto: activateSlide, start: startAutoplay, stop: stopAutoplay };
+
+    // start with first slide active
+    activateSlide(0);
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ HeroInit('#beslockHero'); }, { once:true }); else HeroInit('#beslockHero');
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHeroCarousel); else initHeroCarousel();
 
 })();
