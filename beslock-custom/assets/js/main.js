@@ -428,7 +428,8 @@
     var slides = $all(SELECTORS.slide, root);
     var dots = $all(SELECTORS.dots, root);
     var loader = $(SELECTORS.loader);
-    var currentIndex = 0;
+    // start as -1 so initial activateSlide(0) runs and triggers overlay enter
+    var currentIndex = -1;
     var slideTimer = null;
     var isPlaying = false;
 
@@ -503,6 +504,8 @@
     // Crossfade activation
     function activateSlide(newIndex){
       if (newIndex === currentIndex) return;
+      // Debug: log activations to help diagnose overlay visibility
+      try{ if (window && window.console && window.console.debug) { window.console.debug('[hero] activating slide', newIndex); } }catch(e){}
       var oldSlide = slides[currentIndex];
       var newSlide = slides[newIndex];
       if (!newSlide) return;
@@ -516,10 +519,13 @@
       // overlay enter
       var newOverlay = $(SELECTORS.overlay, newSlide);
       if (newOverlay){
+        try{ window.console.debug('[hero] found overlay for slide', newIndex, newOverlay); }catch(e){}
         newOverlay.classList.remove('overlay-exit','overlay-kenburns');
         // trigger enter then kenburns
         newOverlay.classList.add('overlay-enter');
         setTimeout(function(){ newOverlay.classList.add('overlay-kenburns'); }, 520);
+      } else {
+        try{ window.console.debug('[hero] no overlay element found for slide', newIndex); }catch(e){}
       }
 
       // start crossfade: old fades out while new is visible
