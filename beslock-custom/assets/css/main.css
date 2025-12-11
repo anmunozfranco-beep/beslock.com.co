@@ -83,22 +83,21 @@ body {
 
 /* ========== HEADER & FOOTER ========== */
 
-/* For viewports >= 600px: position overlay so its left edge is at 60% of the
-   hero viewport and its right edge coincides with the right edge of the video
-   (100%). The overlay image keeps its aspect ratio and aligns its visual
-   content to the right inside the box so its rightmost pixels touch the
-   video's right edge. */
+/* For viewports >= 600px: make the overlay span the full hero width (0% -> 100%)
+   but ensure its visual content is anchored to the right so the overlay's
+   rightmost pixels coincide with the video's right edge. The image keeps its
+   aspect ratio via object-fit:contain and scales to the available height. */
 @media (min-width: 600px) {
   .slide-overlay {
-    left: 60% !important; /* left edge at 60% of viewport */
-    right: 0 !important;  /* right edge aligned to hero/video right */
+    left: 0 !important;   /* left edge at 0% of viewport */
+    right: 0 !important;  /* right edge aligned to hero/video right (100%) */
     top: 50% !important;
     transform: translateY(-50%) !important;
-    /* make the overlay occupy the horizontal space between 60% and 100% */
-    width: auto !important; /* width is computed from left/right */
+    /* occupy full horizontal span; image content will be positioned to the right */
+    width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
-    object-position: right center !important; /* keep visual content anchored to the right */
+    object-position: right center !important; /* anchor image content to the right */
     max-width: none !important;
     max-height: 100% !important;
     transition: opacity 260ms ease, transform 260ms cubic-bezier(.22,.9,.41,1);
