@@ -37,17 +37,41 @@
         for ($i = 0; $i < $count; $i++):
           $vid = $videos[$i];
           $ov  = $overlays[$i];
+          // Map overlay filename to high-res variant in images_hero/images_hero_d if present
+          $ov_base = pathinfo($ov, PATHINFO_FILENAME);
+          if (preg_match('/^(.*)_2_hero$/i', $ov_base, $m)) {
+            $ov_d_file = $m[1] . '_d_2.png';
+          } else {
+            $ov_d_file = preg_replace('/_hero$/i', '_d', $ov_base) . '.png';
+          }
+          $ov_d_fs = get_stylesheet_directory() . '/assets/images/Hero_develp/images_hero/images_hero_d/' . $ov_d_file;
+          $ov_d_url = file_exists($ov_d_fs) ? (get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/images_hero_d/' . $ov_d_file) : '';
       ?>
       <article class="hero-slide" data-index="<?php echo $i; ?>" aria-roledescription="slide" aria-label="Slide <?php echo $i+1; ?>">
         <div class="slide-inner">
           <video class="slide-video" muted playsinline preload="auto" loop src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>"></video>
           <picture aria-hidden="true">
-            <source media="(min-width:600px)" srcset="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero_d/' . $ov ); ?>">
+            <?php if ($ov_d_url): ?>
+              <source media="(min-width:600px)" srcset="<?php echo esc_url( $ov_d_url ); ?>">
+            <?php endif; ?>
             <img class="slide-overlay" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/' . $ov ); ?>" alt="" aria-hidden="true" />
           </picture>
           <?php if ($i === 5): // Add second orbit overlay image that enters at 3.55s ?>
+            <?php
+              $ov2 = 'e-orbit_2_hero.png';
+              $ov2_base = pathinfo($ov2, PATHINFO_FILENAME);
+              if (preg_match('/^(.*)_2_hero$/i', $ov2_base, $mm)) {
+                $ov2_d_file = $mm[1] . '_d_2.png';
+              } else {
+                $ov2_d_file = preg_replace('/_hero$/i', '_d', $ov2_base) . '.png';
+              }
+              $ov2_d_fs = get_stylesheet_directory() . '/assets/images/Hero_develp/images_hero/images_hero_d/' . $ov2_d_file;
+              $ov2_d_url = file_exists($ov2_d_fs) ? (get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/images_hero_d/' . $ov2_d_file) : '';
+            ?>
             <picture aria-hidden="true">
-              <source media="(min-width:600px)" srcset="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero_d/e-orbit_2_hero.png' ); ?>">
+              <?php if ($ov2_d_url): ?>
+                <source media="(min-width:600px)" srcset="<?php echo esc_url( $ov2_d_url ); ?>">
+              <?php endif; ?>
               <img class="slide-overlay" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/e-orbit_2_hero.png' ); ?>" data-start="3.55" alt="" aria-hidden="true" />
             </picture>
           <?php endif; ?>
