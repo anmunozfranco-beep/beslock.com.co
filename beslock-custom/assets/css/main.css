@@ -689,6 +689,30 @@ body {
 }
 
 /* end hero styles */
+.\/* ===== Ajuste específico: para resoluciones >600px posicionar el H1/slide-title
+.   con su centro en 30vw y aumentar el tamaño al 200% (aplica al título sobre
+.   cada clip) ===== *\/
+@media (min-width: 600px) {
+  .slide-content {
+    position: absolute !important;
+    left: 30vw !important; /* punto central del bloque en 30% del viewport */
+    transform: translateX(-50%) !important; /* centra el bloque en 30vw */
+    bottom: 12vh !important; /* mantener separación vertical similar */
+    width: min(76%, 760px) !important;
+    padding: 0 1rem !important;
+    text-align: center !important;
+  }
+
+  /* Duplica visualmente los tamaños del título y subtítulo sobre cada clip */
+  .slide-title {
+    font-size: clamp(3.2rem, 12.8vw, 6.3rem) !important; /* 2x de clamp original */
+    line-height: 1.02 !important;
+  }
+  .slide-subtitle {
+    font-size: clamp(2.52rem, 10.08vw, 3.08rem) !important; /* 2x de clamp original */
+  }
+}
+
 .site-footer .footer-copy {
   margin-top: 0.6rem;
   color: var(--beslock-text-sec);
