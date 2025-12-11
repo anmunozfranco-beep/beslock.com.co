@@ -713,6 +713,20 @@ body {
   }
 }
 
+/* Aumentar especificidad para el H1 que se genera sobre cada clip (slide-title) */
+@media (min-width: 600px) {
+  .hero-slide .slide-content { left: 30vw !important; transform: translateX(-50%) !important; }
+  .hero-slide .slide-title {
+    font-size: clamp(3.2rem, 12.8vw, 6.3rem) !important;
+    line-height: 1.02 !important;
+    text-align: center !important;
+  }
+  .hero-slide .slide-subtitle {
+    font-size: clamp(2.52rem, 10.08vw, 3.08rem) !important;
+    text-align: center !important;
+  }
+}
+
 .site-footer .footer-copy {
   margin-top: 0.6rem;
   color: var(--beslock-text-sec);
