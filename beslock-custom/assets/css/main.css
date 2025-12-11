@@ -96,7 +96,7 @@ body {
     /* occupy full horizontal span; image content will be positioned to the right */
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
     object-position: right center !important; /* anchor image content to the right */
     max-width: none !important;
     max-height: 100% !important;
