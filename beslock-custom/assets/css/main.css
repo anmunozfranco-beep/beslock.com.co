@@ -733,6 +733,27 @@ body {
   font-size: 0.95rem;
 }
 
+/* Slide crossfade base rules: ensure slides overlap and crossfade smoothly
+   without using display:none so there is never a black frame between slides. */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  will-change: opacity;
+  z-index: 0;
+}
+.hero-slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+.hero-slide.is-exiting {
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* Responsive: si quieres cambiar el ratio en pantallas grandes */
 @media (min-width: 900px) {
   .footer-logo {
