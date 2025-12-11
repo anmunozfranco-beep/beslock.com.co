@@ -484,8 +484,20 @@
           // Immediately make new slide active (it will fade in 0->1)
           if (newSlide) {
             newSlide.classList.add('is-active'); newSlide.classList.remove('is-exiting'); newSlide.setAttribute('aria-hidden','false');
-            // rewind and play new slide video
-            try{ var nv = newSlide.querySelector('.slide-video'); if (nv){ try{ nv.currentTime = 0; }catch(e){} nv.play().catch(function(){}); } }catch(e){}
+            // rewind and play new slide video. For known clips that show an initial
+            // black frame on play we skip a small epsilon to avoid the flash.
+            try{ var nv = newSlide.querySelector('.slide-video'); if (nv){
+                try{
+                  var SRC = (nv.getAttribute('src') || nv.currentSrc || '').toString();
+                  var SKIP_EPS = 0.06; // skip ~60ms to avoid initial black frame
+                  if (/_?e-(orbit|shield)/i.test(SRC)) {
+                    try { nv.currentTime = SKIP_EPS; } catch (e) {}
+                  } else {
+                    try { nv.currentTime = 0; } catch (e) {}
+                  }
+                }catch(e){}
+                nv.play().catch(function(){});
+              } }catch(e){}
           }
 
           // make sure other slides than old/new are not interfering
