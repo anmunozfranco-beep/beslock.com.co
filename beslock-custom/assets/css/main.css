@@ -82,6 +82,30 @@ body {
 }
 
 /* ========== HEADER & FOOTER ========== */
+
+/* For viewports >= 600px: position overlay so its left edge is at 60% of the
+   hero viewport and its right edge coincides with the right edge of the video
+   (100%). The overlay image keeps its aspect ratio and aligns its visual
+   content to the right inside the box so its rightmost pixels touch the
+   video's right edge. */
+@media (min-width: 600px) {
+  .slide-overlay {
+    left: 60% !important; /* left edge at 60% of viewport */
+    right: 0 !important;  /* right edge aligned to hero/video right */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    /* make the overlay occupy the horizontal space between 60% and 100% */
+    width: auto !important; /* width is computed from left/right */
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: right center !important; /* keep visual content anchored to the right */
+    max-width: none !important;
+    max-height: 100% !important;
+    transition: opacity 260ms ease, transform 260ms cubic-bezier(.22,.9,.41,1);
+    pointer-events: none;
+  }
+  .slide-overlay.overlay--visible { opacity: 0.8; }
+}
 /* Nota: tu regla original aplicaba position: sticky tanto a header como a .footer.
    Dejamos esa regla, pero creamos una clase .site-footer que *anula* lo sticky
    y aplica el diseño concreto del footer que ahora queremos usar. */
@@ -640,69 +664,6 @@ body {
     margin-right: 0 !important;
   }
 }
-/* --------------------------------------------------------------------------
-   BESLOCK HERO — Styles (mobile-first)
-   This block is self-contained and targets only the hero carousel elements.
-   DO NOT modify .slide-video rules here: videos remain intact and full-bleed.
- -------------------------------------------------------------------------- */
-.hero-carousel{ position:relative; width:100%; height:100vh; overflow:hidden; }
-.hero-slides{ position:relative; width:100%; height:100%; }
-.slide{ position:absolute; inset:0; width:100%; height:100%; opacity:0; pointer-events:none; display:block; transition:opacity 600ms cubic-bezier(.22,.9,.41,1); }
-.slide.active{ opacity:1; pointer-events:auto; z-index:2; }
-.slide-inner{ position:relative; width:100%; height:100%; overflow:hidden; display:block; }
-.slide-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; background:#000; display:block; z-index:0; }
-
-/* Overlay aligned to right edge of the visible video */
-.slide-overlay{ position:absolute; top:50%; right:0; transform:translateY(-50%); pointer-events:none; z-index:1; display:block; }
-.slide-overlay img{ display:block; height:auto; max-height:90vh; width:auto; }
-
-/* Slide text (centered on mobile) */
-.slide-text{ position:absolute; left:0; right:0; bottom:12vh; padding:0 1rem; text-align:center; z-index:3; pointer-events:none; }
-.slide-title{ margin:0; color:#fff; font-weight:700; font-size:clamp(1.6rem,6.4vw,3rem); text-shadow:0 6px 22px rgba(0,0,0,0.65); }
-.slide-subtitle{ margin:0.5rem 0 0; color:rgba(255,255,255,0.92); font-size:clamp(1rem,4vw,1.25rem); text-shadow:0 4px 16px rgba(0,0,0,0.55); }
-
-/* Loader styles */
-.beslock-loader{ position:fixed; inset:0; background:#070505; display:flex; align-items:center; justify-content:center; z-index:9999; transition:opacity .5s ease; }
-.beslock-loader.hidden{ opacity:0; pointer-events:none; display:flex; }
-.loader-inner{ text-align:center; color:#fff; }
-.loader-icon{ width:96px; height:auto; display:block; margin:0 auto; animation: loader-pulse 1.8s ease-in-out infinite; }
-@media (min-width:900px){ .loader-icon{ width:128px; } }
-@keyframes loader-pulse{ 0%{ transform:scale(1); opacity:1 } 50%{ transform:scale(1.06); opacity:.9 } 100%{ transform:scale(1); opacity:1 } }
-
-/* Overlay entry, kenburns and exit */
-.slide-overlay.overlay-enter{ animation: overlay-enter-mobile .5s forwards cubic-bezier(.22,.9,.41,1); }
-@media (min-width:900px){ .slide-overlay.overlay-enter{ animation: overlay-enter-desktop .8s forwards cubic-bezier(.22,.9,.41,1); } }
-
-@keyframes overlay-enter-mobile{ 0%{ transform:translate(40%, -50%); opacity:0 } 100%{ transform:translate(0, -50%); opacity:0.8 } }
-@keyframes overlay-enter-desktop{ 0%{ transform:translate(50%, -50%); opacity:0 } 100%{ transform:translate(0, -50%); opacity:0.8 } }
-
-.slide-overlay.overlay-kenburns{ animation: overlay-kenburns 7.2s linear forwards; animation-delay: .5s; }
-@keyframes overlay-kenburns{ 0%{ transform:translate(0,-50%) scale(1) } 100%{ transform:translate(0,-50%) scale(1.05) } }
-
-.slide-overlay.overlay-exit{ transition: opacity .6s ease; opacity:0 !important; }
-
-/* Dots */
-.carousel-dots{ position:absolute; bottom:8vh; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:5; }
-.carousel-dot{ width:8px; height:8px; border-radius:999px; background:rgba(255,255,255,0.3); transition:transform .28s ease, background .28s ease, box-shadow .28s ease; cursor:pointer; }
-.carousel-dot.active{ background:rgba(255,255,255,0.95); transform:scale(1.5); box-shadow:0 0 10px rgba(255,255,255,0.9); }
-@media (hover:hover){ .carousel-dot:hover{ transform:scale(1.4); background:rgba(255,255,255,0.8); } }
-
-/* Swipe helper: ensure slide-inner doesn't produce scrollbars */
-.slide-inner{ touch-action:pan-y; }
-
-/* Desktop adjustments */
-@media (min-width:900px){
-  .slide-text{ left:3rem; right:auto; text-align:left; width:min(56%,900px); padding:0 2rem; bottom:18vh; }
-  .slide-title{ font-size:clamp(2rem,4.2vw,4rem); }
-  .slide-subtitle{ font-size:clamp(1.2rem,2.6vw,1.6rem); }
-  .carousel-dots{ bottom:6vh; }
-}
-
-/* Accessibility: reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .slide, .slide-overlay, .loader-icon { transition: none !important; animation: none !important; }
-}
-
 
 /* end hero styles */
 .site-footer .footer-copy {
