@@ -744,6 +744,13 @@ body {
   will-change: opacity;
   z-index: 0;
 }
+.hero-slide {
+  /* Force GPU compositing to avoid painting flashes on some browsers/devices */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
 .hero-slide.is-active {
   opacity: 1;
   pointer-events: auto;
