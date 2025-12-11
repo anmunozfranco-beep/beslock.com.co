@@ -532,72 +532,21 @@
               try{
                 if (typeof vid._lastCurrent === 'number' && vid.currentTime < 0.2 && vid._lastCurrent > vid.currentTime + 0.5) {
                   var curOvs = Array.prototype.slice.call(sl.querySelectorAll('.slide-overlay'));
-            // For mobile we want the incoming video to be already playing when the
-            // crossfade begins so the user never sees a frozen frame. On desktop
-            // we keep the immediate behavior for snappy transitions.
-            var isMobileView = (typeof window !== 'undefined') && (window.innerWidth < 600);
-            if (isMobileView && newSlide) {
-              var nv = newSlide.querySelector && newSlide.querySelector('.slide-video');
-              // Prepare new video: start playback (may be muted) and wait until it
-              // is actually playing (or reaches small time threshold) before starting
-              // the crossfade. This ensures the incoming video isn't seen frozen.
-              var readyFired = false;
-              var readyTimeout = null;
-              function doCrossfadeNow() {
-                if (readyFired) return; readyFired = true;
-                // make new visible
-                try { newSlide.classList.add('is-active'); newSlide.classList.remove('is-exiting'); newSlide.setAttribute('aria-hidden','false'); }catch(e){}
-                // start fade out of old
-                if (oldSlide) {
-                  try { oldSlide.classList.remove('is-active'); oldSlide.classList.add('is-exiting'); }catch(e){}
-                  (function(s){ setTimeout(function(){ try{ s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','true'); }catch(e){} }, 650); })(oldSlide);
-                  (function(v){ setTimeout(function(){ try{ v.pause(); v.currentTime = 0; }catch(e){} }, 650); })( (oldSlide && oldSlide.querySelector ? oldSlide.querySelector('.slide-video') : null) );
+                  curOvs.forEach(function(o){ o.classList.remove('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} });
+                  curOvs.forEach(function(o){
+                    var startAtLoop = parseFloat(o.getAttribute('data-start'));
+                    if (isNaN(startAtLoop)) startAtLoop = H.overlayStartAt;
+                    if (vid.currentTime >= startAtLoop) { activateOverlay(o); }
+                    else {
+                      o._ontime = function(){ if (vid.currentTime >= startAtLoop){ o.classList.add('overlay--visible'); try{ vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; }catch(e){} } };
+                      vid.addEventListener('timeupdate', o._ontime, { passive:true });
+                      var t2 = setTimeout(function(){ if (!o.classList.contains('overlay--visible')) o.classList.add('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} }, Math.max(200, H.slideDuration-1200));
+                      overlayTimeouts.push(t2);
+                    }
+                  });
                 }
-                current = idx;
-                dots.forEach(function(d,i){ d.classList.toggle('is-active', i===current); d.setAttribute('aria-selected', i===current? 'true':'false'); });
-              }
-
-              try {
-                if (nv) {
-                  // small skip for known problematic clips
-                  try{ var SRC = (nv.getAttribute('src') || nv.currentSrc || '').toString(); if (/_?e-(orbit|shield)/i.test(SRC)) { try{ nv.currentTime = 0.06; }catch(e){} } else { try{ nv.currentTime = 0; }catch(e){} } }catch(e){}
-                  // start playback and wait for either 'playing' or a tiny playhead
-                  var onPlaying = function(){ cleanupAndProceed(); };
-                  var onTime = function(){ if (nv.currentTime > 0.02) cleanupAndProceed(); };
-                  var cleanupAndProceed = function(){ try{ nv.removeEventListener('playing', onPlaying); nv.removeEventListener('timeupdate', onTime); }catch(e){} clearTimeout(readyTimeout); doCrossfadeNow(); };
-                  nv.addEventListener('playing', onPlaying, { once:true });
-                  nv.addEventListener('timeupdate', onTime, { passive:true });
-                  // fallback: if play doesn't start within 400ms, proceed anyway
-                  readyTimeout = setTimeout(function(){ cleanupAndProceed(); }, 400);
-                  nv.play().catch(function(){});
-                } else {
-                  // no video found; fall back to immediate crossfade
-                  doCrossfadeNow();
-                }
-              } catch (e) {
-                doCrossfadeNow();
-              }
-
-            } else {
-              // Start fade: remove active from old (it will transition opacity 1->0)
-              if (oldSlide) {
-                oldSlide.classList.remove('is-active');
-                // mark as exiting so it sits under the new slide during crossfade
-                oldSlide.classList.add('is-exiting');
-                // after transition ends, remove exiting and mark hidden
-                (function(s){ setTimeout(function(){ try{ s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','true'); }catch(e){} }, 650); })(oldSlide);
-                // pause old video's playback after fade completes to free resources
-                (function(v){ setTimeout(function(){ try{ v.pause(); v.currentTime = 0; }catch(e){} }, 650); })( (oldSlide.querySelector && oldSlide.querySelector('.slide-video')) || null );
-              }
-
-              // Immediately make new slide active (it will fade in 0->1)
-              if (newSlide) {
-                newSlide.classList.add('is-active'); newSlide.classList.remove('is-exiting'); newSlide.setAttribute('aria-hidden','false');
-                // rewind and play new slide video
-                try{ var nv2 = newSlide.querySelector('.slide-video'); if (nv2){ try{ nv2.currentTime = 0; }catch(e){} nv2.play().catch(function(){}); } }catch(e){}
-              }
-              current = idx;
-            }
+              }catch(e){}
+              vid._lastCurrent = vid.currentTime;
             };
             vid.addEventListener('timeupdate', vid._loopWatcher, { passive:true });
             try {
