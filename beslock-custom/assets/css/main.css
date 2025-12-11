@@ -354,6 +354,30 @@ body {
   text-align: center;
 }
 
+/* ===== Ajustes para resoluciones mayores a 600px: centrar el bloque de texto
+   de la hero en el 30% del viewport y aumentar fuente al 200% ===== */
+@media (min-width: 600px) {
+  .hero__content {
+    position: absolute;
+    left: 30vw; /* el punto central del bloque quedará en 30% del viewport */
+    transform: translateX(-50%); /* centra el bloque respecto al punto 30vw */
+    bottom: 3rem; /* conservar separación inferior similar al diseño móvil */
+    max-width: 680px; /* permitir mayor anchura en desktop */
+    width: auto;
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  /* Duplicar el tamaño actual (200%) según valores definidos arriba */
+  .hero__title {
+    font-size: 4rem; /* 2rem * 2 */
+    line-height: 1.03;
+  }
+  .hero__subtitle {
+    font-size: 2.1rem; /* 1.05rem * 2 */
+  }
+}
+
 /* ========== DISCOVER ========== */
 .discover {
   background: var(--beslock-white);
