@@ -96,23 +96,23 @@
             <div class="features-wrapper" aria-hidden="true">
               <div class="features-list">
                 <div class="feature">
-                  <img src="https://img.icons8.com/?size=100&id=26111&format=png&color=000000" alt="icon-1" />
+                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=26111&format=png&color=000000" alt="icon-1" /></span>
                   <div class="feature__text"><span class="feature__title">Ideal para</span><span class="feature__subtitle">visitas temporales</span></div>
                 </div>
                 <div class="feature">
-                  <img src="https://img.icons8.com/?size=100&id=3734&format=png&color=000000" alt="icon-2" />
+                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=3734&format=png&color=000000" alt="icon-2" /></span>
                   <div class="feature__text"><span class="feature__title">Múltiples</span><span class="feature__subtitle">usuarios</span></div>
                 </div>
                 <div class="feature">
-                  <img src="https://img.icons8.com/?size=100&id=QSpdbW6kJ2lS&format=png&color=000000" alt="icon-3" />
+                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=QSpdbW6kJ2lS&format=png&color=000000" alt="icon-3" /></span>
                   <div class="feature__text"><span class="feature__title">Libérate</span><span class="feature__subtitle">de cargar llaves</span></div>
                 </div>
                 <div class="feature">
-                  <img src="https://img.icons8.com/?size=100&id=48917&format=png&color=000000" alt="icon-4" />
+                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=48917&format=png&color=000000" alt="icon-4" /></span>
                   <div class="feature__text"><span class="feature__title">Varias formas</span><span class="feature__subtitle">de apertura</span></div>
                 </div>
                 <div class="feature">
-                  <img src="https://img.icons8.com/ios/100/000000/phonelink-lock.png" alt="icon-5" />
+                  <span class="feature__icon"><img src="https://img.icons8.com/ios/100/000000/phonelink-lock.png" alt="icon-5" /></span>
                   <div class="feature__text"><span class="feature__title">Total control</span><span class="feature__subtitle">en el celular</span></div>
                 </div>
               </div>
