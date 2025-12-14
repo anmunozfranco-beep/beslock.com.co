@@ -75,15 +75,6 @@ body {
 @media (min-width: 600px) {
   .section--lined::before {
     display: block;
-  /* Mobile: vertical list, icon above text, aligned left, 10px below H2 */
-  .slide-content { position: relative !important; top: 0 !important; transform: none !important; }
-  .features-wrapper { margin-top: 10px !important; }
-  .features-list { flex-direction: column; gap: 16px; align-items: flex-start; }
-  .features-list .feature { align-items: flex-start; text-align: left; max-width: 100%; }
-  .features-list .feature img { width: 28px; height: 28px; margin-bottom: 8px; }
-  .feature-text { font-size: 0.95rem; color: rgba(255,255,255,0.95); line-height: 1.15; }
-  /* First visible line bold & full white, remaining lines slightly muted (subtitle effect) */
-  .feature-text::first-line { font-weight: 700; color: #ffffff; }
     padding-left: 2rem;
   }
 }
