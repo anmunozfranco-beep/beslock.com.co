@@ -423,6 +423,7 @@
     var dots = $qa('.hero-dot', root);
     var loader = $q('.beslock-loader', root);
     var current = 0, timer = null, isPlaying = false, overlayTimeouts = [];
+    var featureTimeouts = [];
 
     // Loader image is handled by template (favicon); no inline SVG injection needed.
 
@@ -436,6 +437,23 @@
       });
     }
 
+    // Features scheduling helpers (isolated module)
+    function clearFeatureTimeouts(){ if (Array.isArray(featureTimeouts)){ featureTimeouts.forEach(function(t){ try{ clearTimeout(t);}catch(e){} }); featureTimeouts=[]; } }
+    function resetFeaturesOnSlide(slide){ try{ if(!slide) return; var fw = slide.querySelector('.features-wrapper'); if (!fw) return; fw.classList.remove('features--fading'); Array.prototype.slice.call(fw.querySelectorAll('.feature')).forEach(function(f){ f.classList.remove('feature--visible'); }); }catch(e){} }
+    function scheduleFeatures(slide){ try{
+        clearFeatureTimeouts(); if(!slide) return; var fw = slide.querySelector('.features-wrapper'); if(!fw) return;
+        // reset immediately
+        resetFeaturesOnSlide(slide);
+        var features = Array.prototype.slice.call(fw.querySelectorAll('.feature'));
+        var times = [1200,1900,2600,3300,4000]; // ms
+        features.forEach(function(f, i){ var t = times[i] || 4000; var h = setTimeout(function(){ try{ f.classList.add('feature--visible'); }catch(e){} }, t); featureTimeouts.push(h); });
+        // start fade-out at 6.5s
+        var tFade = setTimeout(function(){ try{ fw.classList.add('features--fading'); }catch(e){} }, 6500); featureTimeouts.push(tFade);
+        // ensure fully hidden/reset at 7.4s
+        var tHide = setTimeout(function(){ try{ Array.prototype.slice.call(fw.querySelectorAll('.feature')).forEach(function(f){ f.classList.remove('feature--visible'); }); fw.classList.remove('features--fading'); }catch(e){} }, 7400); featureTimeouts.push(tHide);
+      }catch(e){}
+    }
+
     function showSlide(idx, opts){
       opts = opts||{}; idx = (idx + slides.length) % slides.length; // normalize
       // clear overlay timers and remove any attached timeupdate listeners
@@ -443,6 +461,8 @@
         overlayTimeouts.forEach(function(t){ try{ clearTimeout(t); }catch(e){} });
         overlayTimeouts = [];
       }
+      // clear feature timers and reset features on all slides
+      clearFeatureTimeouts(); slides.forEach(function(s){ try{ resetFeaturesOnSlide(s); }catch(e){} });
       // remove any per-overlay timeupdate handlers and loop watchers left on previous videos
       slides.forEach(function(s){
         var pv = s.querySelector('.slide-video'); if (!pv) return;
@@ -463,6 +483,8 @@
         slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (s===newSlide){ try{ v.currentTime=0; }catch(e){} v.play().catch(function(){}); } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
         // schedule overlays for new slide below (same logic as before)
         current = idx;
+        // schedule features for the newly active slide
+        try{ scheduleFeatures(newSlide); }catch(e){}
       } else {
         if (oldSlide === newSlide) {
           // nothing to do
@@ -504,6 +526,8 @@
           slides.forEach(function(s){ if (s!==oldSlide && s!==newSlide){ s.classList.remove('is-active'); s.classList.remove('is-exiting'); } });
 
           current = idx;
+          // schedule features for new slide
+          try{ scheduleFeatures(newSlide); }catch(e){}
         }
       }
 

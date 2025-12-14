@@ -92,6 +92,31 @@
             ?>
             <h1 class="slide-title"><?php echo esc_html($title_raw); ?></h1>
             <p class="slide-subtitle"><?php echo esc_html($subtitle); ?></p>
+            <!-- Features module (maqueta) - one per slide; layout controlled by CSS/JS -->
+            <div class="features-wrapper" aria-hidden="true">
+              <div class="features-list">
+                <div class="feature">
+                  <img src="https://img.icons8.com/?size=100&id=26111&format=png&color=000000" alt="icon-1" />
+                  <p class="feature-text">Ideal para visitas temporales</p>
+                </div>
+                <div class="feature">
+                  <img src="https://img.icons8.com/?size=100&id=3734&format=png&color=000000" alt="icon-2" />
+                  <p class="feature-text">Múltiples usuarios</p>
+                </div>
+                <div class="feature">
+                  <img src="https://img.icons8.com/?size=100&id=QSpdbW6kJ2lS&format=png&color=000000" alt="icon-3" />
+                  <p class="feature-text">Libérate de cargar llaves</p>
+                </div>
+                <div class="feature">
+                  <img src="https://img.icons8.com/?size=100&id=48917&format=png&color=000000" alt="icon-4" />
+                  <p class="feature-text">Varias formas de apertura</p>
+                </div>
+                <div class="feature">
+                  <img src="https://img.icons8.com/?size=100&id=110470&format=png&color=000000" alt="icon-5" />
+                  <p class="feature-text">Total control en el celular</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </article>

@@ -761,6 +761,40 @@ body {
   pointer-events: none;
 }
 
+/* ===================== Features module styles ===================== */
+.features-wrapper { position: relative; margin-top: 0.8rem; }
+.features-list { display: flex; gap: 1rem; align-items: flex-start; justify-content: flex-start; flex-wrap: nowrap; }
+.features-list .feature { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; max-width: 120px; }
+.features-list .feature img { width: 40px; height: 40px; object-fit: contain; opacity: 0.92; }
+.feature-text { font-size: 0.95rem; color: rgba(7,5,5,0.9); text-align: center; line-height: 1.15; margin: 0; }
+
+/* Hidden by default (visibility controlled by JS via .feature--visible) */
+.feature { opacity: 0; transform: translateY(8px); transition: opacity 400ms cubic-bezier(.22,.9,.41,1), transform 400ms cubic-bezier(.22,.9,.41,1); }
+.feature--visible { opacity: 1 !important; transform: translateY(0) !important; }
+
+/* Fade-out state for all features (no vertical movement on exit) */
+.features--fading .feature { transition: opacity 700ms ease; opacity: 0 !important; transform: translateY(0) !important; }
+
+/* Responsive: MOBILE behaviour (<=600px)
+   - H1/H2 should be at top (we position .slide-content accordingly)
+   - features aligned left, below H2; all 5 visible stacking horizontally if space allows
+   - ensure no internal scroll and items remain visible
+*/
+@media (max-width: 600px) {
+  .slide-content { position: relative !important; top: 0 !important; left: 0 !important; transform: none !important; margin: 0.8rem 1rem 1.2rem 1rem !important; text-align: center !important; width: auto !important; }
+  .features-list { justify-content: flex-start; gap: 0.75rem; overflow: visible; }
+  .features-list .feature { align-items: flex-start; text-align: left; max-width: calc(50vw - 2rem); }
+  .feature-text { font-size: 0.95rem; }
+}
+
+/* Desktop behaviour: position features absolute and center using the same horizontal
+   reference as H1 (left:40vw; translateX(-50%)) and display horizontally */
+@media (min-width: 600px) {
+  .features-wrapper { position: absolute; top: 30px; left: 40vw; transform: translateX(-50%); width: auto; }
+  .features-list { justify-content: center; }
+  .features-list .feature { max-width: 160px; }
+}
+
 /* Responsive: si quieres cambiar el ratio en pantallas grandes */
 @media (min-width: 900px) {
   .footer-logo {
