@@ -935,7 +935,17 @@ body {
     color: #ffffff !important;
   }
   .hero-slide .features-wrapper .features-list .feature__title { font-weight: 700 !important; font-size: 1.2rem !important; }
-  .hero-slide .features-wrapper .features-list .feature__subtitle { font-weight: 500 !important; font-size: 1.2rem !important; opacity: 0.95 !important; }
+  /* Reduce subtitle size and force single line on desktop so the block fits */
+  .hero-slide .features-wrapper .features-list .feature__subtitle {
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    line-height: 1.05 !important;
+    opacity: 0.95 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
   /* Force title to a single line on desktop; allow subtitle to wrap normally */
   .hero-slide .features-wrapper .features-list .feature__title {
     white-space: nowrap !important;
