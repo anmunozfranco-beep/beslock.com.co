@@ -869,8 +869,8 @@ body {
   .hero-slide .features-list { justify-content: center; }
   .hero-slide .features-list .feature { max-width: 160px; }
   .hero-slide .features-list .feature__text { color: var(--beslock-black); text-align: center; }
-  .hero-slide .features-list .feature__title { color: var(--beslock-black); font-weight:700; }
-  .hero-slide .features-list .feature__subtitle { color: rgba(7,5,5,0.78); font-weight:400; }
+  .hero-slide .features-list .feature__title { color: var(--beslock-black); font-weight:700; display:block !important; width:100% !important; }
+  .hero-slide .features-list .feature__subtitle { color: rgba(7,5,5,0.78); font-weight:400; display:block !important; width:100% !important; }
 }
 
 /* Responsive: si quieres cambiar el ratio en pantallas grandes */
