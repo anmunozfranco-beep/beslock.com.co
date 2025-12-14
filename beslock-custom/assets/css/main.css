@@ -889,6 +889,45 @@ body {
   .hero-slide .features-wrapper .feature__icon img { filter: brightness(0) invert(1) !important; }
 }
 
+/* Desktop: place icon and text side-by-side and vertically centered */
+@media (min-width: 600px) {
+  .features-list .feature {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important; /* center text relative to icon */
+    gap: 1rem !important;
+    max-width: none !important;
+  }
+
+  .features-list .feature .feature__icon {
+    margin-right: 0.75rem !important;
+    width: 48px !important;
+    height: 48px !important;
+    flex: 0 0 auto !important;
+  }
+
+  .features-list .feature .feature__text {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; /* vertical center within row */
+    text-align: left !important;
+    color: #ffffff !important;
+  }
+
+  .features-list .feature .feature__title {
+    font-size: 1.2rem !important;
+    margin: 0 !important;
+    font-weight: 700 !important;
+  }
+
+  .features-list .feature .feature__subtitle {
+    font-size: 0.96rem !important;
+    margin: 0 !important;
+    color: rgba(255,255,255,0.92) !important;
+    font-weight: 500 !important;
+  }
+}
+
 /* Desktop behaviour: position features absolute and center using the same horizontal
    reference as H1 (left:40vw; translateX(-50%)) and display horizontally */
 @media (min-width: 600px) {
@@ -910,36 +949,5 @@ body {
   .footer-logo {
     /* ejemplo: en desktop el footer usa 40% pero del header mayor */
     height: calc(var(--site-logo-height, 32px) * 0.4);
-
-/* Desktop: place icon left and text to the right, vertically centered */
-@media (min-width: 600px) {
-  .hero-slide .features-wrapper .features-list .feature {
-    flex-direction: row !important;
-    align-items: center !important; /* vertical center relative to icon */
-    text-align: left !important;
-    max-width: none !important;
-    gap: 1rem !important;
-  }
-
-  .hero-slide .features-wrapper .features-list .feature .feature__icon {
-    margin-right: 12px !important;
-    flex: 0 0 auto !important;
-  }
-
-  .hero-slide .features-wrapper .features-list .feature .feature__text {
-    text-align: left !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 2px !important;
-    align-items: flex-start !important;
-  }
-
-  /* Ensure title/subtitle remain block and aligned */
-  .hero-slide .features-wrapper .feature__title,
-  .hero-slide .features-wrapper .feature__subtitle {
-    display: block !important;
-    text-align: left !important;
-  }
-}
   }
 }
