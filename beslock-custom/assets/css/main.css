@@ -859,6 +859,36 @@ body {
   .hero-slide .features-wrapper .feature__text { opacity: 0.92; }
 }
 
+/* Desktop: make feature texts white and match drawer sizes */
+@media (min-width: 600px) {
+  .hero-slide .features-wrapper .feature__text {
+    color: #ffffff !important;
+    font-size: 1.2rem !important; /* same as drawer links */
+    line-height: 1.18 !important;
+    text-align: left !important;
+  }
+
+  .hero-slide .features-wrapper .feature__title {
+    color: #ffffff !important;
+    font-size: 1.2rem !important; /* title matches drawer size */
+    font-weight: 700 !important;
+    display: block !important;
+    text-align: left !important;
+  }
+
+  .hero-slide .features-wrapper .feature__subtitle {
+    color: rgba(255,255,255,0.92) !important;
+    font-size: 0.96rem !important; /* subtitle size matches drawer secondary */
+    font-weight: 500 !important;
+    display: block !important;
+    text-align: left !important;
+  }
+
+  /* keep icons white and sized correctly on desktop */
+  .hero-slide .features-wrapper .feature__icon { width: 48px !important; height: 48px !important; }
+  .hero-slide .features-wrapper .feature__icon img { filter: brightness(0) invert(1) !important; }
+}
+
 /* Desktop behaviour: position features absolute and center using the same horizontal
    reference as H1 (left:40vw; translateX(-50%)) and display horizontally */
 @media (min-width: 600px) {
