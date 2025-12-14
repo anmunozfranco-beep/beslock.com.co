@@ -50,6 +50,8 @@
       <article class="hero-slide" data-index="<?php echo $i; ?>" aria-roledescription="slide" aria-label="Slide <?php echo $i+1; ?>">
         <div class="slide-inner">
           <video class="slide-video" muted playsinline preload="auto" loop src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/clips_hero/' . $vid ); ?>"></video>
+          <!-- Dim layer strictly over the clip to improve white text contrast; overlays remain above -->
+          <div class="slide-dim" aria-hidden="true"></div>
           <picture aria-hidden="true">
             <?php if ($ov_d_url): ?>
               <source media="(min-width:600px)" srcset="<?php echo esc_url( $ov_d_url ); ?>">
