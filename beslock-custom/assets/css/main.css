@@ -904,6 +904,41 @@ body {
   }
 }
 
+/* Ensure ALL desktop (>=600px) devices use the desktop feature rules - stronger override
+   This covers cases where other breakpoints may override visual behaviour. */
+@media (min-width: 600px) {
+  .hero-slide .features-wrapper,
+  .hero-slide .features-wrapper .features-list,
+  .hero-slide .features-wrapper .features-list .feature,
+  .hero-slide .features-wrapper .feature__icon,
+  .hero-slide .features-wrapper .feature__icon img,
+  .hero-slide .features-wrapper .feature__text,
+  .hero-slide .features-wrapper .feature__title,
+  .hero-slide .features-wrapper .feature__subtitle {
+    color: #ffffff !important;
+  }
+
+  .hero-slide .features-wrapper .features-list {
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+
+  .hero-slide .features-wrapper .features-list .feature {
+    max-width: 140px !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .hero-slide .features-wrapper .feature__icon { width: 48px !important; height: 48px !important; }
+  .hero-slide .features-wrapper .feature__icon img { filter: brightness(0) invert(1) !important; }
+
+  .hero-slide .features-wrapper .feature__text { font-size: 1.2rem !important; line-height: 1.18 !important; }
+  .hero-slide .features-wrapper .feature__title { font-size: 1.2rem !important; font-weight:700 !important; }
+  .hero-slide .features-wrapper .feature__subtitle { font-size: 0.96rem !important; font-weight:500 !important; }
+}
+
 /* Desktop behaviour: position features absolute and center using the same horizontal
    reference as H1 (left:40vw; translateX(-50%)) and display horizontally */
 @media (min-width: 600px) {
