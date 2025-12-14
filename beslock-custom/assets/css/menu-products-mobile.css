@@ -49,7 +49,8 @@
 .drawer-header .drawer__logo img {
   display: block !important;
   /* Use fixed logo sizes for the drawer so it does not react to --site-logo-height changes */
-  height: 32px !important;
+  /* drawer logo: 4px smaller than site header logo */
+  height: 28px !important;
   width: auto !important;
 }
 
@@ -300,7 +301,8 @@ html.has-drawer-open { overflow: hidden !important; touch-action: none !importan
 /* Keep drawer header spacing consistent with main header on larger screens */
 @media (min-width: 600px) {
   .drawer-header { padding: 0.7rem 0 !important; }
-  .drawer-header .drawer__logo img { height: var(--site-logo-height, 38px) !important; }
+  /* desktop: drawer logo 4px smaller than site --site-logo-height */
+  .drawer-header .drawer__logo img { height: calc(var(--site-logo-height, 38px) - 4px) !important; }
 }
 
 /* Make drawer header match the visual height of the site header but keep it fixed
