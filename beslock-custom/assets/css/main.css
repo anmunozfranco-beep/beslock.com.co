@@ -887,10 +887,10 @@ body {
 
   /* Desktop tweaks requested: center relative to H1 (left:40vw), larger icons and text, white text */
   .features-wrapper { left: 40vw !important; transform: translateX(-50%) !important; }
-  .features-list .feature__icon { width: 68px !important; height: 68px !important; }
+  .features-list .feature__icon { width: 56px !important; height: 56px !important; }
   .features-list .feature__icon img { width: 100% !important; height: 100% !important; }
-  /* Increase text size by ~15px; using calc to add px to the base rem value */
-  .features-list .feature__text { font-size: calc(0.95rem + 15px) !important; color: #ffffff !important; text-align: left !important; align-items: flex-start !important; }
+  /* Increase text size by ~6px on desktop (less aggressive) */
+  .features-list .feature__text { font-size: calc(0.95rem + 6px) !important; color: #ffffff !important; text-align: left !important; align-items: flex-start !important; }
   .features-list .feature__title, .features-list .feature__subtitle { color: #ffffff !important; }
 }
 
