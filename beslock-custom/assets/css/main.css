@@ -938,8 +938,8 @@ body {
   /* Reduce subtitle size and force single line on desktop so the block fits */
   .hero-slide .features-wrapper .features-list .feature__subtitle {
     font-weight: 500 !important;
-    font-size: 1rem !important;
-    line-height: 1.05 !important;
+    font-size: 0.9rem !important; /* reduced further per request */
+    line-height: 1.02 !important;
     opacity: 0.95 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
