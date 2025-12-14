@@ -918,6 +918,7 @@ body {
    This block intentionally placed at file end to override earlier conflicting rules. */
 @media (min-width: 600px) {
   .hero-slide .features-wrapper .features-list .feature { align-items: center !important; }
+  .hero-slide .features-wrapper .features-list .feature { align-items: center !important; max-width: 240px !important; }
   .hero-slide .features-wrapper .features-list .feature__icon { width: 56px !important; height: 56px !important; margin-bottom: 8px !important; }
   .hero-slide .features-wrapper .features-list .feature__icon img { width:100% !important; height:100% !important; filter: brightness(0) invert(1) !important; }
   .hero-slide .features-wrapper .features-list .feature__text {
@@ -935,4 +936,11 @@ body {
   }
   .hero-slide .features-wrapper .features-list .feature__title { font-weight: 700 !important; font-size: 1.2rem !important; }
   .hero-slide .features-wrapper .features-list .feature__subtitle { font-weight: 500 !important; font-size: 1.2rem !important; opacity: 0.95 !important; }
+  /* Force title to a single line on desktop; allow subtitle to wrap normally */
+  .hero-slide .features-wrapper .features-list .feature__title {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+  .hero-slide .features-wrapper .features-list .feature__subtitle { white-space: normal !important; }
 }
