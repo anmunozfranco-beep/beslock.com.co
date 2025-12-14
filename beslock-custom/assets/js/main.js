@@ -422,8 +422,11 @@
     var slides = $qa('.hero-slide', root);
     var dots = $qa('.hero-dot', root);
     var loader = $q('.beslock-loader', root);
-    var current = 0, timer = null, isPlaying = false, overlayTimeouts = [];
-    var featureTimeouts = [];
+    var current = 0, timer = null, isPlaying = false;
+    var overlaySchedule = []; // { id, target, fn }
+    var featureSchedule = []; // { id, target, fn }
+    var slideStartTs = 0;
+    var isTouchPaused = false, touchPauseAt = 0, autoplayRemaining = null, autoplayDeadline = null;
 
     // Loader image is handled by template (favicon); no inline SVG injection needed.
 
@@ -438,7 +441,7 @@
     }
 
     // Features scheduling helpers (isolated module)
-    function clearFeatureTimeouts(){ if (Array.isArray(featureTimeouts)){ featureTimeouts.forEach(function(t){ try{ clearTimeout(t);}catch(e){} }); featureTimeouts=[]; } }
+    function clearFeatureTimeouts(){ if (Array.isArray(featureSchedule)){ featureSchedule.forEach(function(obj){ try{ if (obj.id) clearTimeout(obj.id); }catch(e){} }); featureSchedule=[]; } }
     function resetFeaturesOnSlide(slide){ try{ if(!slide) return; var fw = slide.querySelector('.features-wrapper'); if (!fw) return; fw.classList.remove('features--fading'); Array.prototype.slice.call(fw.querySelectorAll('.feature')).forEach(function(f){ f.classList.remove('feature--visible'); }); }catch(e){} }
     function scheduleFeatures(slide){ try{
         clearFeatureTimeouts(); if(!slide) return; var fw = slide.querySelector('.features-wrapper'); if(!fw) return;
@@ -447,20 +450,26 @@
         var features = Array.prototype.slice.call(fw.querySelectorAll('.feature'));
         // Show all features at once after a short delay so entrance animation still plays
         var SHOW_DELAY = 1200; // ms
-        var hShow = setTimeout(function(){ try{ features.forEach(function(f){ f.classList.add('feature--visible'); }); }catch(e){} }, SHOW_DELAY); featureTimeouts.push(hShow);
-        // start fade-out at 6.5s
-        var tFade = setTimeout(function(){ try{ fw.classList.add('features--fading'); }catch(e){} }, 6500); featureTimeouts.push(tFade);
-        // ensure fully hidden/reset at 7.4s
-        var tHide = setTimeout(function(){ try{ features.forEach(function(f){ f.classList.remove('feature--visible'); }); fw.classList.remove('features--fading'); }catch(e){} }, 7400); featureTimeouts.push(tHide);
+        var now = Date.now();
+        var base = slideStartTs || now;
+        var tShowTarget = base + SHOW_DELAY;
+        var tFadeTarget = base + 6500;
+        var tHideTarget = base + 7400;
+
+        function scheduleAt(target, fn){ var delay = Math.max(0, target - Date.now()); if (delay === 0) { try{ fn(); }catch(e){} } else { var id = setTimeout(fn, delay); featureSchedule.push({ id:id, target: target, fn: fn }); } }
+
+        scheduleAt(tShowTarget, function(){ try{ features.forEach(function(f){ f.classList.add('feature--visible'); }); }catch(e){} });
+        scheduleAt(tFadeTarget, function(){ try{ fw.classList.add('features--fading'); }catch(e){} });
+        scheduleAt(tHideTarget, function(){ try{ features.forEach(function(f){ f.classList.remove('feature--visible'); }); fw.classList.remove('features--fading'); }catch(e){} });
       }catch(e){}
     }
 
     function showSlide(idx, opts){
       opts = opts||{}; idx = (idx + slides.length) % slides.length; // normalize
-      // clear overlay timers and remove any attached timeupdate listeners
-      if (Array.isArray(overlayTimeouts)) {
-        overlayTimeouts.forEach(function(t){ try{ clearTimeout(t); }catch(e){} });
-        overlayTimeouts = [];
+      // clear overlay scheduled timeouts and remove any attached timeupdate listeners
+      if (Array.isArray(overlaySchedule)) {
+        overlaySchedule.forEach(function(obj){ try{ if (obj.id) clearTimeout(obj.id); }catch(e){} });
+        overlaySchedule = [];
       }
       // clear feature timers and reset features on all slides
       clearFeatureTimeouts(); slides.forEach(function(s){ try{ resetFeaturesOnSlide(s); }catch(e){} });
@@ -483,6 +492,7 @@
         // play new video, pause others
         slides.forEach(function(s,i){ var v=s.querySelector('.slide-video'); if (!v) return; if (s===newSlide){ try{ v.currentTime=0; }catch(e){} v.play().catch(function(){}); } else { try{ v.pause(); v.currentTime=0; }catch(e){} } });
         // schedule overlays for new slide below (same logic as before)
+        slideStartTs = Date.now();
         current = idx;
         // schedule features for the newly active slide
         try{ scheduleFeatures(newSlide); }catch(e){}
@@ -526,6 +536,7 @@
           // make sure other slides than old/new are not interfering
           slides.forEach(function(s){ if (s!==oldSlide && s!==newSlide){ s.classList.remove('is-active'); s.classList.remove('is-exiting'); } });
 
+          slideStartTs = Date.now();
           current = idx;
           // schedule features for new slide
           try{ scheduleFeatures(newSlide); }catch(e){}
@@ -565,8 +576,11 @@
                     else {
                       o._ontime = function(){ if (vid.currentTime >= startAtLoop){ o.classList.add('overlay--visible'); try{ vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; }catch(e){} } };
                       vid.addEventListener('timeupdate', o._ontime, { passive:true });
-                      var t2 = setTimeout(function(){ if (!o.classList.contains('overlay--visible')) o.classList.add('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} }, Math.max(200, H.slideDuration-1200));
-                      overlayTimeouts.push(t2);
+                      var fallbackDelay = Math.max(200, H.slideDuration-1200);
+                      var target = (slideStartTs || Date.now()) + fallbackDelay;
+                      var delay = Math.max(0, target - Date.now());
+                      var t2 = setTimeout(function(){ if (!o.classList.contains('overlay--visible')) o.classList.add('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} }, delay);
+                      overlaySchedule.push({ id: t2, target: target, fn: function(){ if (!o.classList.contains('overlay--visible')) o.classList.add('overlay--visible'); try{ if (o._ontime) { vid.removeEventListener('timeupdate', o._ontime); delete o._ontime; } }catch(e){} } });
                     }
                   });
                 }
@@ -608,8 +622,10 @@
               ov._ontime = function(){ if (vid.currentTime >= startAt){ activateOverlay(ov); try{ vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; }catch(e){} } };
               vid.addEventListener('timeupdate', ov._ontime, { passive:true });
               var fallbackDelay = Math.max(200, H.slideDuration - 1200);
-              var t = setTimeout(function(){ if (!ov.classList.contains('overlay--visible')) activateOverlay(ov); try{ if (ov._ontime) { vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; } }catch(e){} }, fallbackDelay);
-              overlayTimeouts.push(t);
+              var target = (slideStartTs || Date.now()) + fallbackDelay;
+              var delay = Math.max(0, target - Date.now());
+              var t = setTimeout(function(){ if (!ov.classList.contains('overlay--visible')) activateOverlay(ov); try{ if (ov._ontime) { vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; } }catch(e){} }, delay);
+              overlaySchedule.push({ id: t, target: target, fn: function(){ if (!ov.classList.contains('overlay--visible')) activateOverlay(ov); try{ if (ov._ontime) { vid.removeEventListener('timeupdate', ov._ontime); delete ov._ontime; } }catch(e){} } });
             }
           });
         }
@@ -641,8 +657,8 @@
     var _relocTid = null;
     window.addEventListener('resize', function(){ if (_relocTid) clearTimeout(_relocTid); _relocTid = setTimeout(relocateFeaturesForBreakpoint, 140); }, { passive: true });
 
-    function startAutoplay(){ stopAutoplay(); isPlaying=true; timer = setTimeout(nextSlide, H.slideDuration); }
-    function stopAutoplay(){ if (timer){ clearTimeout(timer); timer=null; } isPlaying=false; }
+    function startAutoplay(){ stopAutoplay(); isPlaying=true; autoplayDeadline = Date.now() + H.slideDuration; timer = setTimeout(nextSlide, H.slideDuration); }
+    function stopAutoplay(){ if (timer){ clearTimeout(timer); timer=null; } isPlaying=false; autoplayDeadline = null; autoplayRemaining = null; }
     function resetAutoplay(){ stopAutoplay(); setTimeout(function(){ startAutoplay(); }, 120); }
     function nextSlide(){ showSlide(current+1); startAutoplay(); }
 
@@ -658,14 +674,46 @@
     (function(){
       var touch = { startX: 0, deltaX: 0, dragging: false };
 
-      function pauseAllVideos() {
-        try { slides.forEach(function(s){ var v = s.querySelector && s.querySelector('.slide-video'); if (v && typeof v.pause === 'function') { try{ v.pause(); }catch(e){} } }); } catch(e){}
-      }
-
       function ensureSingleVisible() {
         try {
           slides.forEach(function(s,i){ if (i === current) { s.classList.add('is-active'); s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','false'); } else { s.classList.remove('is-active'); s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','true'); } });
         } catch(e) {}
+      }
+
+      // Scheduling helpers for pause/resume during touch
+      function pauseAllVideos() {
+        try { slides.forEach(function(s){ var v = s.querySelector && s.querySelector('.slide-video'); if (v && typeof v.pause === 'function') { try{ v.pause(); }catch(e){} } }); } catch(e){}
+      }
+
+      function pauseSchedulesForTouch(){
+        if (isTouchPaused) return;
+        isTouchPaused = true;
+        touchPauseAt = Date.now();
+        // pause autoplay
+        if (autoplayDeadline) {
+          autoplayRemaining = Math.max(0, autoplayDeadline - touchPauseAt);
+          if (timer) { clearTimeout(timer); timer = null; }
+        }
+        // pause overlay schedules
+        overlaySchedule.forEach(function(obj){ try{ if (obj.id) { clearTimeout(obj.id); obj.remaining = Math.max(0, obj.target - touchPauseAt); obj.id = null; } else { obj.remaining = Math.max(0, obj.target - touchPauseAt); } }catch(e){} });
+        // pause feature schedules
+        featureSchedule.forEach(function(obj){ try{ if (obj.id) { clearTimeout(obj.id); obj.remaining = Math.max(0, obj.target - touchPauseAt); obj.id = null; } else { obj.remaining = Math.max(0, obj.target - touchPauseAt); } }catch(e){} });
+      }
+
+      function resumeSchedulesAfterTouch(){
+        if (!isTouchPaused) return;
+        var now = Date.now();
+        overlaySchedule.forEach(function(obj){ try{ var rem = typeof obj.remaining === 'number' ? obj.remaining : Math.max(0, obj.target - now); if (rem <= 0) { try{ obj.fn(); }catch(e){} } else { obj.id = setTimeout(obj.fn, rem); obj.target = now + rem; } }catch(e){} });
+        featureSchedule.forEach(function(obj){ try{ var rem = typeof obj.remaining === 'number' ? obj.remaining : Math.max(0, obj.target - now); if (rem <= 0) { try{ obj.fn(); }catch(e){} } else { obj.id = setTimeout(obj.fn, rem); obj.target = now + rem; } }catch(e){} });
+        overlaySchedule.forEach(function(o){ try{ delete o.remaining; }catch(e){} });
+        featureSchedule.forEach(function(o){ try{ delete o.remaining; }catch(e){} });
+        // resume autoplay
+        if (typeof autoplayRemaining === 'number') {
+          if (autoplayRemaining <= 0) { nextSlide(); }
+          else { timer = setTimeout(nextSlide, autoplayRemaining); autoplayDeadline = Date.now() + autoplayRemaining; }
+          autoplayRemaining = null;
+        }
+        isTouchPaused = false;
       }
 
       function onStart(e){
@@ -677,7 +725,8 @@
         pauseAllVideos();
         // Ensure only the current slide is visible during the gesture
         ensureSingleVisible();
-        stopAutoplay();
+        // Pause schedules (features, overlays, autoplay)
+        pauseSchedulesForTouch();
       }
 
       function onMove(e){
@@ -716,8 +765,8 @@
             }
           } catch (e) {}
         }
-        // Restart autoplay after a short delay
-        resetAutoplay();
+        // resume schedules (features, overlays, autoplay)
+        resumeSchedulesAfterTouch();
       }
 
       document.addEventListener('touchstart', onStart, { passive:true });
