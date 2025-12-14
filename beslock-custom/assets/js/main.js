@@ -441,15 +441,13 @@
     function clearFeatureTimeouts(){ if (Array.isArray(featureTimeouts)){ featureTimeouts.forEach(function(t){ try{ clearTimeout(t);}catch(e){} }); featureTimeouts=[]; } }
     function resetFeaturesOnSlide(slide){ try{ if(!slide) return; var fw = slide.querySelector('.features-wrapper'); if (!fw) return; fw.classList.remove('features--fading'); Array.prototype.slice.call(fw.querySelectorAll('.feature')).forEach(function(f){ f.classList.remove('feature--visible'); }); }catch(e){} }
     function scheduleFeatures(slide){ try{
-        // Show all features at the same time and hide them together.
         clearFeatureTimeouts(); if(!slide) return; var fw = slide.querySelector('.features-wrapper'); if(!fw) return;
         // reset immediately
         resetFeaturesOnSlide(slide);
         var features = Array.prototype.slice.call(fw.querySelectorAll('.feature'));
-        // single show time for all features (ms)
-        var showAt = 1200;
-        features.forEach(function(f){ var h = setTimeout(function(){ try{ f.classList.add('feature--visible'); }catch(e){} }, showAt); featureTimeouts.push(h); });
-        // start fade-out at 6.5s (same as before)
+        var times = [1200,1900,2600,3300,4000]; // ms
+        features.forEach(function(f, i){ var t = times[i] || 4000; var h = setTimeout(function(){ try{ f.classList.add('feature--visible'); }catch(e){} }, t); featureTimeouts.push(h); });
+        // start fade-out at 6.5s
         var tFade = setTimeout(function(){ try{ fw.classList.add('features--fading'); }catch(e){} }, 6500); featureTimeouts.push(tFade);
         // ensure fully hidden/reset at 7.4s
         var tHide = setTimeout(function(){ try{ Array.prototype.slice.call(fw.querySelectorAll('.feature')).forEach(function(f){ f.classList.remove('feature--visible'); }); fw.classList.remove('features--fading'); }catch(e){} }, 7400); featureTimeouts.push(tHide);
@@ -616,6 +614,31 @@
         }
       }
     }
+
+    // Ensure the .features-wrapper is placed where CSS expects for each breakpoint.
+    // On desktop (>=600px) we want the features block to be direct child of .hero-slide
+    // so absolute positioning (top) is relative to the slide. On mobile we move it
+    // back inside .slide-content so it sits under the subtitle.
+    function relocateFeaturesForBreakpoint() {
+      try {
+        var isDesktop = window.innerWidth >= 600;
+        slides.forEach(function(s){
+          var fw = s.querySelector('.features-wrapper');
+          var sc = s.querySelector('.slide-content');
+          if (!fw || !sc) return;
+          if (isDesktop) {
+            if (fw.parentNode !== s) s.appendChild(fw);
+          } else {
+            if (fw.parentNode !== sc) sc.appendChild(fw);
+          }
+        });
+      } catch (e) { console.warn('relocateFeaturesForBreakpoint error', e); }
+    }
+
+    // run once on init and on resize (debounced)
+    relocateFeaturesForBreakpoint();
+    var _relocTid = null;
+    window.addEventListener('resize', function(){ if (_relocTid) clearTimeout(_relocTid); _relocTid = setTimeout(relocateFeaturesForBreakpoint, 140); }, { passive: true });
 
     function startAutoplay(){ stopAutoplay(); isPlaying=true; timer = setTimeout(nextSlide, H.slideDuration); }
     function stopAutoplay(){ if (timer){ clearTimeout(timer); timer=null; } isPlaying=false; }
