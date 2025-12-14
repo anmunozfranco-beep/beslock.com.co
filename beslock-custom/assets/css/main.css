@@ -75,6 +75,31 @@
   .hero-slide .feature__subtitle { font-size: 0.9rem !important; font-weight: 500 !important; }
 }
 
+/* Emergency mobile safety overrides — highest priority for small screens
+   These rules are intentionally specific and use !important to counteract
+   any unexpected cascade or loaded desktop-first styles. Keep minimal. */
+@media (max-width: 700px) {
+  /* Hide loader if it's visible */
+  .beslock-loader { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+
+  /* Header: ensure it's centered and elements spaced correctly */
+  .header, .header__bar { position: sticky !important; top: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 0.6rem 1rem !important; width: 100% !important; z-index: 120 !important; }
+  .header__logo { position: relative !important; left: auto !important; top: auto !important; transform: none !important; margin: 0 auto !important; }
+
+  /* Force hero content into mobile-safe centered/top layout */
+  .hero { min-height: 56vh !important; }
+  .hero__content, .slide-content { position: absolute !important; top: 1.2rem !important; left: 50% !important; transform: translateX(-50%) !important; width: calc(100% - 2rem) !important; padding: 0 1rem !important; text-align: center !important; z-index: 4 !important; }
+
+  /* Features: ensure stacked, left-aligned icon+text rows */
+  .hero-slide .features-wrapper, .hero-slide .slide-content .features-wrapper { position: relative !important; left: auto !important; transform: none !important; width: 100% !important; margin-top: 10px !important; }
+  .hero-slide .features-list { display: flex !important; flex-direction: column !important; gap: 30px !important; align-items: stretch !important; }
+  .hero-slide .features-list .feature { flex-direction: row !important; gap: 12px !important; align-items: center !important; }
+
+  /* Prevent oversized icon/text scaling that could come from other rules */
+  .hero-slide .feature__icon { width: 36px !important; height: 36px !important; flex: 0 0 36px !important; }
+  .hero-slide .feature__text { font-size: 0.96rem !important; line-height: 1.12 !important; }
+}
+
 /* ========== RESET Y BASE ========== */
 html {
   box-sizing: border-box;
