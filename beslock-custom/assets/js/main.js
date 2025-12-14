@@ -358,16 +358,33 @@
     function show() {
       var menuContent = document.getElementById('menuContent');
       if (menuContent) { menuContent.setAttribute('aria-hidden', 'true'); menuContent.style.display = 'none'; }
+      var nav = document.getElementById('mobileDrawer');
+      // Prepare opening from left: add opening class, reveal panel, then activate .products-open
+      try {
+        if (nav) nav.classList.add('products-opening');
+      } catch (e) {}
       productsPanel.removeAttribute('hidden'); productsPanel.setAttribute('aria-hidden', 'false');
+      // force reflow then switch to visible state so CSS animates from left -> center
+      try { void productsPanel.offsetWidth; } catch (e) {}
+      try { if (nav) { nav.classList.add('products-open'); nav.classList.remove('products-opening'); } } catch (e) {}
       if (productsBack) productsBack.focus();
       document.body.classList.add('drawer-no-scroll');
     }
     function hide() {
-      productsPanel.setAttribute('hidden', 'true'); productsPanel.setAttribute('aria-hidden', 'true');
-      var menuContent = document.getElementById('menuContent');
-      if (menuContent) { menuContent.removeAttribute('aria-hidden'); menuContent.style.display = ''; }
-      if (productsToggle) productsToggle.focus();
-      document.body.classList.remove('drawer-no-scroll');
+      var nav = document.getElementById('mobileDrawer');
+      // animate closing to the right: add closing class then remove products-open
+      try { if (nav) nav.classList.add('products-closing'); } catch (e) {}
+      try { if (nav) nav.classList.remove('products-open'); } catch (e) {}
+      // after animation ends, hide panel and cleanup
+      var TRANS_DUR = 340; /* ms, slightly above --products-duration */
+      setTimeout(function(){
+        try { productsPanel.setAttribute('hidden', 'true'); productsPanel.setAttribute('aria-hidden', 'true'); } catch(e) {}
+        var menuContent = document.getElementById('menuContent');
+        if (menuContent) { menuContent.removeAttribute('aria-hidden'); menuContent.style.display = ''; }
+        try { if (productsToggle) productsToggle.focus(); } catch(e) {}
+        document.body.classList.remove('drawer-no-scroll');
+        try { if (nav) nav.classList.remove('products-closing'); } catch(e) {}
+      }, TRANS_DUR);
     }
 
     on(productsToggle, 'click', function (e) {
