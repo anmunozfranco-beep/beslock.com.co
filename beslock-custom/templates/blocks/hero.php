@@ -58,6 +58,31 @@
             <?php endif; ?>
             <img class="slide-overlay" src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/Hero_develp/images_hero/' . $ov ); ?>" alt="" aria-hidden="true" />
           </picture>
+          <!-- Features wrapper moved out of slide-content so it's positioned relative to the slide -->
+          <div class="features-wrapper" aria-hidden="true">
+            <div class="features-list">
+              <div class="feature">
+                <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=26111&format=png&color=000000" alt="icon-1" /></span>
+                <div class="feature__text"><span class="feature__title">Ideal para</span><span class="feature__subtitle">visitas temporales</span></div>
+              </div>
+              <div class="feature">
+                <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=3734&format=png&color=000000" alt="icon-2" /></span>
+                <div class="feature__text"><span class="feature__title">Múltiples</span><span class="feature__subtitle">usuarios</span></div>
+              </div>
+              <div class="feature">
+                <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=QSpdbW6kJ2lS&format=png&color=000000" alt="icon-3" /></span>
+                <div class="feature__text"><span class="feature__title">Libérate</span><span class="feature__subtitle">de cargar llaves</span></div>
+              </div>
+              <div class="feature">
+                <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=48917&format=png&color=000000" alt="icon-4" /></span>
+                <div class="feature__text"><span class="feature__title">Varias formas</span><span class="feature__subtitle">de apertura</span></div>
+              </div>
+              <div class="feature">
+                <span class="feature__icon"><img src="https://img.icons8.com/ios/100/000000/phonelink-lock.png" alt="icon-5" /></span>
+                <div class="feature__text"><span class="feature__title">Total control</span><span class="feature__subtitle">en el celular</span></div>
+              </div>
+            </div>
+          </div>
           <?php if ($i === 5): // Add second orbit overlay image that enters at 3.55s ?>
             <?php
               $ov2 = 'e-orbit_2_hero.png';
@@ -95,30 +120,7 @@
             <h1 class="slide-title"><?php echo esc_html($title_raw); ?></h1>
             <p class="slide-subtitle"><?php echo esc_html($subtitle); ?></p>
             <!-- Features module (maqueta) - one per slide; layout controlled by CSS/JS -->
-            <div class="features-wrapper" aria-hidden="true">
-              <div class="features-list">
-                <div class="feature">
-                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=26111&format=png&color=000000" alt="icon-1" /></span>
-                  <div class="feature__text"><span class="feature__title">Ideal para</span><span class="feature__subtitle">visitas temporales</span></div>
-                </div>
-                <div class="feature">
-                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=3734&format=png&color=000000" alt="icon-2" /></span>
-                  <div class="feature__text"><span class="feature__title">Múltiples</span><span class="feature__subtitle">usuarios</span></div>
-                </div>
-                <div class="feature">
-                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=QSpdbW6kJ2lS&format=png&color=000000" alt="icon-3" /></span>
-                  <div class="feature__text"><span class="feature__title">Libérate</span><span class="feature__subtitle">de cargar llaves</span></div>
-                </div>
-                <div class="feature">
-                  <span class="feature__icon"><img src="https://img.icons8.com/?size=100&id=48917&format=png&color=000000" alt="icon-4" /></span>
-                  <div class="feature__text"><span class="feature__title">Varias formas</span><span class="feature__subtitle">de apertura</span></div>
-                </div>
-                <div class="feature">
-                  <span class="feature__icon"><img src="https://img.icons8.com/ios/100/000000/phonelink-lock.png" alt="icon-5" /></span>
-                  <div class="feature__text"><span class="feature__title">Total control</span><span class="feature__subtitle">en el celular</span></div>
-                </div>
-              </div>
-            </div>
+            <!-- (moved above to be sibling of .slide-content so it can be positioned at top of the hero) -->
           </div>
         </div>
       </article>
