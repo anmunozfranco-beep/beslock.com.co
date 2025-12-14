@@ -913,3 +913,26 @@ body {
     height: calc(var(--site-logo-height, 32px) * 0.4);
   }
 }
+
+/* Final desktop enforcement: ensure icon and text are vertically centered and uniform
+   This block intentionally placed at file end to override earlier conflicting rules. */
+@media (min-width: 600px) {
+  .hero-slide .features-wrapper .features-list .feature { align-items: center !important; }
+  .hero-slide .features-wrapper .features-list .feature__icon { width: 56px !important; height: 56px !important; margin-bottom: 8px !important; }
+  .hero-slide .features-wrapper .features-list .feature__icon img { width:100% !important; height:100% !important; filter: brightness(0) invert(1) !important; }
+  .hero-slide .features-wrapper .features-list .feature__text {
+    font-size: 13px !important; /* smaller font to reduce visual weight */
+    line-height: 1.05 !important;
+    min-height: 38px !important; /* equalize text block heights */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 2px !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+  }
+  .hero-slide .features-wrapper .features-list .feature__title { font-weight: 700 !important; }
+  .hero-slide .features-wrapper .features-list .feature__subtitle { font-weight: 400 !important; opacity: 0.95 !important; }
+}
