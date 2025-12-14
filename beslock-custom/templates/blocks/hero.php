@@ -112,7 +112,7 @@
                   <p class="feature-text">Varias formas de apertura</p>
                 </div>
                 <div class="feature">
-                  <img src="https://img.icons8.com/?size=100&id=110470&format=png&color=000000" alt="icon-5" />
+                  <img src="https://img.icons8.com/ios/100/000000/phonelink-lock.png" alt="icon-5" />
                   <p class="feature-text">Total control en el celular</p>
                 </div>
               </div>
