@@ -445,12 +445,13 @@
         // reset immediately
         resetFeaturesOnSlide(slide);
         var features = Array.prototype.slice.call(fw.querySelectorAll('.feature'));
-        var times = [1200,1900,2600,3300,4000]; // ms
-        features.forEach(function(f, i){ var t = times[i] || 4000; var h = setTimeout(function(){ try{ f.classList.add('feature--visible'); }catch(e){} }, t); featureTimeouts.push(h); });
+        // Show all features at once after a short delay so entrance animation still plays
+        var SHOW_DELAY = 1200; // ms
+        var hShow = setTimeout(function(){ try{ features.forEach(function(f){ f.classList.add('feature--visible'); }); }catch(e){} }, SHOW_DELAY); featureTimeouts.push(hShow);
         // start fade-out at 6.5s
         var tFade = setTimeout(function(){ try{ fw.classList.add('features--fading'); }catch(e){} }, 6500); featureTimeouts.push(tFade);
         // ensure fully hidden/reset at 7.4s
-        var tHide = setTimeout(function(){ try{ Array.prototype.slice.call(fw.querySelectorAll('.feature')).forEach(function(f){ f.classList.remove('feature--visible'); }); fw.classList.remove('features--fading'); }catch(e){} }, 7400); featureTimeouts.push(tHide);
+        var tHide = setTimeout(function(){ try{ features.forEach(function(f){ f.classList.remove('feature--visible'); }); fw.classList.remove('features--fading'); }catch(e){} }, 7400); featureTimeouts.push(tHide);
       }catch(e){}
     }
 
