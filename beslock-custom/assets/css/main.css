@@ -866,7 +866,7 @@ body {
      so it visually sits inside the hero's top area. */
   /* Center features horizontally relative to the H1 anchor (40vw) on desktop */
   .hero-slide .features-wrapper { position: absolute; top: 20px; left: 40vw; transform: translateX(-50%); width: auto; z-index:4; }
-  .hero-slide .features-list { justify-content: center; gap: 1.5rem !important; }
+  .hero-slide .features-list { justify-content: center; gap: 3rem !important; }
   .hero-slide .features-list .feature { max-width: 160px; }
   .hero-slide .features-list .feature__text { color: var(--beslock-black); text-align: center; }
   .hero-slide .features-list .feature__title { color: var(--beslock-black); font-weight:700; display:block !important; width:100% !important; }
