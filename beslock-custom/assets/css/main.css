@@ -601,7 +601,7 @@ body {
 .slide-dim {
   position: absolute;
   inset: 0; /* cover the video area */
-  background: rgba(0,0,0,0.18); /* subtle, tweakable */
+  background: rgba(0,0,0,0.28); /* increased opacity to improve white text contrast */
   z-index: 1; /* sit above video (z=0) and below .slide-overlay (z=2) */
   pointer-events: none;
   transition: background 260ms ease, opacity 260ms ease;
