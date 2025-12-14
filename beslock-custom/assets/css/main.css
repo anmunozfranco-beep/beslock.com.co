@@ -46,12 +46,24 @@ body {
   }
 }
 @media (min-width: 1200px) {
-  .u-container {
-    max-width: 1180px;
-    padding: 0 2.5rem;
+  .features-wrapper { left: 40vw !important; transform: translateX(-50%) !important; }
+  .features-list .feature__icon { width: 56px !important; height: 56px !important; }
+  .features-list .feature__icon img { width: 100% !important; height: 100% !important; }
+  /* Center text under the icon and make all text blocks equal height so lines align */
+  .features-list .feature { align-items: center !important; }
+  .features-list .feature__text {
+    /* reduce font for desktop to avoid crowding */
+    font-size: 14px !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    align-items: center !important;
+    min-height: 44px !important; /* ensures titles/subtitles line up across features */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 2px !important;
   }
-}
-
+  .features-list .feature__title, .features-list .feature__subtitle { color: #ffffff !important; }
 /* ========== SECCIÓN BASE ========== */
 .section {
   padding-top: 2.5rem;
