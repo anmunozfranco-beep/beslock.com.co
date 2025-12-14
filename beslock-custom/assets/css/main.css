@@ -784,7 +784,7 @@ body {
 
 /* ===================== Features module styles ===================== */
 .features-wrapper { position: relative; margin-top: 0.8rem; }
-.features-list { display: flex; gap: 3.5rem; align-items: flex-start; justify-content: flex-start; flex-wrap: nowrap; }
+.features-list { display: flex; gap: 5rem; align-items: flex-start; justify-content: flex-start; flex-wrap: nowrap; }
 .features-list .feature { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; max-width: 120px; }
 
 /* Ajuste específico: bajar 10px las dos líneas (título y subtítulo) del primer feature */
@@ -833,7 +833,7 @@ body {
   .hero-slide .slide-content .features-list {
     display: flex !important;
     flex-direction: column !important;
-    gap: 30px !important;
+    gap: 44px !important;
     align-items: flex-start !important;
     justify-content: flex-start !important;
     overflow: visible !important;
@@ -921,8 +921,8 @@ body {
   .hero-slide .features-wrapper .features-list .feature__icon { width: 56px !important; height: 56px !important; margin-bottom: 8px !important; }
   .hero-slide .features-wrapper .features-list .feature__icon img { width:100% !important; height:100% !important; filter: brightness(0) invert(1) !important; }
   .hero-slide .features-wrapper .features-list .feature__text {
-    font-size: 13px !important; /* smaller font to reduce visual weight */
-    line-height: 1.05 !important;
+    font-size: 1.2rem !important; /* match drawer text size */
+    line-height: 1.2 !important;
     min-height: 38px !important; /* equalize text block heights */
     display: flex !important;
     flex-direction: column !important;
@@ -933,6 +933,6 @@ body {
     margin: 0 !important;
     color: #ffffff !important;
   }
-  .hero-slide .features-wrapper .features-list .feature__title { font-weight: 700 !important; }
-  .hero-slide .features-wrapper .features-list .feature__subtitle { font-weight: 400 !important; opacity: 0.95 !important; }
+  .hero-slide .features-wrapper .features-list .feature__title { font-weight: 700 !important; font-size: 1.2rem !important; }
+  .hero-slide .features-wrapper .features-list .feature__subtitle { font-weight: 500 !important; font-size: 1.2rem !important; opacity: 0.95 !important; }
 }
