@@ -699,8 +699,22 @@
             showSlide(current - 1);
           }
         } else {
-          // No change — re-show current slide to ensure classes/video state
-          showSlide(current);
+          // No change: do NOT call showSlide(current) because that clears
+          // feature timeouts and hides the features block. Instead, resume
+          // playback of the current slide's video and ensure slide classes
+          // remain as they were during the gesture.
+          try {
+            var cur = slides[current];
+            if (cur) {
+              // ensure only current slide visible
+              slides.forEach(function(s,i){ if (i===current){ s.classList.add('is-active'); s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','false'); } else { s.classList.remove('is-active'); s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','true'); } });
+              var cv = cur.querySelector && cur.querySelector('.slide-video');
+              if (cv && typeof cv.play === 'function') {
+                // resume from currentTime (we paused on touchstart)
+                cv.play().catch(function(){});
+              }
+            }
+          } catch (e) {}
         }
         // Restart autoplay after a short delay
         resetAutoplay();
