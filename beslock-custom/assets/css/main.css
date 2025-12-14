@@ -777,7 +777,7 @@ body {
 
 /* Ajuste específico: bajar 10px las dos líneas (título y subtítulo) del primer feature */
 .features-list .feature:first-child .feature__text {
-  margin-top: 10px !important;
+  margin-top: 20px !important;
 }
 .features-list .feature img { width: 48px; height: 48px; object-fit: contain; opacity: 0.92; transform: translateY(0); }
 /* Icon wrapper to support bolt badge and color-tinting */
