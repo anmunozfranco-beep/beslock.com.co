@@ -649,14 +649,67 @@
     // bind dots
     dots.forEach(function(d){ d.addEventListener('click', function(){ var i=parseInt(d.getAttribute('data-index'),10); showSlide(i); resetAutoplay(); }, { passive:true }); });
 
-    // touch swipe with resistance
+    // TOUCH SWIPE: mobile-friendly, non-destructive handling
+    // Rules enforced:
+    // - pause all videos on touchstart
+    // - do NOT move slides during touchmove (only measure)
+    // - on touchend decide based on threshold and call showSlide()
+    // - ensure only one slide visible at any time and only its video plays
     (function(){
-      var touch={startX:0,deltaX:0,dragging:false}; var activeInner=null, rafId=null;
-      function onStart(e){ if (!e.touches || e.touches.length>1) return; touch.startX=e.touches[0].clientX; touch.deltaX=0; touch.dragging=true; activeInner = slides[current] && slides[current].querySelector('.slide-inner'); stopAutoplay(); }
-      function onMove(e){ if (!touch.dragging) return; var x=e.touches[0].clientX; touch.deltaX = x - touch.startX; var moveX = touch.deltaX; if ((current===0 && moveX>0) || (current===slides.length-1 && moveX<0)) moveX = moveX * H.resistanceFactor; if (activeInner){ if (rafId) cancelAnimationFrame(rafId); rafId=requestAnimationFrame(function(){ activeInner.style.transform = 'translateX(' + moveX + 'px)'; }); } }
-      function onEnd(e){ if (!touch.dragging) return; touch.dragging=false; var dx = touch.deltaX; if (activeInner){ activeInner.style.transition='transform 260ms cubic-bezier(.22,.9,.41,1)'; activeInner.style.transform=''; setTimeout(function(){ if (activeInner) activeInner.style.transition=''; },300); }
-        if (Math.abs(dx) > H.swipeThreshold){ if (dx<0) { showSlide(current+1); } else { showSlide(current-1); } resetAutoplay(); } else { resetAutoplay(); } }
-      document.addEventListener('touchstart', onStart, { passive:true }); document.addEventListener('touchmove', onMove, { passive:true }); document.addEventListener('touchend', onEnd, { passive:true }); document.addEventListener('touchcancel', onEnd, { passive:true });
+      var touch = { startX: 0, deltaX: 0, dragging: false };
+
+      function pauseAllVideos() {
+        try { slides.forEach(function(s){ var v = s.querySelector && s.querySelector('.slide-video'); if (v && typeof v.pause === 'function') { try{ v.pause(); }catch(e){} } }); } catch(e){}
+      }
+
+      function ensureSingleVisible() {
+        try {
+          slides.forEach(function(s,i){ if (i === current) { s.classList.add('is-active'); s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','false'); } else { s.classList.remove('is-active'); s.classList.remove('is-exiting'); s.setAttribute('aria-hidden','true'); } });
+        } catch(e) {}
+      }
+
+      function onStart(e){
+        if (!e.touches || e.touches.length !== 1) return;
+        touch.startX = e.touches[0].clientX;
+        touch.deltaX = 0;
+        touch.dragging = true;
+        // Pause all videos while swiping
+        pauseAllVideos();
+        // Ensure only the current slide is visible during the gesture
+        ensureSingleVisible();
+        stopAutoplay();
+      }
+
+      function onMove(e){
+        if (!touch.dragging) return;
+        if (!e.touches || e.touches.length !== 1) return;
+        touch.deltaX = e.touches[0].clientX - touch.startX;
+        // Do not move DOM or apply transforms here — only measure
+      }
+
+      function onEnd(e){
+        if (!touch.dragging) return;
+        touch.dragging = false;
+        var dx = touch.deltaX || 0;
+        // Decide change only after gesture ends
+        if (Math.abs(dx) > H.swipeThreshold) {
+          if (dx < 0) {
+            showSlide(current + 1);
+          } else {
+            showSlide(current - 1);
+          }
+        } else {
+          // No change — re-show current slide to ensure classes/video state
+          showSlide(current);
+        }
+        // Restart autoplay after a short delay
+        resetAutoplay();
+      }
+
+      document.addEventListener('touchstart', onStart, { passive:true });
+      document.addEventListener('touchmove', onMove, { passive:true });
+      document.addEventListener('touchend', onEnd, { passive:true });
+      document.addEventListener('touchcancel', onEnd, { passive:true });
     })();
 
     // visibility pause
