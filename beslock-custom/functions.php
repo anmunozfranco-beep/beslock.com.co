@@ -29,7 +29,7 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_enqueue_style(
     'beslock-main-style',
     $theme_dir_uri . '/assets/css/main.css',
-    [ 'kadence-parent-style' ],
+    [],
     $ver_main_css
   );
 
@@ -140,4 +140,15 @@ add_action( 'after_setup_theme', function() {
   if ( ! current_theme_supports( 'woocommerce' ) ) {
     add_theme_support( 'woocommerce' );
   }
-}, 9 );
+}, 11 );
+
+// Enqueue a minimal CSS reset on WooCommerce pages so the child theme
+// does not globally override Kadence/WooCommerce styles.
+add_action( 'wp_enqueue_scripts', function() {
+  if ( function_exists( 'is_woocommerce' ) && ( is_woocommerce() || is_cart() || is_checkout() || is_account_page() ) ) {
+    $css_file = get_stylesheet_directory() . '/assets/css/wc-scope-fix.css';
+    if ( file_exists( $css_file ) ) {
+      wp_enqueue_style( 'beslock-wc-scope-fix', get_stylesheet_directory_uri() . '/assets/css/wc-scope-fix.css', [], filemtime( $css_file ) );
+    }
+  }
+}, 20 );
