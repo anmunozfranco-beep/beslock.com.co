@@ -46,11 +46,11 @@
       </li>
 
       <li class="mobile-menu__item" role="none">
-        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/orders') ); ?>" role="menuitem">
-          <i class="bi bi-truck" aria-hidden="true"></i>
+        <a class="mobile-menu__link" href="<?php echo esc_url( home_url('/tienda') ); ?>" role="menuitem">
+          <i class="bi bi-shop-window" aria-hidden="true"></i>
           <div class="mobile-menu__meta">
-            <span class="mobile-menu__title">Track your Orders</span>
-            <span class="mobile-menu__subtitle">Get online updated status</span>
+            <span class="mobile-menu__title">Tienda de productos</span>
+            <span class="mobile-menu__subtitle">Compra fácil y rápida</span>
           </div>
         </a>
       </li>
