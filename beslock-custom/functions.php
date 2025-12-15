@@ -29,7 +29,7 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_enqueue_style(
     'beslock-main-style',
     $theme_dir_uri . '/assets/css/main.css',
-    [],
+    [ 'kadence-parent-style' ],
     $ver_main_css
   );
 
@@ -140,4 +140,4 @@ add_action( 'after_setup_theme', function() {
   if ( ! current_theme_supports( 'woocommerce' ) ) {
     add_theme_support( 'woocommerce' );
   }
-}, 11 );
+}, 9 );
