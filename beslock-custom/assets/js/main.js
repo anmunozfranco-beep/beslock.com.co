@@ -801,8 +801,16 @@
     // visibility pause
     document.addEventListener('visibilitychange', function(){ if (document.hidden) stopAutoplay(); else startAutoplay(); });
 
-    // wait first video then hide loader and start
-    waitFirst().then(function(){ if (loader) loader.setAttribute('aria-hidden','true'); root.classList.add('ready'); showSlide(0, { immediate:true }); startAutoplay(); });
+    // wait first video then keep loader visible 2.5s, then hide loader and start
+    waitFirst().then(function(){
+      var DELAY = 2500; // ms
+      setTimeout(function(){
+        if (loader) loader.setAttribute('aria-hidden','true');
+        root.classList.add('ready');
+        showSlide(0, { immediate:true });
+        startAutoplay();
+      }, DELAY);
+    });
 
     // expose for debug
     window.__beslockHero = { show: showSlide, next: nextSlide, prev:function(){ showSlide(current-1); }, stop:stopAutoplay, start:startAutoplay };

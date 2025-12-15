@@ -130,3 +130,14 @@ add_action( 'wp_enqueue_scripts', function() {
   );
 
 });
+
+/**
+ * Declare WooCommerce support for the child theme if not already present.
+ * Using after_setup_theme with priority > 10 helps run after the parent theme
+ * so we don't accidentally override parent theme setup.
+ */
+add_action( 'after_setup_theme', function() {
+  if ( ! current_theme_supports( 'woocommerce' ) ) {
+    add_theme_support( 'woocommerce' );
+  }
+}, 11 );

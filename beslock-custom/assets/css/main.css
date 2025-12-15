@@ -549,14 +549,43 @@ body {
    HERO BESLOCK STYLES (appended)
    ========================== */
 .beslock-hero { position: relative; width:100%; height:85vh; max-height:100vh; overflow:hidden; background:#000; color:#fff; isolation:isolate; }
-.beslock-loader { position: fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#ffffff; z-index:9999; transition:opacity 1.2s ease, visibility 1.2s linear; }
+.beslock-loader { position: fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.6rem; background:#ffffff; z-index:9999; transition:opacity 1.2s ease, visibility 1.2s linear; }
 .beslock-loader[aria-hidden="true"]{ opacity:0; visibility:hidden; pointer-events:none; }
-.beslock-loader__wrap{ display:inline-block; /* responsive size: min 140px, fluid up to 30vw, max 416px */ width: clamp(140px, 30vw, 416px); height: clamp(140px, 30vw, 416px); position:relative; }
+.beslock-loader__wrap{ --loader-logo-size: clamp(140px, 30vw, 416px); display:inline-block; /* responsive size via variable */ width: var(--loader-logo-size); height: var(--loader-logo-size); position:relative; }
 .beslock-loader__img{ width:100%; height:100%; display:block; object-fit:contain; /* no decorative background; show logo natural */
   opacity: 0; transform: scale(.92); animation: loader-reveal 1.2s cubic-bezier(.22,.9,.41,1) forwards; }
 /* remove decorative pseudo-element and pulse: keep only the logo image */
 .beslock-loader__wrap::before{ display:none; }
 .beslock-loader__pulse{ display:none; }
+/* Loader caption placed under logo: 25% of logo size, uses same typography weight as slide H1 */
+.beslock-loader .beslock-loader__text{
+  margin-top: 0.6rem;
+  color: var(--beslock-green) !important;
+  font-weight: 700;
+  line-height: 1;
+  font-family: inherit;
+  font-size: 4rem !important;
+  text-align: center;
+  display: block;
+  letter-spacing: 0.02em;
+  transform: translateY(-20vh) !important;
+}
+
+/* Mobile override: ensure text sits below the logo, smaller and positioned 25% below center */
+@media (max-width: 599px) {
+  .beslock-loader { align-items: center; justify-content: center; }
+  .beslock-loader .beslock-loader__text{
+    transform: none !important; /* reset desktop vertical shift */
+    margin-top: 4px !important; /* 4px below the logo on mobile */
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important; /* remove any padding on mobile */
+    font-size: 1.35rem !important; /* mobile requested size */
+    position: relative !important;
+    top: auto !important;
+  }
+}
 @keyframes loader-pulse{0%{transform:scale(.95);opacity:.9}50%{transform:scale(1.08);opacity:1}100%{transform:scale(.95);opacity:.9}}
 
 @keyframes loader-reveal {
