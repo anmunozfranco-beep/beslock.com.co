@@ -557,11 +557,11 @@ body {
 /* remove decorative pseudo-element and pulse: keep only the logo image */
 .beslock-loader__wrap::before{ display:none; }
 .beslock-loader__pulse{ display:none; }
-/* Loader caption placed under logo: 25% of logo size, uses same typography weight as slide H1 */
-.beslock-loader .beslock-loader__text{
+  /* Loader caption placed under logo: 25% of logo size */
+  .beslock-loader .beslock-loader__text{
   margin-top: 0.6rem;
   color: var(--beslock-green) !important;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
   font-family: inherit;
   font-size: 4rem !important;
@@ -587,11 +587,10 @@ body {
   }
 }
 
-/* Desktop override: match slide secondary text size on larger viewports
-   (use same clamp as .slide-subtitle at >=768px) */
+/* Desktop override: force 2rem for loader caption on desktop viewports */
 @media (min-width: 768px) {
   .beslock-loader .beslock-loader__text {
-    font-size: clamp(1.4rem, 2.94vw, 1.82rem) !important;
+    font-size: 2rem !important;
   }
 }
 @keyframes loader-pulse{0%{transform:scale(.95);opacity:.9}50%{transform:scale(1.08);opacity:1}100%{transform:scale(.95);opacity:.9}}
