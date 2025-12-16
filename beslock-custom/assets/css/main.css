@@ -586,6 +586,13 @@ body {
     top: auto !important;
   }
 }
+
+/* Desktop override: set loader caption to 1rem for widths >=600px */
+@media (min-width: 600px) {
+  .beslock-loader .beslock-loader__text {
+    font-size: 1rem !important;
+  }
+}
 @keyframes loader-pulse{0%{transform:scale(.95);opacity:.9}50%{transform:scale(1.08);opacity:1}100%{transform:scale(.95);opacity:.9}}
 
 @keyframes loader-reveal {
