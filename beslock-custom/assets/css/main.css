@@ -587,10 +587,11 @@ body {
   }
 }
 
-/* Desktop override: force 2rem for loader caption on desktop viewports */
+/* Desktop override: match slide secondary text size on larger viewports
+   (use same clamp as .slide-subtitle at >=768px) */
 @media (min-width: 768px) {
   .beslock-loader .beslock-loader__text {
-    font-size: 2rem !important;
+    font-size: 2.5rem !important;
   }
 }
 @keyframes loader-pulse{0%{transform:scale(.95);opacity:.9}50%{transform:scale(1.08);opacity:1}100%{transform:scale(.95);opacity:.9}}
